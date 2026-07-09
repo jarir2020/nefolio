@@ -718,7 +718,7 @@ function monthChargeNet($month, $year, $extra = null)
 function dayOrders($day, $month, $year, $extra = null)
 {
     global $conn;
-    if (count($extra["status"])):
+    if (is_array($extra) && isset($extra["status"]) && is_array($extra["status"]) && count($extra["status"])):
         $where = "&& ( ";
         if (in_array("cron", $extra["status"])):
             $where .= "order_detail='cronpending' || ";
@@ -736,7 +736,7 @@ function dayOrders($day, $month, $year, $extra = null)
     else:
         $where = "";
     endif;
-    if (count($_POST["services"])):
+    if (isset($_POST["services"]) && is_array($_POST["services"]) && count($_POST["services"]) && is_array($extra) && isset($extra["services"]) && is_array($extra["services"])):
         $where .= "&& ( ";
         foreach ($extra["services"] as $service):
             $where .= " service_id='$service' || ";
@@ -752,7 +752,7 @@ function dayOrders($day, $month, $year, $extra = null)
 function monthOrders($month, $year, $extra = null)
 {
     global $conn;
-    if (count($extra["status"])):
+    if (is_array($extra) && isset($extra["status"]) && is_array($extra["status"]) && count($extra["status"])):
         $where = "&& ( ";
         if (in_array("cron", $extra["status"])):
             $where .= "order_detail='cronpending' || ";
@@ -770,7 +770,7 @@ function monthOrders($month, $year, $extra = null)
     else:
         $where = "";
     endif;
-    if (count($_POST["services"])):
+    if (isset($_POST["services"]) && is_array($_POST["services"]) && count($_POST["services"]) && is_array($extra) && isset($extra["services"]) && is_array($extra["services"])):
         $where .= "&& ( ";
         foreach ($extra["services"] as $service):
             $where .= " service_id='$service' || ";
