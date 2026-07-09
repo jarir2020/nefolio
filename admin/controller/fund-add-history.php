@@ -27,11 +27,17 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             } else {
                 $paymentStatus = "Pending";
             }
+            $client_id = $payments[$i]["client_id"];
+            $username = isset($clients[$client_id]) ? $clients[$client_id][0]["username"] : "Deleted User";
+
+            $method_id = $payments[$i]["payment_method"];
+            $method_name = isset($methods[$method_id]) ? $methods[$method_id][0]["methodVisibleName"] : "Unknown Method";
+
             $PAYMENTS[] = [
                 "id" => $payments[$i]["payment_id"],
-                "cid" => $payments[$i]["client_id"],
-                "username" => $clients[$payments[$i]["client_id"]][0]["username"],
-                "method" => $methods[$payments[$i]["payment_method"]][0]["methodVisibleName"],
+                "cid" => $client_id,
+                "username" => $username,
+                "method" => $method_name,
                 "user_balance" => number_format($payments[$i]["client_balance"], 2, '.', ''),
                 "amount" => number_format($payments[$i]["payment_amount"], 2, '.', ''),
                 "status" => $paymentStatus,
