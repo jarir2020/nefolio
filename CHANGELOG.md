@@ -15,3 +15,5 @@ This document tracks all file modifications made to the Nefolio project during l
 ### Files Modified
 - **[`app/config.php`](file:///home/jarir-ahmed/Documents/Nefolio/app/config.php):** Modified to load `.env` variables first, then dynamically configure database credentials (`DB_DATABASE`, `DB_HOST`, `DB_USERNAME`, `DB_PASSWORD`, `DB_CHARSET`) and system constants (`URL`, `SUBFOLDER`, `STYLESHEETS_URL`, and timezone settings).
 - **[`app/controller/auth.php`](file:///home/jarir-ahmed/Documents/Nefolio/app/controller/auth.php):** Extracted hardcoded Google OAuth credentials to `.env` to prevent GitHub Push Protection failures when pushing.
+- **[`router.php`](file:///home/jarir-ahmed/Documents/Nefolio/router.php):** Rewrote the router to intercept physical directory requests (such as `/admin/`) and route them to root `index.php`, preventing directory indexes or 403 blocks on localhost.
+
