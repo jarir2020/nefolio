@@ -430,7 +430,9 @@
             ready_table();
             $(".table tbody").html(tbody);
           } else {
-
+            $(".table").removeClass("loading");
+            $(".table").parent().removeClass("table-responsive");
+            $(".table tbody").html('<tr><td colspan="8"><center><b>No Data</b></center></td></tr>');
           }
 
 
