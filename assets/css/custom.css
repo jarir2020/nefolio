@@ -1,0 +1,91 @@
+My Byte Points
+-
+GPT4 Points
+-
+GPT3.5 Points
+My BNB
+-
+GPT to Earn
+Open and Sign In to ChatGPT
+Please open and log in to ChatGPT to continue using this feature.
+Go to ChatGPT
+Earnings History
+No Earnings History Yet
+Start uploading sessions to earn now!
+.body .form-group .search-dropdown .input-wrapper {
+		position: relative;
+		--form-group-search-paddings: 12px;
+		--form-group-border-width-right: 0;
+		--form-group-border-width-left: 0;
+	}
+
+	.body .form-group .search-dropdown .input-wrapper .input-wrapper__prepend,
+	.form-group .search-dropdown .input-wrapper .input-wrapper__append {
+		position: absolute;
+		background: none;
+		border: none;
+		top: 50%;
+		transform: translateY(-50%);
+		padding: 0 2px;
+		color: #61768e !important;
+    font-size:17px;
+	}
+
+	.body .form-group .search-results {
+	    position: absolute !important;
+    max-height: 300px;
+    border-radius: 8px;
+    margin-top: 8px;
+    border-left-width: 0px;
+    border-right-width: 0px;
+    border-top-width: 0px;
+    border-bottom-width: 0px;
+    border-color: transparent;
+    border-style: solid;
+    box-shadow: 0 12px 24px 12px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+    width: calc(100% - 3rem);
+    background: #fff;
+    z-index: 1;
+    left: 25px;
+	}
+	.body .form-group .search-dropdown .input-wrapper .input-wrapper__prepend {
+		left: 10px;
+	}
+	.body .form-group .search-dropdown .input-wrapper .form-control {
+		padding-left: calc(var(--form-group-search-paddings) + 28px);
+		padding-right: calc(var(--form-group-search-paddings) + 14px);
+	}
+	.body .form-group .select2-selection--single {
+		display: flex;
+		align-items: center;
+	}
+
+
+	.body .form-group .search-dropdown .input-wrapper .input-wrapper__append {
+		font-size: 15px;
+		right: 16px;
+		display: none;
+	}
+	.body .form-group .search-dropdown .input-wrapper .input-wrapper__prepend:hover,
+	.body .form-group .search-dropdown .input-wrapper .input-wrapper__append:hover {
+		opacity: 0.5;
+	}
+	.body .form-group .search-dropdown .input-wrapper .input-wrapper__prepend:hover,
+	.body .form-group .search-dropdown .input-wrapper .input-wrapper__append:focus {
+		outline: none;
+	}
+  .body .form-group .search-results ul.resultServicesList {
+    padding-left: 0;
+    margin-bottom: 5px;
+}
+ .body .form-group .search-results ul.resultServicesList li.resultService {
+    cursor: pointer;
+    list-style-type: none;
+}
+.body .form-group .search-results ul.resultServicesList li.resultService:hover {
+    background-color: #f2f2f2;
+}
+.body .form-group .search-results ul.resultServicesList li.resultService a {
+  color: #000;
+}
