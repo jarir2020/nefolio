@@ -15,7 +15,8 @@ This document tracks all file modifications and bug fixes made to the Nefolio pr
 ### Files Modified
 - **[`app/config.php`](file:///home/jarir-ahmed/Documents/Nefolio/app/config.php):** Modified to load `.env` variables first, then dynamically configure database credentials (`DB_DATABASE`, `DB_HOST`, `DB_USERNAME`, `DB_PASSWORD`, `DB_CHARSET`) and system constants (`URL`, `SUBFOLDER`, `STYLESHEETS_URL`, and timezone settings).
 - **[`app/controller/auth.php`](file:///home/jarir-ahmed/Documents/Nefolio/app/controller/auth.php):** Extracted hardcoded Google OAuth credentials to `.env` to fix GitHub Push Protection scan issues.
-- **[`admin/views/header.php`](file:///home/jarir-ahmed/Documents/Nefolio/admin/views/header.php):** Replaced domain-restricted FontAwesome kit script with an unrestricted public cdnjs FontAwesome v6 CDN. Also removed incorrect `assets/` directory prefixes from local stylesheets/scripts.
+- **[`admin/views/header.php`](file:///home/jarir-ahmed/Documents/Nefolio/admin/views/header.php):** Replaced domain-restricted FontAwesome kit script with an unrestricted public cdnjs FontAwesome v6 CDN. Removed incorrect `assets/` directory prefixes from local files, and replaced protocol-relative URLs with explicit `https://` protocols for all external CDNs to resolve 307 redirects.
+
 - **[`admin/views/dripfeeds.php`](file:///home/jarir-ahmed/Documents/Nefolio/admin/views/dripfeeds.php):** Removed incorrect `assets/` prefix from `drip.js` script resource tag.
 - **[`app/init.php`](file:///home/jarir-ahmed/Documents/Nefolio/app/init.php):** Fixed case-sensitivity of `general_options` SQL table query.
 
