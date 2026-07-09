@@ -34,8 +34,24 @@ if ($subfolderEnv === 'false' || $subfolderEnv === '0') {
 
 define('PATH', realpath('.'));
 define('SUBFOLDER', $subfolder);
-define('URL', getenv('APP_URL') ?: 'https://clickbd.shop' );
-define('STYLESHEETS_URL', getenv('APP_STYLESHEETS_URL') ?: '//clickbd.shop' );
+// Dynamic host checking for local development vs production URL
+$httpHost = $_SERVER['HTTP_HOST'] ?? '';
+$isLocal = false;
+if (!empty($httpHost)) {
+    if (strpos($httpHost, 'localhost') !== false || strpos($httpHost, '127.0.0.1') !== false || strpos($httpHost, '0.0.0.0') !== false) {
+        $isLocal = true;
+    }
+}
+
+if ($isLocal) {
+    $scheme = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
+    $detectedUrl = $scheme . '://' . $httpHost;
+    define('URL', $detectedUrl);
+    define('STYLESHEETS_URL', $detectedUrl);
+} else {
+    define('URL', getenv('APP_URL') ?: 'https://clickbd.shop' );
+    define('STYLESHEETS_URL', getenv('APP_STYLESHEETS_URL') ?: '//clickbd.shop' );
+}
 date_default_timezone_set(getenv('APP_TIMEZONE') ?: 'Asia/Dhaka');
 
 /* 

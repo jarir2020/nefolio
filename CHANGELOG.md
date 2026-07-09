@@ -13,13 +13,7 @@ This document tracks all file modifications made to the Nefolio project during l
 - **[`.github/workflows/deploy.yml`](file:///home/jarir-ahmed/Documents/Nefolio/.github/workflows/deploy.yml):** Created GitHub Actions workflow for automatic FTP deployment on push to `main` branch.
 
 ### Files Modified
-- **[`app/config.php`](file:///home/jarir-ahmed/Documents/Nefolio/app/config.php):** Modified to load `.env` variables first, then dynamically configure database credentials (`DB_DATABASE`, `DB_HOST`, `DB_USERNAME`, `DB_PASSWORD`, `DB_CHARSET`) and system constants (`URL`, `SUBFOLDER`, `STYLESHEETS_URL`, and timezone settings).
+- **[`app/config.php`](file:///home/jarir-ahmed/Documents/Nefolio/app/config.php):** Modified to load `.env` variables first, then dynamically configure database credentials and system constants. Added dynamic host detection to automatically use the local host URL during local development (preventing cross-origin CORS/AJAX issues) while keeping production `.env` settings on the live remote server.
 - **[`app/controller/auth.php`](file:///home/jarir-ahmed/Documents/Nefolio/app/controller/auth.php):** Extracted hardcoded Google OAuth credentials to `.env` to prevent GitHub Push Protection failures when pushing.
-- **[`app/init.php`](file:///home/jarir-ahmed/Documents/Nefolio/app/init.php):** Fixed case-sensitivity of the `general_options` SQL table query to prevent crashes on Linux environments.
-- **[`admin/controller/settings.php`](file:///home/jarir-ahmed/Documents/Nefolio/admin/controller/settings.php):** Fixed case-sensitivity of the `general_options` SQL table queries to prevent settings save failures.
-- **[`admin/controller/login.php`](file:///home/jarir-ahmed/Documents/Nefolio/admin/controller/login.php):** Bypassed the mandatory redirect to Google 2FA welcome page on admin login.
-- **[`admin/views/header.php`](file:///home/jarir-ahmed/Documents/Nefolio/admin/views/header.php):** Pointed all CSS and script links to the new locally hosted copies, removing the external CDN scripts and stylesheets.
-- **[`admin/views/footer.php`](file:///home/jarir-ahmed/Documents/Nefolio/admin/views/footer.php):** Pointed all javascript script links to the new locally hosted copies, removing the external CDN scripts.
 - **[`router.php`](file:///home/jarir-ahmed/Documents/Nefolio/router.php):** Rewrote the router to intercept physical directory requests (such as `/admin/`) and route them to root `index.php`, preventing directory indexes or 403 blocks on localhost.
-
 
