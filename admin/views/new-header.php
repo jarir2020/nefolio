@@ -825,7 +825,7 @@
         <li>
           <a class="nav-link" href="<?php echo site_url("admin/account"); ?>">
             <img class="img-responsive nav-li-href-logo" height="30" width="30"
-              src="<?php echo site_url("/img/admin/ic_account_new.png"); ?>"><span class="links_name"> Admin Account</span>
+              src="<?php echo site_url("img/admin/ic_account_new.png"); ?>"><span class="links_name"> Admin Account</span>
           </a>
         </li>
 
