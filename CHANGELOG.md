@@ -15,7 +15,7 @@ This document tracks all file modifications made to the Nefolio project during l
 
 
 ### Files Modified
-- **[`app/config.php`](file:///home/jarir-ahmed/Documents/Nefolio/app/config.php):** Modified to load `.env` variables first, then dynamically configure database credentials and system constants. Added dynamic host detection to automatically use the local host URL during local development (preventing cross-origin CORS/AJAX issues) while keeping production `.env` settings on the live remote server.
+- **[`app/config.php`](file:///home/jarir-ahmed/Documents/Nefolio/app/config.php):** Modified to load `.env` variables first, then dynamically configure database credentials and system constants. Added dynamic host detection to automatically use the local host URL during local development (preventing cross-origin CORS/AJAX issues) while keeping production `.env` settings on the live remote server. Also persistently enabled display_errors and error_reporting (E_ALL) to facilitate easier debugging.
 - **[`app/controller/auth.php`](file:///home/jarir-ahmed/Documents/Nefolio/app/controller/auth.php):** Extracted hardcoded Google OAuth credentials to `.env` to prevent GitHub Push Protection failures when pushing.
 - **[`router.php`](file:///home/jarir-ahmed/Documents/Nefolio/router.php):** Rewrote the router to intercept physical directory requests (such as `/admin/`) and route them to root `index.php`, preventing directory indexes or 403 blocks on localhost.
 

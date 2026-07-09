@@ -55,11 +55,8 @@ if ($isLocal) {
 date_default_timezone_set(getenv('APP_TIMEZONE') ?: 'Asia/Dhaka');
 
 
- ini_set("display_errors","1");
- error_reporting(E_ERROR); 
-
-
-error_reporting(0);
+ini_set("display_errors", "1");
+error_reporting(E_ALL);
 
 
 return [

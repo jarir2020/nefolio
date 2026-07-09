@@ -72,31 +72,31 @@
 
     
 
-<script src="public/admin/js/fontawesome-all.min.js"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css">
 
     <link rel="stylesheet" type="text/css" href="public/admin/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="public/admin/style.css">
-    <link rel="stylesheet" type="text/css" href="public/admin/toastDemo.css">
-	<link rel="stylesheet" type="text/css" href="public/admin/tooltip.css">
+    <link rel="stylesheet" type="text/css" href="assets/public/admin/toastDemo.css">
+	<link rel="stylesheet" type="text/css" href="assets/public/admin/tooltip.css">
 	
-<link href="public/admin/summernote.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" type="text/css" href="public/admin/codemirror.css">
-    <link rel="stylesheet" type="text/css" href="public/admin/codemirror-monokai.css">
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.css">
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/theme/monokai.css">
 
 
-    <link rel="stylesheet" type="text/css" href="public/admin/tinytoggle.min.css" rel="stylesheet">
- <link rel="stylesheet" href="public/admin/iziToast.min.css">
-<script src="public/admin/iziToast.min.js"></script>
-<script src="public/admin/apex.js"></script>
+    <link rel="stylesheet" type="text/css" href="assets/public/admin/tinytoggle.min.css" rel="stylesheet">
+ <link rel="stylesheet" href="assets/public/admin/iziToast.min.css">
+  <script src="https://kit.fontawesome.com/f9fbee3ddf.js" crossorigin="anonymous"></script>
+<script src="assets/public/admin/iziToast.min.js"></script>
 
-  <link href="public/admin/bootstrap-toggle.min.css" rel="stylesheet">
+  <link href="//gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 
-<link href="public/admin/bootstrap3.min.css" type="text/css" rel="stylesheet">
-<link rel="stylesheet" href="public/admin/bootstrap-select.css">
-<link rel="stylesheet" href="public/admin/fontawesome-iconpicker.min.css">
-<link rel="stylesheet" href="css/admin/image-picker.css">
-	<link href="css/admin/main.css" type="text/css" rel="stylesheet">
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" type="text/css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.8.1/css/bootstrap-select.css">
+<link rel="stylesheet" href="https://itsjavi.com/fontawesome-iconpicker/dist/css/fontawesome-iconpicker.min.css">
+<link rel="stylesheet" href="assets/css/admin/image-picker.css">
+	<link href="assets/css/admin/main.css" type="text/css" rel="stylesheet">
     <style>
  @import url("https://fonts.googleapis.com/css2?family=Sansita+Swashed:wght@600&display=swap");
         #loading {
