@@ -21,6 +21,7 @@
 <script src="public/admin/iziToast.min.js"></script>
 <script src="public/admin/js/rwd-table.min.js"></script>
 <script>
+  const site_url = "<?php echo site_url(); ?>";
   const panel_categories = <?= $categories ?>;
   const panel_services = <?= $services ?>;
   const users = <?= $users ?>;
@@ -198,7 +199,7 @@
   function populate_special_prices() {
     var special_prices = "";
     $.ajax({
-      url: "admin/special-pricing/data",
+      url: site_url + "admin/special-pricing/data",
       type: "GET",
       success: function (response) {
         special_prices = JSON.parse(response);
@@ -290,7 +291,7 @@
       body = "";
       var methodId = $(this).attr("data-method-id");
       $.ajax({
-        url: "admin/settings/paymentMethods/getForm",
+        url: site_url + "admin/settings/paymentMethods/getForm",
         data: "methodId=" + methodId,
         type: "POST",
         success: function (json) {
@@ -306,7 +307,7 @@
       title = "Add / Deduct Balance";
       body = "";
       $.ajax({
-      url: "admin/fund-add-history?action=add_remove_balance",
+        url: site_url + "admin/fund-add-history?action=add_remove_balance",
         type: "GET",
         success: function (json) {
           body = json.content;
@@ -357,7 +358,7 @@
       var methodId = element.attr("data-method-id");
       if (isGreen) {
         $.ajax({
-          url: "admin/settings/paymentMethods/deactivate",
+          url: site_url + "admin/settings/paymentMethods/deactivate",
           data: "methodId=" + methodId,
           type: "POST",
           success: function (response) {
@@ -367,7 +368,7 @@
         });
       } else {
         $.ajax({
-          url: "admin/settings/paymentMethods/activate",
+          url: site_url + "admin/settings/paymentMethods/activate",
           data: "methodId=" + methodId,
           type: "POST",
           success: function (response) {
@@ -384,7 +385,7 @@
 
     if (Route == "settings" && settingsRoute == "paymentMethods") {
       $.ajax({
-        url: "admin/settings/paymentMethods?action=getData",
+        url: site_url + "admin/settings/paymentMethods?action=getData",
         type: "GET",
         success: function (response) {
           data = response;
@@ -411,7 +412,7 @@
 
     if (Route == "fund-add-history") {
       $.ajax({
-        url: "admin/fund-add-history?action=getData",
+        url: site_url + "admin/fund-add-history?action=getData",
         type: "GET",
         success: function (json) {
           data = json;
@@ -491,7 +492,7 @@
     $(document).on("click", "[data-ajax='true']", function () {
       var url = $(this).attr("data-action-ajax");
       $.ajax({
-        url: url,
+        url: (url.startsWith('http') || url.startsWith('/') ? url : site_url + url),
         type: 'GET',
         success: function (json) {
           json = JSON.parse(json);
@@ -538,7 +539,7 @@
       btn.attr("disabled", true);
       btn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ' + loader_after_text);
       $.ajax({
-        url: action_url,
+        url: (action_url.startsWith('http') || action_url.startsWith('/') ? action_url : site_url + action_url),
         type: method,
         data: post_data,
         success: function (json) {
@@ -586,7 +587,7 @@
         var arr = $("#category-list").sortable('toArray');
         var data = window.btoa(JSON.stringify(arr));
         $.ajax({
-          url: 'admin/category-sort',
+          url: site_url + 'admin/category-sort',
           data: 'action=sort_category&category_list=' + data,
           type: 'POST',
           success: function (response) {
@@ -618,7 +619,7 @@
         var updatedSequence = getChangedElements(paymentMethodsSequence, updatedSequence);
         var methodPositions = window.btoa(JSON.stringify(updatedSequence));
         $.ajax({
-          url: 'admin/settings/paymentMethods/sort',
+          url: site_url + 'admin/settings/paymentMethods/sort',
           data: 'sortData=' + methodPositions,
           type: 'POST',
           success: function (response) {
