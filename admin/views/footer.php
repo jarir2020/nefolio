@@ -27,27 +27,27 @@
      </div>
    </div>
   </div>
-  <script type="text/javascript" src="//code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
-  <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script src="//unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-  <script src="//gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
- <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.8.1/js/bootstrap-select.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+   <script type="text/javascript" src="public/admin/jquery.min.js"></script>
+  <script type="text/javascript" src="public/admin/moment.min.js"></script>
+  <script type="text/javascript" src="public/admin/bootstrap3.min.js"></script>
+  <script src="public/admin/sweetalert.min.js"></script>
+  <script src="public/admin/bootstrap-toggle.min.js"></script>
+ <link href="public/admin/summernote.min.css" rel="stylesheet">
+<script src="public/admin/bootstrap-select.js"></script>
+  <script src="public/admin/summernote.min.js"></script>
 
   <script src="public/admin/toastDemo.js"></script>
   <script src="public/admin/script.js"></script>
   <script src="public/admin/script-2.js"></script>
-  <script src="//code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <script src="public/admin/jquery-ui-1.12.1.min.js"></script>
   <script src="public/admin/jquery.tinytoggle.min.js"></script>
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" ></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+<script src="public/admin/jquery-ui-1.13.2.min.js" ></script>
+<script src="public/admin/jquery.ui.touch-punch.min.js"></script>
 <script src="public/admin/sortable-animation.js"></script>
-<script src="https://itsjavi.com/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.js"></script>
+<script src="public/admin/fontawesome-iconpicker.js"></script>
 <script src="public/admin/image-picker.min.js"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.10.6/sweetalert2.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.10.6/sweetalert2.css"/>
+ <script src="public/admin/sweetalert2.min.js"></script>
+<link rel="stylesheet" href="public/admin/sweetalert2.css"/>
 
  
  <script type="text/javascript"> $.fn.TinyToggle={defaults:{type:"toggle",size:"medium",palette:"standard"},types:{dot:{checked:"tt-check-circle",unchecked:"tt-check-circle"}},palettes:{red:{check:"#CC0000",uncheck:"#999999"},green:{check:"#29bf12",uncheck:"#ef233c"}},sizes:{medium:"1.5em"}};$(document).ready(function(){$("#loading").hide(),$(".custom_method").on("click",function(t){t.preventDefault();var e,i,n,o,a={text:$(this).data("message"),title:$(this).data("title"),icon:"warning",showCancelButton:!0,confirmButtonColor:"#3085d6",cancelButtonColor:"#d33",confirmButtonText:"Okay",timer:1e4,timerProgressBar:!0},c=$(this).data("action"),d=$(this).data("id"),s=$(this).data("url"),r=$(this).data("main");s=(e=c,i=s,n=d,url="delete_service"==e?"admin/services/delete/"+n:i),Swal.fire(a).then(t=>{t.isConfirmed&&$.ajax({url:s,type:"POST",beforeSend:function(){$("#loading").show()},data:{action:c,method_id:d,main:r},success:function(t){console.log(t),$("#loading").hide(),t=JSON.parse(t),new swal(t.title,"",t.icon).then(function(e){"success"==t.icon&&(window.location.href=window.location.href)})}})})})});$(window).on("load",function(){$("#loading").hide()});$(document).ready(function(){var site_url  = $('head base').attr('href');<?php if( route(2) == "new-service" || route(2) == "new-subscription" ): echo '$(document).ready(function(){getProviderServices($("#provider").val(),site_url);});'; endif; ?>$(".buy-button").click(function(){var a=$(this).parent().attr("data-addon");window.location.href="admin/settings/modules?action=buy_addon&addon="+a}),$(".addon").change(function(){var a=$(this).attr("data-addon");$.ajax({url:"admin/settings/modules?action=toggle_addon&addon="+a,type:"GET",success:function(a){}})}),

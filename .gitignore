@@ -49,8 +49,6 @@ Vagrantfile
 # Temporary / Local Setup Files
 #-------------------------
 ftp_listing.txt
-router.php
-
 #-------------------------
 # Temporary Files
 #-------------------------
