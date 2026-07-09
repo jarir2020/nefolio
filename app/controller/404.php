@@ -1,3 +1,8 @@
+<?php
+if(!defined('BASEPATH')) {
+   die('Direct access to the script is not allowed');
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,3 +63,4 @@ window.__mirage2 = {petok:"34b33e236d910a10da6299e747be4e92b22e4b4d-1625831579-1
 
 </body>
 </html>
+<?php exit(); ?>
