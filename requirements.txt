@@ -1,0 +1,52 @@
+Feature Name:
+Custom Resend System
+ 
+Purpose:
+Admin যেন Failed Order যেকোনো Provider-এর যেকোনো Service-এ Manual Resend করতে পারেন।
+
+Workflow:
+1.  Admin Orders Page থেকে একটি Failed Order Open করবেন।
+ 
+ 
+2.  Custom Resend Button-এ Click করলে একটি Popup/Modal Open হবে।
+ 
+ 
+3.  Popup-এর মধ্যে প্রথমে Provider Selection থাকবে।
+
+- সমস্ত Active Provider-এর List দেখাবে।
+
+- Provider List-এর উপরে একটি Search Box থাকবে।
+ 
+- Admin Provider-এর নাম লিখে দ্রুত Search করে Provider নির্বাচন করতে পারবেন।
+ 
+1. Provider নির্বাচন করার পর, নির্বাচিত Provider-এর সকল Service Load হবে।
+
+- Service List-এর উপরে একটি Search Box থাকবে।
+ 
+- Admin Service ID, Service Name বা Keyword লিখে দ্রুত Service Search করতে পারবেন।
+ 
+- Search Result থেকে কাঙ্ক্ষিত Service নির্বাচন করতে পারবেন।
+ 
+1. এরপর Resend Button-এ Click করলে Order নতুন Provider-এর নির্বাচিত Service-এ Submit হবে।
+ 
+- শুধুমাত্র Failed Order Resend করা যাবে।
+ 
+- Provider অবশ্যই Active হতে হবে।
+ 
+- Service অবশ্যই Active হতে হবে।
+ 
+- একই Order একাধিকবার Resend করা যাবে না (Admin Permission অনুযায়ী Control করা যাবে)।
+ 
+- সফলভাবে Resend হলে নতুন Provider Order ID সংরক্ষণ করতে হবে।
+ 
+- হাজার হাজার Provider থাকলেও Search করে দ্রুত Provider নির্বাচন করা যাবে।
+ 
+- হাজার হাজার Service থাকলেও Search করে দ্রুত Service নির্বাচন করা যাবে।
+ 
+- Manual কাজ অনেক কমে যাবে।
+ 
+- Order Recovery আরও দ্রুত এবং সহজ হবে।
+ 
+- Admin-এর সম্পূর্ণ Manual Control থাকবে।
+ 
+Provider Search এবং Service Search-এ Live Search (AJAX Search) ব্যবহার করবেন। অর্থাৎ Admin টাইপ করা শুরু করলেই Result Filter হয়ে যাবে। এতে হাজার হাজার Provider বা Service থাকলেও খুব দ্রুত কাঙ্ক্ষিতটি খুঁজে পাওয়া যাবে এবং User Experience অনেক ভালো হবে।

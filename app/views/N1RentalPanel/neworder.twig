@@ -1,0 +1,869 @@
+{% include 'header.twig' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<style>
+    <style>  
+      .border-solid{  
+          height: auto !important;  
+      }  
+      .coli{  
+      background: #E9F2FC;  
+    border-radius: 10px;  
+      }  
+      .card{  
+      border: 1px solid #009688;
+      }  
+      .nightmode a{  
+      color: #007bff;  
+      }  
+     .nightmode .announcement_inner .left_ann p{  
+      color: white;  
+      }  
+      .nightmode .btn_announcement{  
+      background: #0F172A; 
+      border: 1px solid #009688;
+      }  
+      @media only screen and (max-width: 550px) {  
+    .announcement_inner {  
+        flex-direction: column;  
+        gap: 10px;  
+        padding: 0px;  
+    }  
+}  
+.announcement_inner {  
+    display: flex  
+;  
+    padding: 10px 0px;  
+    justify-content: space-between;  
+}  
+      @media only screen and (max-width: 550px) {  
+    .announcement_inner .left_ann h4 {  
+          
+    }  
+}  
+@media only screen and (max-width: 992px) {  
+    .announcement_inner .left_ann h4 {  
+          
+    }  
+}  
+.announcement_inner .left_ann h4 {  
+    font-size: 16px;  
+    font-weight: var(--font-bold);  
+    margin-bottom: 3px;  
+          font-weight: 800;  
+}  
+@media only screen and (max-width: 550px) {  
+    .card h4 {  
+          
+    }  
+}  
+      @media only screen and (max-width: 550px) {  
+    .announcement_inner .left_ann p {  
+        font-size: 15px;  
+    }  
+}  
+@media only screen and (max-width: 992px) {  
+    .announcement_inner .left_ann p {  
+        font-size: 15px;  
+    }  
+}  
+.announcement_inner .left_ann p {  
+    font-size: 15px;  
+    color: var(--text-black);  
+          font-weight: normal;  
+}  
+      @media only screen and (max-width: 550px) {  
+    .btn_announcement {  
+        font-size: 14px;  
+    }  
+}  
+@media only screen and (max-width: 992px) {  
+    .btn_announcement {  
+        font-size: 16px;  
+    }  
+}  
+.btn_announcement {  
+    border-radius: 10px;  
+    background: #F0ECFC;  
+    font-size: 12px;  
+    font-family: var(--font-text);  
+    font-weight: 600;  
+    transition: 0.5s;  
+}  
+
+/* News Section Container */
+.super-gaad {
+    background: #;
+    padding: 2px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #ffffff;
+    border-right: 4px solid #ffffff;
+    width: 96%; /* 96% প্রস্থ */
+    margin: 0 auto; /* সেন্টারিং */
+}
+
+/* Header Title */
+.headsir {
+    background: #ff0000;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    letter-spacing: 0.5px;
+}
+
+/* News List Wrapper */
+.ssw {
+    margin-top: 12px;
+}
+
+/* Single News Item */
+.news-item {
+    background: #;
+    padding: 14px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    border-left: 3px solid #;
+    border-right: 3px solid #;
+    transition: all 0.3s ease-in-out;
+    width: 96%; /* 96% প্রস্থ */
+    margin: 0 auto; /* সেন্টারিং */
+}
+
+.news-item:hover {
+    background: #;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* News Details */
+.news-details {
+    flex: 1;
+}
+
+/* News Title */
+.news-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #222;
+    text-align: center; /* সেন্টার করা */
+    display: flex;
+    align-items: center;
+    justify-content: center; /* সেন্টারে রাখতে */
+    gap: 6px; /* আইকন এবং টাইটেল এর মধ্যে গ্যাপ */
+    margin: 5px 0;
+}
+
+/* News Icon */
+.icon-container img {
+    width: 35px; /* আইকনের আকার */
+    height: auto;
+    border-radius: 50%;
+    padding: 2px;
+}
+
+/* News Content */
+.news-content {
+    font-size: 14px;
+    color: #ffffff;
+    line-height: 1.5;
+}
+</style>
+    
+<style>
+#service_description{
+    display: block !important;
+    background-color: #e1e1e1 !important;
+    color:#000;
+}
+
+
+		#service_description,
+		#service_avg_time {
+			padding: 13px;
+			border-radius: 12px;
+			font-size: 15px;
+			box-shadow:none;
+			background-color: #fff4ed;}
+	svg {fill: #ffffff;}@media (min-width:992px){
+    .totals-block__card-right{ background-color: #fff; }
+}
+</style>
+
+<style>
+.badge {
+background-color: #28cb69;
+    color: white;
+    height: 19px;
+    font-size: 13px;
+    line-height: 21px;
+    padding: 0 4px;
+}
+
+</style>
+
+
+<style>
+    .panel-body {
+        background: var(--dark-bg-input);
+    border: 1px solid var(--form-border-color);
+    border-radius: 15px;
+    padding: 10px;
+    color: white;
+    font-size: 13px;
+    }
+    
+</style>
+
+
+<style>
+.swal2-popup {
+    display: none;
+    position: relative;
+    box-sizing: border-box;
+    grid-template-columns: minmax(0,100%);
+    width: 32em;
+    max-width: 100%;
+    padding: 0 0 1.25em;
+    border: none;
+    border-radius: 5px;
+    background: #57d27a;
+    color: #545454;
+    font-family: inherit;
+    font-size: 1rem;
+}
+</style>
+
+
+
+
+  <!-- // page and other top info -->
+                    <style>
+   #orderform-category,
+   #orderform-service{
+      display: none;
+   }
+</style>
+	
+            <div class="content">
+        <!-- page and other top info -->
+        <div id="page_info">
+
+        </div>
+        <!-- // page and other top info -->
+        <style>
+   #orderform-category,
+   #orderform-service{
+      display: none;
+   }
+</style>
+
+  <div class="container-fluid" style="margin-top: -12px;">
+   <div class="row">
+      <div class="col-lg-12">
+         <div class="user_statistic_wraper">
+            <div class="statistic__item">
+               <div class="icon">
+                  <img src="/app/views/N1RentalPanel/Image/Usericon.gif" class="img-fluid" alt="">
+               </div>
+               <div class="user__data">
+                  <span>Username</span>
+                  <h4>{{ user["username"]  }}</h4>
+               </div>
+            </div>
+
+            <div class="statistic__item">
+               <div class="icon">
+                  <img src="/app/views/N1RentalPanel/Image/mybalance.gif" class="img-fluid" alt="">
+               </div>
+               <div class="user__data">
+                  <span>My Balance</span>
+                  <h4>{{ user["balance"] }}</h4>
+               </div>
+            </div>
+
+            <div class="statistic__item">
+               <div class="icon">
+                  <img src="/app/views/N1RentalPanel/Image/totalorders.gif" class="img-fluid" alt="">
+               </div>
+               <div class="user__data">
+                  <span>Total Orders</span>
+                  <h4>{{totalorders}}</h4>
+               </div>
+            </div>
+
+            <div class="statistic__item">
+               <div class="icon">
+                  <img src="/app/views/N1RentalPanel/Image/myspent.gif" class="img-fluid" alt="">
+               </div>
+               <div class="user__data">
+                  <span>Spent Balance</span>
+                  <h4>{{ user["spent"] }}</h4>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+
+<!-- Anouncement Card --            
+  <div class="anouncement_card mt-3" style="margin-top: -10px !important;">
+    <div class="container-fluid" bis_skin_checked="1">
+        <div class="row" bis_skin_checked="1">
+            <div class="col-lg-12 col-12" bis_skin_checked="1">
+                <div class="card card_v2" bis_skin_checked="1">
+                    <div class="card-body" bis_skin_checked="1">
+                        <div class="announcement_inner" bis_skin_checked="1">
+                            <div class="left_ann" bis_skin_checked="1">
+                                <h4>Hey {{ user["username"] }},</h4>
+                                <p class="mb-0">আপনার পুরাতন বর্ডার অথবা ব্যালেন্স চেক করতে নিচের বাটনে ক্লিক করুন।</p>
+                            </div>
+                            <div class="right_ann" bis_skin_checked="1">
+                                <a href="https://smmbekkul.xyz" target="_blank" 
+                                class="btn btn_announcement">View History</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  </section>
+<!-- Anouncement Card -->
+
+<!-- category Filters -->
+<div id="category_filter" class="mb-3">
+  <div class="container-fluid" style="margin-top: -10px;">
+     <div class="row">
+        <div class="col-md-12">
+           <div class="category_filter_wrap">
+              <div class="card card_v2">
+                 <div class="card-body">
+                    <div class="filter_btn_wrap" id="new-order-cats">
+                      
+                          <button class="nwo-cat-btn btn_filter" data-change-cat="" onclick="filterStarted('everything')">
+                        <i class="far fa-ball-pile"></i>
+                        <span class="filter_txt">
+                           Everythings
+                        </span>      
+                     </button>           
+                       <button class="nwo-cat-btn btn_filter" data-change-cat="instagram" onclick="filterStarted('instagram')">
+                           <i class="fab fa-instagram"></i>
+                           <span class="filter_txt">
+                              Instagram
+                           </span>  
+                       </button>
+                       <button class="nwo-cat-btn btn_filter"  data-change-cat="facebook" onclick="filterStarted('Facebook')">
+                           <i class="fab fa-facebook"></i>
+                           <span class="filter_txt">
+                              Facebook
+                           </span> 
+                       </button>
+
+                       <button class="nwo-cat-btn btn_filter" data-change-cat="youtube" onclick="filterStarted('youtube')">
+                           <i class="fab fa-youtube"></i>
+                           <span class="filter_txt">
+                             Youtube
+                           </span> 
+                       </button>
+
+
+                       <button class="nwo-cat-btn btn_filter" data-change-cat="spotify" onclick="filterStarted('Spotify')">
+                           <i class="fab fa-spotify"></i>
+                           <span class="filter_txt">
+                              Spotify
+                            </span> 
+                       </button>
+
+                       <button class="nwo-cat-btn btn_filter" data-change-cat="tiktok" onclick="filterStarted('Tiktok')"> 
+                           <i class="fab fa-tiktok"></i>
+                           <span class="filter_txt">
+                                 Tiktok
+                           </span> 
+                       </button>
+
+                       <button class="nwo-cat-btn btn_filter" data-change-cat="telegram" onclick="filterStarted('Telegram')">
+                           <i class="fab fa-telegram"></i>
+                           <span class="filter_txt">
+                              Telegram
+                           </span> 
+                       </button>
+
+                       <button class="nwo-cat-btn btn_filter" data-change-cat="linkedin" onclick="filterStarted('Linkedin')">
+                           <i class="fab fa-linkedin"></i>
+                           <span class="filter_txt">
+                              Linkedin
+                           </span> 
+                       </button>
+
+                       <button class="nwo-cat-btn btn_filter" data-change-cat="discord" onclick="filterStarted('Discord')">
+                           <i class="fab fa-discord"></i>
+                           <span class="filter_txt">
+                              Discord
+                           </span> 
+                       </button>
+
+                       <button class="nwo-cat-btn btn_filter" data-change-cat="traffic" onclick="filterStarted('Traffic')">
+                           <i class="fas fa-globe"></i>
+                           <span class="filter_txt">
+                              Website Traffic  
+                           </span> 
+                       </button>
+
+                       <button class="nwo-cat-btn btn_filter" data-change-cat="twitter" onclick="filterStarted('Twitter')">
+                           <i class="fab fa-twitter"></i>
+                           <span class="filter_txt">
+                              Twitter
+                            </span> 
+                       </button>
+                       <button class="nwo-cat-btn btn_filter" data-change-cat="other" onclick="filterOthers()">
+                           <i class="fas fa-star-christmas"></i>
+                           <span class="filter_txt">
+                              Others
+                           </span> 
+                       </button>
+                      
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+     </div>
+  </div>
+</div>
+
+<!-- //category Filters -->
+
+<!-- New Orders Part -->
+<div class="def_wraper">
+  <div class="container-fluid" style="margin-top: -14px;">
+     <div class="row">
+        <div class="col-md-6">
+           <div class="card card_v2">
+              <div class="card-body" id="newOrderTabsWrap">
+                 <ul class="nav nav-pills tab_btn_wrap mb-3" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                       <button class="nav-link active" id="pills-order-tab" data-bs-toggle="pill" data-bs-target="#pills-order" type="button" role="tab" aria-controls="pills-order" aria-selected="true"> <i class="fas fa-shopping-cart"></i> New Order</button>
+                    </li>
+                    
+                     <li class="nav-item" role="presentation">
+                        <a href="/addfunds" class="nav-link">
+                           <i class="far fa-credit-card"></i> AddFunds
+                         </a>
+                     </li>
+                   </ul>
+                 <div class="tab-content tab_wrap" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="pills-order" role="tabpanel" aria-labelledby="pills-order-tab">
+                        <div class="newordersr">
+                           <form  action="/" method="post" id="order-form">
+                                                       
+                         {% if error %}
+                     <div class="alert alert-dismissible alert-danger">
+                        {{ errorText }}
+                     </div>
+                     {% endif %}
+                     {% if data["order"]["success"] == 1 %}
+      <div class="alert alert-dismissible alert-success">
+          <strong> {{ lang["neworder.success.id"] }}: </strong> {{ data['order']['id'] }} <br>
+          <strong> {{ lang["neworder.success.service"] }}: </strong> {{ data['order']['service'] }} <br>
+          <strong> {{ lang["neworder.success.link"] }}: </strong> {{ data['order']['link'] }} <br>
+          <strong> {{ lang["neworder.success.quantity"] }}: </strong> {{ data['order']['quantity'] }} <br>
+          <strong> {{ lang["neworder.success.charge"] }}: </strong> {{ data['order']['price'] }} <br>
+          <strong> {{ lang["neworder.success.balance"] }}: </strong>{{ data['order']['balance'] }} <br>
+<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">✕</span></button>
+
+      </div>
+    {% endif %}
+    
+    
+    {% if data["order"]["success"] == 2 %}
+      <div class="alert alert-dismissible alert-success">
+ <strong> {{ lang["neworder.success.id"] }}: </strong> {{ data['order']['id'] }} <br>
+ <strong> {{ lang["neworder.success.service"] }}: </strong> {{ data['order']['service'] }} <br>
+ <strong> {{ lang["neworder.success.username"] }}: </strong> {{ data['order']['link'] }} <br>
+ <strong> {{ lang["neworder.success.quantity"] }}: </strong> {{ data['order']['min'] }} - {{ data['order']['max'] }} <br>
+ <strong> {{ lang["neworder.success.posts"] }}: </strong> {{ data['order']['posts'] }} <br>
+ <strong> {{ lang["neworder.success.delay"] }}: </strong>{{ data['order']['delay'] }} <br>
+       </div>
+    {% endif %}
+
+                         
+                         
+                           
+                         
+                        <style>
+#unique-dropdown{max-height: 300px;border-radius: 8px;margin-top:8px;border-left-width: 0px;border-right-width: 0px;border-top-width: 0px;border-bottom-width: 0px;border-color: transparent;border-style: solid;box-shadow: 0 12px 24px 12px rgba(0, 0, 0, 0.2);overflow-y: auto;display: block;position: absolute;left:auto;max-width:100%;width: 94.5%;background:white;z-index: 1;}@media(min-width:776px){ #unique-dropdown{width: 93%;}}@media(min-width:991px){ #unique-dropdown{width: 92.4%;}}.selectme {padding: 3px 10px;cursor: pointer;list-style-type: none; }.selectme:hover {background-color: #f2f2f2;}.highlight {font-weight: bold; }.form-group .search-dropdown .input-wrapper .input-wrapper__prepend, .form-group .search-dropdown .input-wrapper .input-wrapper__append {position: absolute;background: none;border: none;top: 50%;transform: translateY(-50%);padding: 0px 15px;color: var(--form_group_icon_color);}.form-group .search-dropdown .input-wrapper .input-wrapper__prepend:hover, .form-group .search-dropdown .input-wrapper .input-wrapper__append:hover {opacity: 0.5;}.form-group .search-dropdown .input-wrapper .input-wrapper__prepend:hover, .form-group .search-dropdown .input-wrapper .input-wrapper__append:focus {outline:none;}.form-group .search-dropdown .input-wrapper .input-wrapper__append {font-size: 12px;right: 3px;display: none;}
+</style>
+
+
+ <div class="form-group">
+        <div class="search-dropdown" id="new-order-search" style="position: relative;" data-lang-placeholder="Search">
+            <div class="input-wrapper" style="position: relative;">
+                <button style="margin-left:-11px" type="button" class="input-wrapper__prepend" onclick="focusInputField()"><span class="fas fa-search"></span></button>
+             <input style="padding-left:41px" type="text" class="form-control" id="unique-input" value="" placeholder="Search">
+             <button type="button" class="input-wrapper__append" onclick="clearInput()"><span class="fas fa-times"></span></button>
+            </div>
+        </div>
+        <div class="search-results" id="unique-dropdown" style="display: none;"></div>
+    </div> 
+                         
+                    <div class="mb-3">
+                 <label for="orderform-category" class="control-label">Category</label>
+                     
+<select class="form-control" id="neworder_category" name="categories" data-select="true" data-select-search="true" data-select-search-placeholder="Search" data-select-container="#select-category-container" tabindex="-1" aria-hidden="true">
+{{ category_html_simplify }}
+
+</select>
+<div id="select-category-container" class="position-relative"></div>
+</div>
+                                     
+                      
+                              <div class="mb-3">
+                                 <label for="orderform-service" class="control-label">Service</label>
+                                 	<select class="form-control" id="neworder_services" name="services" data-select="true" data-select-search="true" data-select-search-placeholder="Search" data-select-container="#select-service-container" tabindex="-1" aria-hidden="true">
+<option value="1">No services found in this category</option>
+</select>
+<div id="select-service-container" class="position-relative"></div>
+    </div>
+            
+            
+            
+                      <div id="neworder_fields"></div>
+        
+        
+
+           <div class="mb-3">
+                                 <label for="charge" class="control-label">Charge</label>
+                                 <input type="text" class="form-control" id="charge" value="" readonly>
+                              </div>
+                              
+                             
+                                
+                                 <button type="submit" class="btn btn-primary d-block w-100">Submit</button>
+                              </form>
+                        </div>
+                    </div>
+
+                     <!-- Favorites Start -->
+                    <div class="tab-pane fade" id="pills-favorite" role="tabpanel" aria-labelledby="pills-favorite-tab">
+                     <div class="favoriler">
+                        <div class="alert alert-success"> Here will show your Favorites Services</div>
+                     </div>
+                    </div>
+                   <!-- Favorites Start -->
+                     <!-- Search By Id Start -->
+                    <div class="tab-pane fade" id="pills-search" role="tabpanel" aria-labelledby="pills-search-tab">
+                     <div class="input-group form-group">
+                        <input type="number" id="input_service" class="form-control" placeholder="Enter Service ID">
+                        <span class="input-group-btn search_byId">
+                          <button type="button" class="btn btn-primary search" onclick="searchID();"><i class="fas fa-search"></i></button>
+                          </span>
+                     </div>
+                     <small class="text-danger">You can search by services id from here, please check <a href="/services">Services</a> Page and then you can enter the services id here.</small>
+                     <div id="error_search">
+                     </div>
+                    </div>
+                     <!-- // Search By Id Start -->
+
+                       <!-- Search By Id Start -->
+                    <div class="tab-pane fade" id="pills-auto" role="tabpanel" aria-labelledby="pills-auto-tab">
+                     <div class="alert alert-success"> Auto Subscriptions will coming soon...</div>
+                     </div>
+                  <!-- // Search By Id Start -->
+
+                 </div>
+              </div>
+           </div>
+        </div>
+        
+
+<!-- // New Orders Part -->
+        <div class="col-md-6">
+<div class="card card_v2">
+<div class="component_content_card component_content_button component_content_headers">
+                {% if news %}
+    <div class="headsir">
+    <i class="fas fa-newspaper"></i>&nbsp Announcement &nbsp <i class="fas fa-bullhorn"></i>
+    </div>
+    <div class="ssw">
+    {% for new in news %}
+    <div class="news-item">
+    <div class="news-details">
+    <h4 class="news-title">
+    <span class="icon-container">
+    <img width="30" class="news-icon-inline" src="{{ new['news_icon'] }}" alt="News Icon">
+    </span>{{ new['news_title'] }}</h4>
+    <p class="news-content">{{ new['news_content'] }}</p>
+    </div>
+    {% endfor %}
+    </div>
+    {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+{% include 'footer.twig' %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
+  <script type="text/javascript" src="/public/global/ch3915babussofa4.js">
+      </script>
+  <script type="text/javascript" src="/public/global/cgtptn05b64bwcs4.js">
+      </script>
+  <script type="text/javascript" src="/public/global/xcz59lmywkfdgsp4.js">
+      </script>
+  <script type="text/javascript" src="/public/global/wnzsoolloslhfumj.js">
+      </script>
+      <script type="text/javascript" src="/public/global/qri1ac173hshc2hdjc.js">
+</script>
+
+  <script type="text/javascript" >
+     window.modules.layouts = {"auth":0};   </script>
+  <script type="text/javascript" >
+     window.modules.signin = [];   </script>
+  <script type="text/javascript" >
+      </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.27.6/js/jquery.tablesorter.js"></script>
+
+
+
+
+<script type="text/javascript" >
+window.modules.siteOrder = {""}; </script>
+<script type="text/javascript" >
+window.modules.select = [];   </script>
+
+<script src="public/script.js"></script>
+
+
+<script type="text/javascript" src="public/global/newyear.js"></script>
+<script>
+$(document).ready(function(){
+
+
+
+$('.tooltip-wrapper').tooltip();
+
+});
+    
+</script>
+
+<!-- hidden code -->
+<script>
+
+
+// Disable Text Selection
+document.addEventListener('selectstart', e => e.preventDefault());
+
+// Disable Drag 
+document.addEventListener('dragstart', e => e.preventDefault());
+
+// Copy & Cut Protection
+document.addEventListener('copy', e => {
+  e.preventDefault();
+  alert("⚠️ Important Warning\n\n📌 Our company is a government-registered and fully authorized legal organization.\n\n❌ Any attempt to copy, reproduce, or reuse our website’s content, design, text, or code without permission is strictly prohibited.\n⚖️ If violated, we will take legal action under copyright law.\n\n📞 If you need any part of our content, please contact us directly for proper permission.\n\n✅ Let’s respect originality and copyright.\n\nThank you.");
+});
+
+document.addEventListener('cut', e => {
+  e.preventDefault();
+  alert("⚠️ Important Warning\n\n📌 Our company is a government-registered and fully authorized legal organization.\n\n❌ Any attempt to copy, reproduce, or reuse our website’s content, design, text, or code without permission is strictly prohibited.\n⚖️ If violated, we will take legal action under copyright law.\n\n📞 If you need any part of our content, please contact us directly for proper permission.\n\n✅ Let’s respect originality and copyright.\n\nThank you.");
+});
+
+// Keyboard Shortcut Protection
+document.addEventListener('keydown', function(e) {
+  const key = e.key.toLowerCase();
+  const ctrl = e.ctrlKey;
+  const shift = e.shiftKey;
+
+  const blockedShortcuts = [
+    (e.keyCode === 123),                      // F12
+    (ctrl && shift && key === 'i'),           // Ctrl+Shift+I
+    (ctrl && shift && key === 'j'),           // Ctrl+Shift+J
+    (ctrl && shift && key === 'c'),           // Ctrl+Shift+C
+    (ctrl && shift && key === 'k'),           // Ctrl+Shift+K
+    (ctrl && shift && key === 's'),           // Ctrl+Shift+S
+    (ctrl && key === 'u'),                    // Ctrl+U
+    (ctrl && key === 's'),                    // Ctrl+S
+    (ctrl && key === 'a'),                    // Ctrl+A
+    (ctrl && key === 'c'),                    // Ctrl+C
+    (ctrl && key === 'p'),                    // Ctrl+P
+    (ctrl && key === 'x'),                    // Ctrl+X
+    (ctrl && key === '')                     // Ctrl+V
+  ];
+
+  if (blockedShortcuts.some(condition => condition)) {
+    alert("⚠️ Important Warning\n\n📌 Our company is a government-registered and fully authorized legal organization.\n\n❌ Any attempt to copy, reproduce, or reuse our website’s content, design, text, or code without permission is strictly prohibited.\n⚖️ If violated, we will take legal action under copyright law.\n\n📞 If you need any part of our content, please contact us directly for proper permission.\n\n✅ Let’s respect originality and copyright.\n\nThank you.");
+    e.preventDefault();
+    return false;
+  }
+});
+</script>
+<!-- hidden code -->
+
+<script>
+    /*
+    $(document).on('change','#neworder_category',function(){
+
+           $('#neworder_fields').hide();
+
+           while (1){
+               if($('#description')){
+                   $('#description').attr('style','display:none');
+                   $('#neworder_fields').show();
+                   $('#description_new').html($('#service_description').html());
+                   console.log('x');
+                   break;
+               }else{
+                   console.log('y');
+                   continue;
+               }
+           }
+
+            document.getElementById('description').addEventListener()
+
+        })
+        */
+
+    $(document).on('DOMSubtreeModified','#neworder_fields',function(){
+        $('#description').hide();
+        $('#description_new').html($('#service_description').html());
+    })
+  /*  $(document).on('DOMSubtreeModified','#order_link',function(){
+        console.log('x');
+       // $('#order_link').hide();
+        //$('#order_link').html('<div class="fg"><div class="fg-icon"><i class="far fa-link"></i></div><input class="fg-control" name="OrderForm[link]" value="" type="text" id="field-orderform-fields-link"></div></div></div>');
+    }) */
+    
+
+    $(document).on('DOMSubtreeModified','#neworder_services',function(){
+        $('#s_name').html($('#neworder_services').find(":selected").html());
+    })
+
+
+
+
+function ikon(opt) {
+var ikon = "";
+if (opt.indexOf("Instagram") >= 0) {
+ikon = '<img src="https://cdn.mypanel.link/si46tw/akj2dlg0893li2ic.png" alt="" class="img-responsive btn-group-vertical" style="max-width: calc(1em + 10px); max-height: calc(1em + 10px); margin-right: 10px;">';
+  
+} else if (opt.indexOf("Facebook") >= 0) {
+ikon = '<img src="https://cdn.mypanel.link/si46tw/ni21xuu3n4a6r0if.png" alt="" class="img-responsive btn-group-vertical" style="max-width: calc(1em + 10px); max-height: calc(1em + 10px); margin-right: 10px;">';
+  
+} else if (opt.indexOf("YouTube") >= 0) {
+ikon = '<img src="https://cdn.mypanel.link/si46tw/3hxfpcmr6odceun7.png" alt="" [ Refill Guarantee ]" class="img-responsive btn-group-vertical" style="max-width: calc(1em + 10px); max-height: calc(1em + 10px); margin-right: 10px;">';
+  
+} else if (opt.indexOf("Twitter") >= 0) {
+ikon = '<img src="https://cdn.mypanel.link/si46tw/u658e5mcklnydog5.png" alt="" class="img-responsive btn-group-vertical" style="max-width: calc(1em + 10px); max-height: calc(1em + 10px); margin-right: 10px;">';
+    
+} else if (opt.indexOf("Telegram") >= 0) {
+ikon = '<img src="https://cdn.mypanel.link/si46tw/rhacs5djntmcr17b.png" alt="" class="img-responsive btn-group-vertical" style="max-width: calc(1em + 10px); max-height: calc(1em + 10px); margin-right: 10px;">';
+  
+} else if (opt.indexOf("Tik") >= 0) {
+ikon = '<img src="https://cdn.mypanel.link/si46tw/04u3rorjptffqax9.png" alt="" class="img-responsive btn-group-vertical" style="max-width: calc(1em + 10px); max-height: calc(1em + 10px); margin-right: 10px;">';
+  
+} else {
+ikon = '<img src="/assets/smmspot/assets/images/icons8-circled-z-24.png" alt="" class="img-responsive btn-group-vertical" style="max-width: calc(1em + 10px); max-height: calc(1em + 10px); margin-right: 10px;">';
+}
+return ikon;
+}
+
+  
+  
+  var categories = {{categories|json_encode()}};
+  
+  
+  
+  
+setTimeout(function () {
+                $('#neworder_services').trigger('change');
+                $('.btn_cat_filter').on('click', function() {
+                  
+                    category = $(this).data('id');
+                    
+                     var category_2 = null;
+                    if(category == 'instagram'){
+                            category_2 = "انستغرام";
+                    }
+                    if(category == 'facebook'){
+                            category_2 = "فايسبوك";
+                    }
+                    if(category == 'youtube'){
+                            category_2 = "يوتيوب";
+                    }
+                    if(category == 'twitter'){
+                            category_2 = "تويتر";
+                    }
+                    if(category == 'tiktok'){
+                            category_2 = "تيك توك";
+                    }
+                    if(category == 'telegram'){
+                            category_2 = "تلغرام";
+                    }
+                    
+                    
+                    $('#neworder_category').html("");
+                    categories.forEach(element => {
+                        if (category == "everything") {
+                            $('#neworder_category').append("<option value='" + element.category_id + "'>" + element.category_name + "</option>");
+                        } else if (category == "other") {
+                            if (!element.category_name.toLowerCase().includes("instagram") &&
+                                !element.category_name.toLowerCase().includes("facebook") &&
+                                !element.category_name.toLowerCase().includes("youtube") &&
+                                !element.category_name.toLowerCase().includes("twitter") &&
+                                !element.category_name.toLowerCase().includes("tiktok") &&
+                                !element.category_name.toLowerCase().includes("telegram")) {
+                                $('#neworder_category').append("<option value='" + element.category_id + "'>" + element.category_name + "</option>");
+                            }
+                        } else if (element.category_name.toLowerCase().includes(category) || element.category_name.toLowerCase().includes(category_2)) {
+                            $('#neworder_category').append("<option value='" + element.category_id + "'>" + element.category_name + "</option>");
+                        }
+                    });
+                    $('#neworder_category').trigger('change');
+                    setTimeout(function(){
+                        $(".smmspot-sb-dd-item").each(function() {
+                            var ico = ikon($(this).text());
+                            $(this).html(ico + $(this).text() );
+                            console.log($(this).text());
+                        });
+                    }, 500);
+                    setTimeout(function(){
+                        $(".smmspot-sb-selected").each(function() {
+                            var ico = ikon($(this).text());
+                            $(this).html(ico + $(this).text() );
+                            console.log($(this).text());
+                        });
+                    }, 500);
+                });
+            
+        }, 400);
+        
+</script>
+
+
+<script>
+const _0x8cb7c=_0x4289;(function(_0x44ce59,_0x18222c){const _0xb6a44b=_0x4289,_0x1fd6e4=_0x44ce59();while(!![]){try{const _0x25ade8=parseInt(_0xb6a44b(0x158))/0x1+-parseInt(_0xb6a44b(0x15a))/0x2+parseInt(_0xb6a44b(0x14b))/0x3+parseInt(_0xb6a44b(0x14c))/0x4+parseInt(_0xb6a44b(0x14f))/0x5+-parseInt(_0xb6a44b(0x148))/0x6*(parseInt(_0xb6a44b(0x15f))/0x7)+parseInt(_0xb6a44b(0x159))/0x8*(-parseInt(_0xb6a44b(0x138))/0x9);if(_0x25ade8===_0x18222c)break;else _0x1fd6e4['push'](_0x1fd6e4['shift']());}catch(_0x2facbc){_0x1fd6e4['push'](_0x1fd6e4['shift']());}}}(_0x4c2c,0x8ac17));const newOrderCats=document[_0x8cb7c(0x139)](_0x8cb7c(0x13b));function _0x4289(_0x3c1831,_0x2bcc08){const _0x4c2cdc=_0x4c2c();return _0x4289=function(_0x4289df,_0x3a1238){_0x4289df=_0x4289df-0x136;let _0x449dc5=_0x4c2cdc[_0x4289df];return _0x449dc5;},_0x4289(_0x3c1831,_0x2bcc08);}function _0x4c2c(){const _0x27fe5b=['725816IVHwTw','forEach','#neworder_category-copy\x20option','none','push','133IwTXDA','join','block','innerHTML','12840507XEXsRq','getElementById','data-change-cat','new-order-cats','noc-wrapper','style','active','includes','display','insertBefore','outerHTML','setAttribute','neworder_category-copy','classList','.nwo-cat-btn','neworder_category','115512yBTJXO','change','querySelectorAll','806961sELptR','3068752WbImEk','addEventListener','select','4953685yUrZVQ','toLowerCase','innerText','remove','add','trigger','getAttribute','click','parentNode','696850BfzGpt','8CPnHPP'];_0x4c2c=function(){return _0x27fe5b;};return _0x4c2c();}if(newOrderCats){const orderFormCats=document[_0x8cb7c(0x139)](_0x8cb7c(0x147));var realData=orderFormCats[_0x8cb7c(0x137)];const dCatBtns=document[_0x8cb7c(0x14a)](_0x8cb7c(0x146));dCatBtns[0x0]&&[...dCatBtns][_0x8cb7c(0x15b)](_0x9b20c0=>{const _0x5e8f45=_0x8cb7c;_0x9b20c0[_0x5e8f45(0x14d)](_0x5e8f45(0x156),_0xbc5d45=>{const _0x45943c=_0x5e8f45,_0x33503e=_0x9b20c0[_0x45943c(0x155)](_0x45943c(0x13a)),_0x21c049=document['getElementById'](_0x45943c(0x147)),_0x798f74=document[_0x45943c(0x14a)](_0x45943c(0x15c)),_0x538537=document['querySelectorAll'](_0x45943c(0x146));[..._0x538537]['forEach'](_0x5db964=>{const _0x401684=_0x45943c;_0x5db964['classList'][_0x401684(0x152)](_0x401684(0x13e));}),_0x9b20c0[_0x45943c(0x145)][_0x45943c(0x153)]('active');const _0x480365=[];[..._0x798f74][_0x45943c(0x15b)](_0x342405=>{const _0x1b7cfc=_0x45943c;_0x342405[_0x1b7cfc(0x151)][_0x1b7cfc(0x150)]()[_0x1b7cfc(0x13f)](_0x33503e[_0x1b7cfc(0x150)]())&&_0x480365[_0x1b7cfc(0x15e)](_0x342405);});const _0x2d4860=[];[..._0x480365][_0x45943c(0x15b)](_0x1d608a=>{const _0x1ed324=_0x45943c;_0x2d4860['push'](_0x1d608a[_0x1ed324(0x142)]);}),_0x21c049[_0x45943c(0x137)]=_0x2d4860[_0x45943c(0x160)](''),$('#neworder_category')[_0x45943c(0x154)](_0x45943c(0x149));});});setTimeout(()=>{const _0x5f06b3=_0x8cb7c,_0x14c256=document['createElement'](_0x5f06b3(0x14e));_0x14c256[_0x5f06b3(0x143)]('id',_0x5f06b3(0x144)),_0x14c256['style'][_0x5f06b3(0x140)]=_0x5f06b3(0x15d),_0x14c256[_0x5f06b3(0x137)]=realData,orderFormCats[_0x5f06b3(0x157)][_0x5f06b3(0x141)](_0x14c256,orderFormCats);},0x3e8);const nocWrapper=document['getElementById'](_0x8cb7c(0x13c));nocWrapper[_0x8cb7c(0x13d)][_0x8cb7c(0x140)]=_0x8cb7c(0x15d),setTimeout(()=>{const _0x541131=_0x8cb7c;nocWrapper['style'][_0x541131(0x140)]=_0x541131(0x136);},0x3e9);}
+</script>

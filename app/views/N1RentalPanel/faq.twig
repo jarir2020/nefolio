@@ -1,0 +1,215 @@
+{% include 'header.twig' %}
+<div
+<div class="content">
+        <!-- page and other top info -->
+        <div id="page_info">
+
+        </div>
+        <!-- // page and other top info -->
+        <section id="faq">
+      <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-12">
+                <div class="card card_v2">
+                    <div class="card-body">
+                        <div id="def_side_title">
+                            <div class="icon">
+                              <i class="fas fa-question"></i>
+                            </div>
+                            <div class="name">
+                                Frequently Asked Question
+                            </div>
+                          </div>
+                          <div id="def_side_content">
+                            <div class="accordion paymentpage site_accordion" id="accordionExample">
+                              <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingOne">
+                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    <i class="far fa-question-circle"></i> What is Partial status?
+ 
+                                  </button>
+                                </h2>
+                                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="">
+                                  <div class="accordion-body">
+                                    <p>Partial Status is when we partially refund the remains of an order. Sometimes for some reasons we are unable to deliver a full order, so we refund you the remaining undelivered amount. Example: You bought an order with quantity 10 000 and charges 10$, let's say we delivered 9 000 and the remaining 1 000 we couldn't deliver, then we will "Partial" the order and refund you the remaining 1 000 (1$ in this example)
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo">
+                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    <i class="far fa-question-circle"></i> What is Drip Feed?
+                                  </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                  <div class="accordion-body">
+                                    <p>
+                                        <span>Drip Feed is a service that we are offering so you would be able to put the same order multiple times automatically. Example: let's say you want to get 1000 likes on your Instagram Post but you want to get 100 likes each 30 minutes, you will put Link: Your Post Link Quantity: 100 Runs: 10 (as you want to run this order 10 times, if you want to get 2000 likes, you will run it 20 times, etc&amp;hellip;) Interval:30 (because you want to get 100 likes on your post each 30 minutes, if you want each hour, you will put 60 because the time is in minutes) P.S: Never order more quantity than the maximum which is written on the service name (Quantity x Runs),Example if the service's max is 4000, you don&amp;rsquo;t put Quantity: 500 and Run: 10,because total quantity will be 500x10 = 5000 which is bigger than the service max (4000). Also never put the Interval below the actual start time (some services need 60 minutes to start, don&amp;rsquo;t put Interval less than the service start time or it will cause a fail in your order).</span>
+                                     </p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingThree">
+                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    <i class="far fa-question-circle"></i> How do I use mass order?
+                                  </button>
+                                </h2>
+                                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample" style="">
+                                  <div class="accordion-body">
+                                    <p>
+                                        You put the service ID followed by | followed by the link followed by | followed by quantity on each line To get the service ID of a service please check here: https://techsmm.com/services Let&amp;rsquo;s say you want to use the Mass Order to add Instagram Followers to your 3 accounts: abcd, asdf, qwer From the Services List @ https://techsmm.com/services, the service ID for this service Instagram Followers [5K]; is 187 Lets say you want to add 1000 followers for each account, the output will be like this: ID|Link|Quantity or in this example: 187|abcd|1000 187|asdf|1000 187|qwer|1000
+                                     </p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingfour">
+                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsefour" aria-expanded="false" aria-controls="collapsefour">
+                                    <i class="far fa-question-circle"></i> I want a panel like yours / I want to resell your services how?
+                                  </button>
+                                </h2>
+                                <div id="collapsefour" class="accordion-collapse collapse" aria-labelledby="headingfour" data-bs-parent="#accordionExample">
+                                  <div class="accordion-body">
+                                    <p>
+                                        To get a panel like ours, please check https://bit.ly/2EejTNn to rent a panel, and then you can connect to us via API easily!
+                                     </p>
+                                  </div>
+                                </div>
+                              </div>
+          
+                              <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingfive">
+                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsefive" aria-expanded="false" aria-controls="collapsefive">
+                                    <i class="far fa-question-circle"></i> Cancel button / Refill button is not working for me?
+                                  </button>
+                                </h2>
+                                <div id="collapsefive" class="accordion-collapse collapse" aria-labelledby="headingfive" data-bs-parent="#accordionExample">
+                                  <div class="accordion-body">
+                                    <p>
+                                        The cancel or refill button sends a trigger to cancel or refill an order, it doesn't work instantly, it's just a trigger, sometimes it's too late to stop an order, and sometimes an order might not need refill.
+                                     </p>
+                                  </div>
+                                </div>
+                              </div>
+          
+                              <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingsix">
+                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsesix" aria-expanded="false" aria-controls="collapsesix">
+                                    <i class="far fa-question-circle"></i> Can i get a discount?
+                                  </button>
+                                </h2>
+                                <div id="collapsesix" class="accordion-collapse collapse" aria-labelledby="headingsix" data-bs-parent="#accordionExample">
+                                  <div class="accordion-body">
+                                    <p>
+                                        Yes we can offer it if you are a big buyer
+                                     </p>
+                                  </div>
+                                </div>
+                              </div>
+          
+                              <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingseven">
+                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseseven" aria-expanded="false" aria-controls="collapseseven">
+                                    <i class="far fa-question-circle"></i> When can you activate my paypal?
+                                  </button>
+                                </h2>
+                                <div id="collapseseven" class="accordion-collapse collapse" aria-labelledby="headingseven" data-bs-parent="#accordionExample">
+                                  <div class="accordion-body">
+                                    <p>
+                                        You can use Paypal whenever you want by following the instructions in the Add Funds page (manual use) To have it automatically enabled, you have to have added at least 30$ in your account, and then you can send us a ticket with your username to enable it for you!
+                                     </p>
+                                  </div>
+                                </div>
+                              </div>
+          
+                             <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingEight">
+                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
+                                    <i class="far fa-question-circle"></i> Does drip feed work with mass order / or with API?
+                                  </button>
+                                </h2>
+                                <div id="collapseEight" class="accordion-collapse collapse" aria-labelledby="headingEight" data-bs-parent="#accordionExample">
+                                  <div class="accordion-body">
+                                    <p>
+                                        Drip Feed doesn't work with neither "Mass Order" nor API.
+                                     </p>
+                                  </div>
+                                </div>
+                              </div>
+
+
+                              <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading9">
+                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse9" aria-expanded="false" aria-controls="collapse9">
+                                    <i class="far fa-question-circle"></i> How to get youtube comment link?
+                                  </button>
+                                </h2>
+                                <div id="collapse9" class="accordion-collapse collapse" aria-labelledby="heading9" data-bs-parent="#accordionExample">
+                                  <div class="accordion-body">
+                                    <p>
+                                        Find the timestamp that is located next to your username above your comment (for example: "3 days ago") and hover over it then right click and "Copy Link Address". The link will be something like this: https://www.youtube.com/watch?v=12345&amp;amp;lc=a1b21etc instead of just https://www.youtube.com/watch?v=12345 To be sure that you got the correct link, paste it in your browser's address bar and you will see that the comment is now the first one below the video and it says "Highlighted comment".
+                                     </p>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading10">
+                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse10" aria-expanded="false" aria-controls="collapse10">
+                                    <i class="far fa-question-circle"></i> What is "Instagram mentions", how do you use it?
+                                  </button>
+                                </h2>
+                                <div id="collapse10" class="accordion-collapse collapse" aria-labelledby="heading10" data-bs-parent="#accordionExample" style="">
+                                  <div class="accordion-body">
+                                    <p>
+                                        Instagram Mention is when you mention someone on Instagram (example @abcde this means you have mentioned abcde under this post and abcde will receive a notification to check the post). Basically the Instagram Mentions [User Followers], you put the link of your post, and the username of the person that you want us to mention HIS FOLLOWERS!
+                                     </p>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading11">
+                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse11" aria-expanded="false" aria-controls="collapse11">
+                                    <i class="far fa-question-circle"></i> The link must be added before the user goes live or after?
+                                  </button>
+                                </h2>
+                                <div id="collapse11" class="accordion-collapse collapse" aria-labelledby="heading11" data-bs-parent="#accordionExample">
+                                  <div class="accordion-body">
+                                    <p>
+                                        After he goes live, or just 5 second before he goes!
+                                     </p>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading12">
+                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse12" aria-expanded="false" aria-controls="collapse12">
+                                    <i class="far fa-question-circle"></i> What is "Instagram Saves", and what does it do?
+                                  </button>
+                                </h2>
+                                <div id="collapse12" class="accordion-collapse collapse" aria-labelledby="heading12" data-bs-parent="#accordionExample">
+                                  <div class="accordion-body">
+                                    <p>
+                                        Instagram Saves is when a user saves a post to his history on Instagram (by pressing the save button near the like button). A lot of saves for a post increase its impression.
+                                     </p>
+                                  </div>
+                                </div>
+                              </div>
+
+
+                            </div>
+          
+                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% include 'footer.twig' %}

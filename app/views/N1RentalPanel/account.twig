@@ -1,0 +1,335 @@
+{% include 'header.twig' %}
+
+    
+<div class="content">
+        <!-- page and other top info -->
+        <div id="page_info">
+
+        </div>
+        <!-- // page and other top info -->
+        <!-- Account Page Content  -->
+<div id="accountpage">
+    <div class="container-fluid">
+                <div class="row">
+            <div class="col-md-6">
+               
+               {% if error %}
+        <div class="alert alert-dismissible alert-danger">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          {{ errorText }}
+        </div>
+      {% endif %}
+      {% if success %}
+        <div class="alert alert-dismissible alert-success">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          {{ successText }}
+        </div>
+      {% endif %}
+      
+                <div class="card card_v2 mb-3">
+                    <div class="card-body">
+                            <div id="def_side_title">
+                                <div class="icon">
+                                    <i class="fal fa-user-circle"></i>
+                                </div>
+                                <div class="name">
+                                User Infos
+                                </div>
+                            </div>
+                         <div class="mb-3">
+                             <label for="">Username</label>
+                             <input type="text" class="form-control" id="username" value="{{ user['username'] }}" readonly>
+                         </div>
+                         <div class="mb-3">
+                            <label for="">Email Address</label>
+                            <input type="text" class="form-control" id="username" value="{{ user['email'] }}" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card_v2 mb-3">
+                    <div class="card-body">
+
+                            <div id="def_side_title">
+                                <div class="icon">
+                                    <i class="far fa-lock"></i>
+                                </div>
+                                <div class="name">
+                                Account Password Manager
+                                </div>
+                            </div>
+                            <form action="" method="post">
+                                            
+                                <div class="mb-3">
+                                    <label for="current">{{ lang['account.password.current'] }}</label>
+                                    <input type="password" class="form-control" id="current" name="current_password">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="new">{{ lang['account.password.new'] }}</label>
+                                    <input type="password" class="form-control" id="new" name="password">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="confirm">{{ lang['account.password.confirm'] }}</label>
+                                    <input type="password" class="form-control" id="confirm" name="confirm_password">
+                                </div>
+                                <button type="submit" class="btn btn-primary d-block w-100">{{ lang['account.password.button'] }}</button>
+                            </form>
+                            
+                    </div>
+                </div>
+
+            
+            
+                  <div class="card card_v2 ">
+                    <div class="card-body">
+                      <div class="">
+                        <div id="2fa-approve-error-block" style="display: none;" class="mb-2 alert alert-dismissible alert-danger">
+                          <button type="button" class="close" onclick="closeErrorBlock()">&times;</button>
+                          <span id="2fa-error-text"></span>
+                        </div>
+                        <div id="2fa-approve-success-block" style="display: none;" class="mb-2 alert alert-dismissible alert-success">
+                          <button type="button" class="close" onclick="closeSuccessBlock()">&times;</button>
+                          <span id="2fa-success-text"></span>
+                        </div>
+                        
+                         <h4 class="mb-3"><i class="fad fa-key"></i> Two-factor authentication</h4>
+                        <form id="2fa-generate-form" method="post" action="/2fa/generate" style="display: block;">
+                          <p>Email-based option to add an extra layer of protection to your account. When signing in, you’ll need to enter a code that will be sent to your email address.</p>
+                          <input type="hidden" name="enabled" value="1">
+                          <input type="hidden" id="generated-otp" name="generated_otp">
+                          <input type="hidden" name="_csrf" value="<?php echo generateCSRFToken(); ?>">
+                          <button id="2fa-generate" type="button" class="btn btn-primary d-block w-100" onclick="enable2FA()">Enable</button>
+                        </form>
+
+                        <form id="2fa-approve-form" method="post" action="/2fa/approve" style="display: none;">
+                          <p>Please check your email and enter the code below.</p>
+                          <div class="form-group mt-2">
+                            <label for="code" class="control-label">Code</label>
+                            <input type="text" id="code" name="code" class="form-control">
+                          </div>
+                          <input type="hidden" name="enabled" value="1">
+                          <input type="hidden" name="_csrf" value="<?php echo generateCSRFToken(); ?>">
+                          <button id="2fa-approve" type="button" class="btn btn-primary d-block w-100" onclick="approve2FA()">Enable</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+    
+  <script>
+   let otp; 
+    function enable2FA() {
+  otp = Math.floor(100000 + Math.random() * 900000);
+  $.ajax({ type: "POST", url: "/2fa/generate", data: { enabled: 1, _csrf: getCSRFToken(), otp: otp},
+    success: function(response) {
+      toggleForms();
+    },
+    error: function(error) {
+      displayError("AJAX Error");
+    }
+  });
+}
+
+function enable4FA() {
+    const otp_type = 1;
+  $.ajax({ type: "POST", url: "/2fa/approve", data: { enabled: 1, _csrf: getCSRFToken(), otp: otp_type}
+  });
+}
+  function approve2FA() {
+  const enteredCode = document.getElementById('code').value;
+  if (enteredCode === otp.toString()) {
+    const approveButton = document.getElementById('2fa-approve'); 
+    if (approveButton && approveButton.textContent === 'Disable') {
+      enable3FA();
+      initializeButtonState();
+    }
+    localStorage.setItem('authenticationStatus', 'enabled');
+    if (approveButton && approveButton.textContent === 'Enable') {
+      enable4FA();
+      initializeButtonState();
+    }
+    location.reload();
+    setTimeout(toggleForms, 1000); 
+  } else {
+    displayError('Invalid code. Please check your email and try again.');
+  }
+}
+
+
+function enable3FA() {
+  const otp_type = 0;
+  $.ajax({ type: "POST", url: "/2fa/disable", data: { enabled: 1, _csrf: getCSRFToken(), otp: otp_type}
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    var authenticationStatus = localStorage.getItem('authenticationStatus');
+    const generateButton = document.getElementById('2fa-generate');
+    const approveButton = document.getElementById('2fa-approve');
+    if (authenticationStatus === 'enabled') {
+        displaySuccess('Two-factor authentication has been enabled');
+       initializeButtonState();
+        if (generateButton && generateButton.textContent === 'Disable') {
+        displaySuccess('Two-factor authentication has been enabled');
+    } else if (approveButton && approveButton.textContent === 'Disable') {
+        displaySuccess('Two-factor authentication has been enabled');
+    } else {
+        
+        displaySuccess('Two-factor authentication has been disabled');
+    }
+        localStorage.removeItem('authenticationStatus');
+    }
+});
+
+
+function updateButtonsText(buttonIds, otpType) {
+  buttonIds.forEach(function (buttonId) {
+    const button = document.getElementById(buttonId);
+    if (button) {
+      const buttonText = (otpType === 1) ? 'Disable' : 'Enable';
+      button.textContent = buttonText;
+      localStorage.setItem(buttonId, buttonText);
+    }
+  });
+}
+
+function initializeButtonState() {
+  const buttonIds = ['2fa-generate', '2fa-approve'];
+  const otpType = {{ user['otp_type'] }};
+  buttonIds.forEach(function (buttonId) {
+    const button = document.getElementById(buttonId);
+    if (button) {
+      const storedText = localStorage.getItem(buttonId);
+      if (storedText) {
+        button.textContent = storedText;
+      }
+    }
+  });
+  updateButtonsText(buttonIds, otpType);
+}
+initializeButtonState();
+
+function toggleForms() {
+    const generateForm = document.getElementById('2fa-generate-form');
+    const approveForm = document.getElementById('2fa-approve-form');
+    generateForm.style.display = generateForm.style.display === 'none' ? 'block' : 'none';
+    approveForm.style.display = approveForm.style.display === 'none' ? 'block' : 'none';
+  }
+
+    function displayError(error) {
+      document.getElementById('2fa-error-text').innerText = error;
+      document.getElementById('2fa-approve-error-block').style.display = 'block';
+      document.getElementById('2fa-approve-success-block').style.display = 'none';
+    }
+    
+    function displaySuccess(success) {
+      document.getElementById('2fa-success-text').innerText = success;
+      document.getElementById('2fa-approve-success-block').style.display = 'block';
+      document.getElementById('2fa-approve-error-block').style.display = 'none';
+    }
+    function closeSuccessBlock() {
+      document.getElementById('2fa-approve-success-block').style.display = 'none';
+    }
+    function closeErrorBlock() {
+      document.getElementById('2fa-approve-error-block').style.display = 'none';
+    }
+
+    function getCSRFToken() {
+      return document.querySelector('input[name="_csrf"]').value;
+    }
+
+    function simulateServerRequest(url, method, data, callback) {
+      setTimeout(function() {
+        const response = { success: true };
+        if (callback) {
+          callback(response);
+        }
+      }, 1000);
+    }
+  </script>
+            <div class="col-md-6">
+                <div class="card card_v2 mb-3">
+                    <div class="card-body">
+                            <div id="def_side_title">
+                                <div class="icon">
+                                    <i class="fad fa-key"></i>
+                                </div>
+                                <div class="name">
+                                 API Key Generator
+                                </div>
+                            </div>
+                             <form  action="/account/newapikey" method="post">
+                                <div class="form-group">
+                                  <label for="key" class="control-label">API key</label>
+                                                                  </div>
+                      
+                                <button type="submit" class="btn btn-primary d-block w-100">Generate new</button>
+                              </form>
+                        <br>
+                        <div class="alert alert-danger">
+                            When you click on "Generate new" it will Generate new key. This key is very sensitive informations of your account please avoid share this key. Thank you.
+                        </div>
+                    </div>
+                  </div>
+                                  <div class="card card_v2 mb-3">
+                    <div class="card-body">
+                            <div id="def_side_title">
+                                <div class="icon">
+                                    <i class="far fa-language"></i>
+                                </div>
+                                <div class="name">
+                                 Language
+                                </div>
+                            </div>
+                            <form  method="post" action="">
+                                <div class="form-group">
+                                  <label for="language" class="control-label">Language</label>
+                                 <select class="form-control" name="lang">
+                  {% for language in site['languages'] %}
+                  <option {% if language["code"] == user["lang"] %} selected {% endif %} value="{{ language["code"] }}">{{ language["name"] }}</option>
+                  {% endfor %}
+              </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary d-block w-100">Save</button>
+                              </form>
+                    </div>
+                  </div>
+                
+                <div class="card card_v2 mb-3">
+                    <div class="card-body">
+                            <div id="def_side_title">
+                                <div class="icon">
+                                    <i class="far fa-clock"></i>
+                                </div>
+                                <div class="name">
+                                    Timezone
+                                </div>
+                            </div>
+                            <form  action="" method="post">
+                                <div class="form-group">
+                                  <label for="timezone" class="control-label">Timezone</label>
+                                  <select name="SettingsFrom[timezone]" id="timezone" class="form-control">
+                                                                          <option value="21600" selected>(UTC +6:00) Bangladesh Standard Time, Bhutan Time, Omsk Time</option>
+                                                                      </select>
+                                </div>
+                      
+                                <input type="hidden" name="_csrf" value="senI0sjKZ59RMP_2CpfhKEnCxQxbmUU_XHQ5qEg6xdDlvrmBnfwg0ABXsKFez5tDEfCKXTDTKkkmP1GYKkCanw==">
+                                <button type="submit" class="btn btn-primary d-block w-100">Save</button>
+                              </form>
+                    </div>
+                  </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+      </div>
+    </div>
+  </main>
+  
+  
+ {% include 'footer.twig' %}
+		

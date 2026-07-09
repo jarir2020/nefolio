@@ -1,0 +1,143 @@
+{% include 'header.twig' %}
+
+<main id="notLogin">
+    
+<section id="blog_post">
+    
+    <div class="container">
+    <h1 class="blog_section_title">✍️ Latest Blog Insights</h1>
+<p class="blog_section_subtitle">Stay informed with our latest news & articles</p>
+
+<style>
+    .blog_section_title {
+        font-size: 32px;
+        font-weight: bold;
+        color: #2ecc71;
+        text-align: center;
+        margin-top: 30px;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .blog_section_subtitle {
+        font-size: 16px;
+        color: #7f8c8d;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+</style>
+    
+        <div class="row mb-5">
+            
+            {% for blog in blogs %}
+                        <div class="col-lg-4 col-md-4 col-sm-6 col-12">
+                <div class="blog_wraper">
+                    <div class="blog_img">
+                        {% if blog["image_file"] %} 
+                          <a href="/blog/{{ blog["blog_get"] }}">
+                            <img src="{{blog["image_file"]}}" class="img-fluid" alt="{{ blog["title"] }}">
+                          </a>
+                        {% endif %} 
+                    </div>
+                    <div class="blog_content">
+                        <h4>{{ blog["title"] }}</h4>
+                        <div class="blog_content">
+                            <p><span style="color: inherit; font-family: inherit; font-size: 30px;">{{ blog["content"] }}</p>
+                        </div>
+                    </div>
+                    <div class="blog_btn_wrap">
+                        <a href="/" class="btn btn-primary">Read More &gt;&gt;</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}           
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="blog_wraper">
+                    <div class="blog_img">
+                        <img src="https://imarticus.org/blog/wp-content/uploads/2022/01/diigtal-marketing.gif" class="img-fluid" alt="Power of Cross-Platform Promotion">
+                    </div>
+                    <div class="blog_content">
+                        <h4>The Power of Cross-Platform Promotion: Expanding Your Brand’s Reach</h4>
+                        <p>In today's fast-paced digital world, businesses are continuously looking for effective ways to expand their reach and connect with their target audiences. Cross-platform promotion has emerged as one of the most powerful strategies in digital marketing. By promoting your brand across multiple platforms, you can effectively reach a wider audience and create a cohesive brand experience that resonates with customers.</p>
+
+                        <p>The key benefits of cross-platform promotion include:</p>
+                        <ul>
+                            <li><strong>Increased Brand Visibility:</strong> Engaging with your audience across various platforms allows your brand to be seen by a larger and more diverse audience.</li>
+                            <li><strong>Improved Customer Engagement:</strong> You can engage with customers on their preferred platforms, building stronger relationships and trust.</li>
+                            <li><strong>Better Conversion Rates:</strong> Cross-platform promotion helps in driving traffic from multiple sources, resulting in increased conversions and sales.</li>
+                        </ul>
+
+                        <p>To make the most of cross-platform promotion, it's essential to ensure that your messaging and branding are consistent across all platforms, whether it's social media, your website, or other marketing channels. By creating a seamless experience for your customers, you can enhance brand loyalty and drive long-term success.</p>
+                    </div>
+                    <div class="blog_btn_wrap">
+                        <a href="/" class="btn btn-primary">Read More &gt;&gt;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="blog_wraper">
+                    <div class="blog_img">
+                        <img src="https://static.wixstatic.com/media/cb2aeb_d6f866c812804a5286187530d2c86973~mv2.gif" class="img-fluid" alt="Reliable SMM Panel: Key Strategies for Business Success">
+                    </div>
+                    <div class="blog_content">
+                        <h4>Reliable SMM Panel Provider: Key Strategies for Business Success</h4>
+                        <p>Social media marketing (SMM) has become an essential part of any modern business strategy. With billions of users on social media platforms, businesses have realized the immense potential for reaching their target audience. However, to maximize the effectiveness of social media marketing, it's crucial to partner with a reliable SMM panel provider.</p>
+
+                        <p>Choosing the right SMM panel provider can make a significant difference in the success of your marketing campaigns. Here are some key strategies to help you select the best provider:</p>
+                        <ul>
+                            <li><strong>Quality and Range of Services:</strong> Look for an SMM panel provider that offers a wide variety of services tailored to your needs, such as social media post scheduling, analytics, engagement boosting, and more.</li>
+                            <li><strong>Reliability and Speed:</strong> Your SMM provider should deliver services quickly and without downtime to ensure that your marketing campaigns run smoothly.</li>
+                            <li><strong>Affordable Pricing:</strong> Make sure the provider offers competitive pricing that fits within your budget, while still delivering high-quality results.</li>
+                            <li><strong>Customer Support:</strong> A good SMM panel provider should offer excellent customer support to resolve any issues promptly.</li>
+                        </ul>
+
+                        <p>With the right SMM panel provider, you can effectively manage and scale your social media campaigns, resulting in increased brand awareness, customer engagement, and business growth.</p>
+                    </div>
+                    <div class="blog_btn_wrap">
+                        <a href="/" class="btn btn-primary">Read More &gt;&gt;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="blog_wraper">
+                    <div class="blog_img">
+                        <img src="https://cdnl.iconscout.com/lottie/premium/thumb/student-prepared-statistics-chart-animation-download-in-lottie-json-gif-static-svg-file-formats--analytics-logo-graph-webinar-pack-seo-web-animations-9665311.gif" class="img-fluid" alt="Cheapest SMM Panel – The Best in the Market">
+                    </div>
+                    <div class="blog_content">
+                        <h4>Cheapest SMM Panel – The Best SMM Panel in the Entire Market!</h4>
+                        <p>When it comes to social media marketing, the cost of services can sometimes be a barrier for many businesses. However, finding the cheapest SMM panel doesn’t mean you have to compromise on quality. In fact, several SMM panel providers offer affordable rates without sacrificing the effectiveness of their services.</p>
+
+                        <p>Here are a few reasons why choosing the cheapest SMM panel provider can still offer great value:</p>
+                        <ul>
+                            <li><strong>Cost-Effective Solutions:</strong> The cheapest SMM panels provide a variety of affordable services, making it easier for small businesses and startups to implement social media strategies without breaking the bank.</li>
+                            <li><strong>Effective Social Media Marketing:</strong> Despite their low costs, the best cheap SMM panels can still deliver great results by boosting engagement, increasing followers, and driving traffic to your website.</li>
+                            <li><strong>Scalable Plans:</strong> Many affordable SMM panels offer scalable plans, allowing you to start with a small budget and increase your investment as your business grows.</li>
+                        </ul>
+
+                        <p>To ensure you're getting the best value for your money, it's important to do thorough research and read reviews of the SMM panel providers. Look for those with a proven track record of delivering results at affordable prices.</p>
+                    </div>
+                    <div class="blog_btn_wrap">
+                        <a href="/" class="btn btn-primary">Read More &gt;&gt;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+{% include 'footer.twig' %}
