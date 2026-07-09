@@ -56,7 +56,7 @@ date_default_timezone_set(getenv('APP_TIMEZONE') ?: 'Asia/Dhaka');
 
 
 ini_set("display_errors", "1");
-error_reporting(E_ALL);
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED & ~E_USER_NOTICE & ~E_USER_WARNING & ~E_USER_DEPRECATED);
 
 
 return [
