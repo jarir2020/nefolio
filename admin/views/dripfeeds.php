@@ -138,4 +138,4 @@
 
 <?php include 'footer.php'; ?>
 
-<script src="/js/datatable/drip.js"></script>
+<script src="/assets/js/datatable/drip.js"></script>
