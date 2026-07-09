@@ -102,7 +102,7 @@
  @import url("https://fonts.googleapis.com/css2?family=Sansita+Swashed:wght@600&display=swap");
         #loading {
             position: fixed;
-            display: flex;
+            display: none;
             justify-content: center;
             align-items: center;
             width: 100%;
