@@ -98,7 +98,7 @@ $settings = $conn->prepare("SELECT * FROM settings WHERE id=:id");
 $settings->execute(array("id"=>1));
 $settings = $settings->fetch(PDO::FETCH_ASSOC);
 
-$general = $conn->prepare("SELECT * FROM General_options WHERE id=:id");
+$general = $conn->prepare("SELECT * FROM general_options WHERE id=:id");
 $general->execute(array("id"=>1));
 $general = $general->fetch(PDO::FETCH_ASSOC);
 

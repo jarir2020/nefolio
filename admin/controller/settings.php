@@ -142,7 +142,7 @@ email_confirmation=:email_confirmation,
             "avg_time" => $services_average_time
           )
         );
-        $update = $conn->prepare("UPDATE General_options SET currency_format=:format WHERE id=:id ");
+        $update = $conn->prepare("UPDATE general_options SET currency_format=:format WHERE id=:id ");
         $update->execute(array("format" => $currency_format, "id" => 1));
         $referrer = site_url("admin/settings/general");
         $icon = "success";
@@ -465,7 +465,7 @@ referral_status=:referral_status WHERE id=:id ");
         )
       );
 
-      $update = $conn->prepare("UPDATE General_options SET updates_show=:updates_show,coupon_status=:coupon_status,massorder=:massorder WHERE id=:id ");
+      $update = $conn->prepare("UPDATE general_options SET updates_show=:updates_show,coupon_status=:coupon_status,massorder=:massorder WHERE id=:id ");
       $update = $update->execute(array("id" => 1, "updates_show" => $updates_show, "coupon_status" => $coupon_status, "massorder" => $massorder));
 
       //update menu updates
