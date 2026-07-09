@@ -73,7 +73,7 @@ setcookie("a_login", 'ok', time()+(60*60*24*7), '/', null, null, true );
 setcookie("a_id", $admin["admin_id"], time()+(60*60*24*7), '/', null, null, true );
 setcookie("a_password", $admin["password"], time()+(60*60*24*7), '/', null, null, true );
 setcookie("a_login", 'ok', time()+(60*60*24*7), '/', null, null, true );
-header('Location: '.site_url('admin/activate-google-2fa'));
+header('Location: '.site_url('admin'));
 }
 $update = $conn->prepare("UPDATE admins SET login_date=:date, login_ip=:ip WHERE admin_id=:c_id ");
 $update->execute(array("c_id"=>$admin["admin_id"],"date"=>date("Y.m.d H:i:s"),"ip"=>GetIP() ));
