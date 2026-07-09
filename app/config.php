@@ -49,14 +49,14 @@ if ($isLocal) {
     define('URL', $detectedUrl);
     define('STYLESHEETS_URL', $detectedUrl);
 } else {
-    define('URL', getenv('APP_URL') ?: 'https://clickbd.shop' );
-    define('STYLESHEETS_URL', getenv('APP_STYLESHEETS_URL') ?: '//clickbd.shop' );
+    define('URL', getenv('APP_URL') ?: 'https://netfollows.com' );
+    define('STYLESHEETS_URL', getenv('APP_STYLESHEETS_URL') ?: '//netfollows.com' );
 }
 date_default_timezone_set(getenv('APP_TIMEZONE') ?: 'Asia/Dhaka');
 
-/* 
+
  ini_set("display_errors","1");
- error_reporting(E_ERROR);  */  
+ error_reporting(E_ERROR); 
 
 
 error_reporting(0);
