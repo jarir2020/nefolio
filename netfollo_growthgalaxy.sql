@@ -2725,6 +2725,27 @@ ALTER TABLE `units_per_page`
 --
 ALTER TABLE `updates`
   MODIFY `u_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+
+--
+-- Table structure for table `refill_status`
+--
+
+CREATE TABLE IF NOT EXISTS `refill_status` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `client_id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `refill_apiid` int(11) DEFAULT '0',
+  `order_apiid` int(11) DEFAULT '0',
+  `order_url` varchar(500) DEFAULT NULL,
+  `service_name` varchar(255) DEFAULT NULL,
+  `creation_date` datetime DEFAULT NULL,
+  `refill_status` enum('Pending','Refilling','Completed','Rejected','Error') NOT NULL DEFAULT 'Pending',
+  `refill_where` varchar(50) DEFAULT 'site',
+  PRIMARY KEY (`id`),
+  KEY `client_id` (`client_id`),
+  KEY `order_id` (`order_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
