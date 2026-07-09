@@ -11,6 +11,8 @@ This document tracks all file modifications made to the Nefolio project during l
 - **[`start.sh`](file:///home/jarir-ahmed/Documents/Nefolio/start.sh):** Created startup script to start PHP development server at `http://0.0.0.0:5400`.
 - **[`ftp_listing.txt`](file:///home/jarir-ahmed/Documents/Nefolio/ftp_listing.txt):** Saved the remote FTP directory listing of the target upload directory (`public_html`).
 - **[`.github/workflows/deploy.yml`](file:///home/jarir-ahmed/Documents/Nefolio/.github/workflows/deploy.yml):** Created GitHub Actions workflow for automatic FTP deployment on push to `main` branch.
+- **`assets/` (Manually Created):** Created the `assets/` directory locally and copied resources there to fix the stylesheet/script loading paths.
+
 
 ### Files Modified
 - **[`app/config.php`](file:///home/jarir-ahmed/Documents/Nefolio/app/config.php):** Modified to load `.env` variables first, then dynamically configure database credentials and system constants. Added dynamic host detection to automatically use the local host URL during local development (preventing cross-origin CORS/AJAX issues) while keeping production `.env` settings on the live remote server.
