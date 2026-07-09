@@ -89,6 +89,7 @@
  <link rel="stylesheet" href="assets/public/admin/iziToast.min.css">
   <script src="https://kit.fontawesome.com/f9fbee3ddf.js" crossorigin="anonymous"></script>
 <script src="assets/public/admin/iziToast.min.js"></script>
+<script src="assets/public/admin/apex.js"></script>
 
   <link href="//gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 
