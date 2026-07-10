@@ -6087,24 +6087,46 @@ elseif ($action == "order_errors"):
   $row = $conn->prepare("SELECT * FROM orders INNER JOIN service_api ON service_api.id=orders.order_api WHERE order_id=:id ");
   $row->execute(array("id" => $id));
   $row = $row->fetch(PDO::FETCH_ASSOC);
-  $errors = json_decode($row["order_error"]);
+  
+  $order_error = $row["order_error"];
+  $decoded = json_decode($order_error, true);
+  
+  $display_error = "";
+  $technical_details = $order_error;
+  
+  if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+    if (isset($decoded["error"])) {
+      $display_error = $decoded["error"];
+    } else {
+      $display_error = "API returned a structured error response.";
+    }
+  } else {
+    $display_error = $order_error;
+  }
+
   $return = '<form>
         <div class="modal-body">
 
           <div class="service-mode__block">
             <div class="form-group">
-            <h4>' . $row["api_name"] . '</h4>
-              <textarea class="form-control" rows="8" readonly>';
-  $return .= print_r($errors, true);
-  $return .= '</textarea>
-            </div>
-          </div>
+              <h4 style="margin-bottom: 10px;">Provider: ' . htmlspecialchars($row["api_name"]) . '</h4>
+              
+              <div class="alert alert-danger" style="border-radius: 4px; padding: 12px; border-left: 5px solid #d9534f; background-color: #f2dede; color: #a94442; margin-bottom: 15px;">
+                <strong><i class="fa fa-exclamation-triangle"></i> Error:</strong> ' . htmlspecialchars($display_error) . '
+              </div>';
 
+  if (!empty($technical_details) && $technical_details !== $display_error) {
+    $return .= '<label>Technical Details (Raw Response):</label>
+                <textarea class="form-control" rows="5" readonly style="font-family: monospace; font-size: 12px; background-color: #f9f9f9;">' . htmlspecialchars($technical_details) . '</textarea>';
+  }
+
+  $return .= '</div>
+          </div>
 
         </div>
 
           <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           </div>
           </form>';
   echo json_encode(["content" => $return, "title" => "Error details (ID: " . $row["order_id"] . ") "]);
