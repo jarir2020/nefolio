@@ -6,6 +6,7 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+.agents
 
 # OS X Thumbnails
 ._*
