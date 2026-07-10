@@ -39,4 +39,4 @@ git commit -m "$COMMIT_MSG"
 echo "Pushing changes to remote branch '$CURRENT_BRANCH'..."
 git push origin "$CURRENT_BRANCH"
 
-echo "Push complete. Changes pushed to GitHub for backup."
+echo "Push complete. CI/CD deployment triggered!"

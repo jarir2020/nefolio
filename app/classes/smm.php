@@ -12,7 +12,7 @@ class SMMApi{
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_USERAGENT ,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
     curl_setopt($ch, CURLOPT_URL , $api);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST , true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
@@ -37,6 +37,7 @@ class socialsmedia_api
         curl_setopt_array($ch, array(
                 CURLOPT_URL             => $data["apiurl"],
                 CURLOPT_RETURNTRANSFER  => true,
+                CURLOPT_SSL_VERIFYPEER  => false,
                 CURLOPT_CONNECTTIMEOUT  => 15,
                 CURLOPT_TIMEOUT         => 30,
                 CURLOPT_POST            => true,
