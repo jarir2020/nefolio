@@ -355,11 +355,7 @@ if( route(2)  ==  "provider" ):
 
           if ($new_service["api_type"] == 1) {
             if ($new_service["service_package"] == 1 || $new_service["service_package"] == 2 || $new_service["service_package"] == 11 || $new_service["service_package"] == 12) {
-              if (strpos($new_service["api_url"], "alphapaybd.com") !== false || strpos($new_service["api_url"], "localhost") !== false || strpos($new_service["api_url"], "127.0.0.1") !== false || strpos($new_service["api_url"], "vietnamese-bot.com") !== false) {
-                $get_order = (object) array("order" => 987654);
-              } else {
-                $get_order = $smmapi->action(array('key' => $new_service["api_key"], 'action' => 'add', 'service' => $new_service["api_service"], 'link' => $order["order_url"], 'quantity' => $order["order_quantity"]), $new_service["api_url"]);
-              }
+              $get_order = $smmapi->action(array('key' => $new_service["api_key"], 'action' => 'add', 'service' => $new_service["api_service"], 'link' => $order["order_url"], 'quantity' => $order["order_quantity"]), $new_service["api_url"]);
               if (@!$get_order->order) {
                 $error = json_encode($get_order);
                 $order_id = "";
@@ -368,11 +364,7 @@ if( route(2)  ==  "provider" ):
                 $order_id = @$get_order->order;
               }
             } elseif ($new_service["service_package"] == 3) {
-              if (strpos($new_service["api_url"], "alphapaybd.com") !== false || strpos($new_service["api_url"], "localhost") !== false || strpos($new_service["api_url"], "127.0.0.1") !== false || strpos($new_service["api_url"], "vietnamese-bot.com") !== false) {
-                $get_order = (object) array("order" => 987654);
-              } else {
-                $get_order = $smmapi->action(array('key' => $new_service["api_key"], 'action' => 'add', 'service' => $new_service["api_service"], 'link' => $order["order_url"], 'comments' => $comments), $new_service["api_url"]);
-              }
+              $get_order = $smmapi->action(array('key' => $new_service["api_key"], 'action' => 'add', 'service' => $new_service["api_service"], 'link' => $order["order_url"], 'comments' => $comments), $new_service["api_url"]);
               if (@!$get_order->order) {
                 $error = json_encode($get_order);
                 $order_id = "";
@@ -383,13 +375,8 @@ if( route(2)  ==  "provider" ):
             }
 
             if ($order_id) {
-              if (strpos($new_service["api_url"], "alphapaybd.com") !== false || strpos($new_service["api_url"], "localhost") !== false || strpos($new_service["api_url"], "127.0.0.1") !== false || strpos($new_service["api_url"], "vietnamese-bot.com") !== false) {
-                $orderstatus = (object) array("charge" => 0.15);
-                $balance = (object) array("currency" => "USD");
-              } else {
-                $orderstatus = $smmapi->action(array('key' => $new_service["api_key"], 'action' => 'status', 'order' => $order_id), $new_service["api_url"]);
-                $balance = $smmapi->action(array('key' => $new_service["api_key"], 'action' => 'balance'), $new_service["api_url"]);
-              }
+              $orderstatus = $smmapi->action(array('key' => $new_service["api_key"], 'action' => 'status', 'order' => $order_id), $new_service["api_url"]);
+              $balance = $smmapi->action(array('key' => $new_service["api_key"], 'action' => 'balance'), $new_service["api_url"]);
               $api_charge = isset($orderstatus->charge) ? $orderstatus->charge : 0;
               $currency = isset($balance->currency) ? $balance->currency : "TRY";
               if ($currency == "TRY") {
