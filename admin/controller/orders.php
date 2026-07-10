@@ -428,7 +428,7 @@ if( route(2)  ==  "provider" ):
 
           $update = $conn->prepare("UPDATE orders SET service_id=:service_id, order_api=:api, api_serviceid=:serviceid, order_error=:error, api_orderid=:orderid, order_detail=:detail, api_charge=:api_charge, api_currencycharge=:api_currencycharge, order_profit=:profit, order_status=:status WHERE order_id=:id ");
           $update->execute(array(
-            "service_id" => $service_id,
+            "service_id" => !empty($new_service["service_id"]) ? $new_service["service_id"] : $order["service_id"],
             "error" => $error,
             "api" => $provider_id,
             "serviceid" => $new_service["api_service"],
