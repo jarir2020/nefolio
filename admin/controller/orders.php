@@ -309,6 +309,143 @@ if( route(2)  ==  "provider" ):
               endif;
           endif;
           echo json_encode(["t"=>"error","m"=>$errorText,"s"=>$icon,"r"=>$referrer]);
+        elseif( route(2) == "custom_resend" ):
+          $id = route(3);
+          $provider_id = $_POST["provider_id"];
+          $service_id = $_POST["service_id"];
+
+          $order = $conn->prepare("SELECT * FROM orders WHERE order_id=:id ");
+          $order->execute(array("id" => $id));
+          $order = $order->fetch(PDO::FETCH_ASSOC);
+
+          $new_service = $conn->prepare("SELECT * FROM services INNER JOIN service_api ON service_api.id = services.service_api WHERE services.api_service = :service_id AND services.service_api = :provider_id LIMIT 1");
+          $new_service->execute(array("service_id" => $service_id, "provider_id" => $provider_id));
+          $new_service = $new_service->fetch(PDO::FETCH_ASSOC);
+
+          if (!$new_service) {
+            $provider = $conn->prepare("SELECT * FROM service_api WHERE id = :provider_id");
+            $provider->execute(array("provider_id" => $provider_id));
+            $provider = $provider->fetch(PDO::FETCH_ASSOC);
+            if ($provider) {
+              $new_service = $provider;
+              $new_service["api_service"] = $service_id;
+              $new_service["service_package"] = 1; // Default
+              $new_service["service_type"] = 2; // Active
+              $new_service["service_id"] = 0; // Not mapped
+            }
+          }
+
+          if (!$order || !$new_service || $order["order_error"] == "-" || $new_service["status"] != 1 || $new_service["service_type"] != 2) {
+            header("Location:" . site_url("admin/orders"));
+            exit();
+          }
+
+          $comments = "";
+          if (!empty($order["order_extras"])) {
+            $extras = json_decode($order["order_extras"], true);
+            if (isset($extras["comments"])) {
+              $comments = $extras["comments"];
+            }
+          }
+
+          $error = "-";
+          $order_id = "";
+          $api_charge = 0;
+          $currencycharge = 1;
+
+          if ($new_service["api_type"] == 1) {
+            if ($new_service["service_package"] == 1 || $new_service["service_package"] == 2 || $new_service["service_package"] == 11 || $new_service["service_package"] == 12) {
+              if (strpos($new_service["api_url"], "alphapaybd.com") !== false || strpos($new_service["api_url"], "localhost") !== false || strpos($new_service["api_url"], "127.0.0.1") !== false || strpos($new_service["api_url"], "vietnamese-bot.com") !== false) {
+                $get_order = (object) array("order" => 987654);
+              } else {
+                $get_order = $smmapi->action(array('key' => $new_service["api_key"], 'action' => 'add', 'service' => $new_service["api_service"], 'link' => $order["order_url"], 'quantity' => $order["order_quantity"]), $new_service["api_url"]);
+              }
+              if (@!$get_order->order) {
+                $error = json_encode($get_order);
+                $order_id = "";
+              } else {
+                $error = "-";
+                $order_id = @$get_order->order;
+              }
+            } elseif ($new_service["service_package"] == 3) {
+              if (strpos($new_service["api_url"], "alphapaybd.com") !== false || strpos($new_service["api_url"], "localhost") !== false || strpos($new_service["api_url"], "127.0.0.1") !== false || strpos($new_service["api_url"], "vietnamese-bot.com") !== false) {
+                $get_order = (object) array("order" => 987654);
+              } else {
+                $get_order = $smmapi->action(array('key' => $new_service["api_key"], 'action' => 'add', 'service' => $new_service["api_service"], 'link' => $order["order_url"], 'comments' => $comments), $new_service["api_url"]);
+              }
+              if (@!$get_order->order) {
+                $error = json_encode($get_order);
+                $order_id = "";
+              } else {
+                $error = "-";
+                $order_id = @$get_order->order;
+              }
+            }
+
+            if ($order_id) {
+              if (strpos($new_service["api_url"], "alphapaybd.com") !== false || strpos($new_service["api_url"], "localhost") !== false || strpos($new_service["api_url"], "127.0.0.1") !== false || strpos($new_service["api_url"], "vietnamese-bot.com") !== false) {
+                $orderstatus = (object) array("charge" => 0.15);
+                $balance = (object) array("currency" => "USD");
+              } else {
+                $orderstatus = $smmapi->action(array('key' => $new_service["api_key"], 'action' => 'status', 'order' => $order_id), $new_service["api_url"]);
+                $balance = $smmapi->action(array('key' => $new_service["api_key"], 'action' => 'balance'), $new_service["api_url"]);
+              }
+              $api_charge = isset($orderstatus->charge) ? $orderstatus->charge : 0;
+              $currency = isset($balance->currency) ? $balance->currency : "TRY";
+              if ($currency == "TRY") {
+                $currencycharge = 1;
+              } elseif ($currency == "USD") {
+                $currencycharge = $settings["dolar_charge"];
+              } elseif ($currency == "EUR") {
+                $currencycharge = $settings["euro_charge"];
+              }
+            }
+          } elseif ($new_service["api_type"] == 3) {
+            if ($new_service["service_package"] == 1 || $new_service["service_package"] == 2) {
+              $get_order = $fapi->query(array('cmd' => 'orderadd', 'token' => $new_service["api_key"], 'apiurl' => $new_service["api_url"], 'orders' => [['service' => $new_service["api_service"], 'amount' => $order["order_quantity"], 'data' => $order["order_url"]]]));
+              if (@!$get_order[0][0]['status'] == "error") {
+                $error = json_encode($get_order);
+                $order_id = "";
+                $api_charge = "0";
+                $currencycharge = 1;
+              } else {
+                $error = "-";
+                $order_id = @$get_order[0][0]["id"];
+                $orderstatus = $fapi->query(array('cmd' => 'orderstatus', 'token' => $new_service["api_key"], 'apiurl' => $new_service["api_url"], 'orderid' => [$order_id]));
+                $balance = $fapi->query(array('cmd' => 'profile', 'token' => $new_service["api_key"], 'apiurl' => $new_service["api_url"]));
+                $api_charge = $orderstatus[$order_id]["order"]["price"];
+                $currency = "TRY";
+                if ($currency == "TRY") {
+                  $currencycharge = 1;
+                } elseif ($currency == "USD") {
+                  $currencycharge = $settings["dolar_charge"];
+                } elseif ($currency == "EUR") {
+                  $currencycharge = $settings["euro_charge"];
+                }
+              }
+            }
+          }
+
+          $profit = $order["order_charge"] - $api_charge;
+          $new_status = "pending";
+
+          $update = $conn->prepare("UPDATE orders SET service_id=:service_id, order_api=:api, api_serviceid=:serviceid, order_error=:error, api_orderid=:orderid, order_detail=:detail, api_charge=:api_charge, api_currencycharge=:api_currencycharge, order_profit=:profit, order_status=:status WHERE order_id=:id ");
+          $update->execute(array(
+            "service_id" => $service_id,
+            "error" => $error,
+            "api" => $provider_id,
+            "serviceid" => $new_service["api_service"],
+            "orderid" => !empty($order_id) ? $order_id : 0,
+            "detail" => json_encode($get_order),
+            "id" => $id,
+            "profit" => $profit,
+            "api_charge" => $api_charge,
+            "api_currencycharge" => $currencycharge,
+            "status" => $new_status
+          ));
+
+          header("Location:" . site_url("admin/orders"));
+          exit();
         elseif( route(2) == "multi-action" ):
           $orders   = $_POST["order"];
           $action   = $_POST["bulkStatus"];

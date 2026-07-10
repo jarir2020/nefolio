@@ -128,3 +128,10 @@ nb-configuration.xml
 /results/
 /phpunit*.xml
 /.phpunit.*.cache
+
+# Business Analysis
+business_analysis.md
+
+# Balance Checker
+check_balance.php
+

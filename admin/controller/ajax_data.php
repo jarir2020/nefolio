@@ -6949,5 +6949,139 @@ elseif ($action == "edit_currency"):
   echo json_encode(["content" => $return, "title" => "Edit currency (" . $provider["name"] . ") "]);
 
 
+elseif ($action == "order_custom_resend"):
+  $id = $_POST["id"];
+  $row = $conn->prepare("SELECT * FROM orders WHERE order_id=:id ");
+  $row->execute(array("id" => $id));
+  $row = $row->fetch(PDO::FETCH_ASSOC);
+
+  // Fetch all active providers (status = '1')
+  $providers = $conn->prepare("SELECT id, api_name FROM service_api WHERE status = '1' ORDER BY api_name ASC");
+  $providers->execute();
+  $providers = $providers->fetchAll(PDO::FETCH_ASSOC);
+
+  $return = '<form action="' . site_url('admin/orders/custom_resend/' . $id) . '" method="POST">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="control-label" for="provider_search">Select Provider (Active)</label>
+            <input type="text" id="provider_search" class="form-control" placeholder="Search Provider..." style="margin-bottom: 8px;">
+            <select id="provider_select" class="form-control" name="provider_id" size="5">
+              <option value="" disabled selected>-- Choose Provider --</option>';
+  foreach ($providers as $prov) {
+    $return .= '<option value="' . $prov['id'] . '">' . htmlspecialchars($prov['api_name']) . '</option>';
+  }
+  $return .= '
+            </select>
+          </div>
+
+          <div class="form-group" id="service_group" style="display:none;">
+            <label class="control-label" for="service_search">Select Service (Active)</label>
+            <input type="text" id="service_search" class="form-control" placeholder="Search Service ID, Name or Keyword..." style="margin-bottom: 8px;">
+            <select id="service_select" class="form-control" name="service_id" size="8">
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" id="submit_resend" class="btn btn-primary" disabled>Resend Order</button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+
+      <script>
+      $(document).ready(function(){
+        var site_url = $("head base").attr("href") || "/";
+        // Filter providers list
+        $("#provider_search").on("keyup", function() {
+          var val = $(this).val().toLowerCase();
+          $("#provider_select option").each(function() {
+            var text = $(this).text().toLowerCase();
+            if (text.indexOf(val) > -1 || $(this).val() === "") {
+              $(this).show();
+            } else {
+              $(this).hide();
+            }
+          });
+        });
+
+        // Handle provider selection
+        $("#provider_select").on("change", function() {
+          var providerId = $(this).val();
+          if (!providerId) return;
+
+          // Reset service search and list
+          $("#service_search").val("").hide();
+          $("#service_select").empty().hide();
+          $("#service_group").show();
+          $("#submit_resend").prop("disabled", true);
+
+          // Show loading spinner
+          $("#service_select").html(\'<option disabled>Loading services...</option>\').show();
+
+          // Fetch services of this provider
+          $.post(site_url + "admin/ajax_data", { action: "custom_resend_get_services", provider_id: providerId }, function(data) {
+            $("#service_select").empty();
+            if (data && data.length > 0) {
+              $("#service_search").show();
+              data.forEach(function(srv) {
+                $("#service_select").append(\'<option value="\' + srv.service + \'">[\' + srv.service + \'] \' + srv.name + \'</option>\');
+              });
+            } else {
+              $("#service_select").append(\'<option disabled>No active services found for this provider.</option>\');
+            }
+          }, "json");
+        });
+
+        // Filter services list
+        $("#service_search").on("keyup", function() {
+          var val = $(this).val().toLowerCase();
+          $("#service_select option").each(function() {
+            var text = $(this).text().toLowerCase();
+            if (text.indexOf(val) > -1) {
+              $(this).show();
+            } else {
+              $(this).hide();
+            }
+          });
+        });
+
+        // Enable button on service select
+        $("#service_select").on("change", function() {
+          var val = $(this).val();
+          if (val && !$(this).find("option:selected").is(":disabled")) {
+            $("#submit_resend").prop("disabled", false);
+          } else {
+            $("#submit_resend").prop("disabled", true);
+          }
+        });
+      });
+      </script>';
+  echo json_encode(["content" => $return, "title" => "Custom Resend Order (ID: #" . $row["order_id"] . ")"]);
+
+
+elseif ($action == "custom_resend_get_services"):
+  $provider_id = $_POST["provider_id"];
+
+  // Load provider details
+  $provider = $conn->prepare("SELECT * FROM service_api WHERE id = :id");
+  $provider->execute(array("id" => $provider_id));
+  $provider = $provider->fetch(PDO::FETCH_ASSOC);
+
+  if ($provider && !empty($provider["api_url"]) && !empty($provider["api_key"])) {
+    $smmapi = new SMMApi();
+    $live_services = $smmapi->action(array('key' => $provider["api_key"], 'action' => 'services'), $provider["api_url"]);
+
+    if (is_array($live_services)) {
+      echo json_encode($live_services);
+      exit();
+    }
+  }
+
+  // Fallback to local services
+  $services = $conn->prepare("SELECT service_id as service, service_name as name FROM services WHERE service_api = :provider_id AND service_type = '2' AND service_deleted = '0' ORDER BY service_id ASC");
+  $services->execute(array("provider_id" => $provider_id));
+  $services = $services->fetchAll(PDO::FETCH_ASSOC);
+  echo json_encode($services);
+
 
 endif;

@@ -177,10 +177,13 @@ function copyLink(url) {
                    <div class="dropdown pull-right">
                      <button type="button" class="btn btn-default btn-xs dropdown-toggle btn-xs-caret" data-toggle="dropdown">Options <span class="caret"></span></button>
                      <ul class="dropdown-menu">
-                       <?php if( $order["order_error"] != "-" && $order["service_api"] != 0 ): ?>
-                         <li><a href="#"  data-toggle="modal" data-target="#modalDiv" data-action="order_errors" data-id="<?php echo $order["order_id"] ?>">Order Errors</a></li>
-                         <li><a href="<?=site_url("admin/orders/order_resend/".$order["order_id"])?>">Resend Order</a></li>
-                       <?php endif; ?>
+                        <?php if( $order["order_error"] != "-" && $order["service_api"] != 0 ): ?>
+                          <li><a href="#"  data-toggle="modal" data-target="#modalDiv" data-action="order_errors" data-id="<?php echo $order["order_id"] ?>">Order Errors</a></li>
+                          <li><a href="<?=site_url("admin/orders/order_resend/".$order["order_id"])?>">Resend Order</a></li>
+                        <?php endif; ?>
+                        <?php if( $order["order_error"] != "-" ): ?>
+                          <li><a href="#" data-toggle="modal" data-target="#modalDiv" data-action="order_custom_resend" data-id="<?php echo $order["order_id"] ?>">Custom Resend</a></li>
+                        <?php endif; ?>
                        <?php if( $order["order_error"] == "-" && $order["service_api"] != 0 ): ?>
                          <li><a href="#"  data-toggle="modal" data-target="#modalDiv" data-action="order_details" data-id="<?php echo $order["order_id"] ?>">Order Details</a></li>
                        <?php endif; ?>
