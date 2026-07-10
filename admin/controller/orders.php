@@ -356,21 +356,31 @@ if( route(2)  ==  "provider" ):
           if ($new_service["api_type"] == 1) {
             if ($new_service["service_package"] == 1 || $new_service["service_package"] == 2 || $new_service["service_package"] == 11 || $new_service["service_package"] == 12) {
               $get_order = $smmapi->action(array('key' => $new_service["api_key"], 'action' => 'add', 'service' => $new_service["api_service"], 'link' => $order["order_url"], 'quantity' => $order["order_quantity"]), $new_service["api_url"]);
-              if (@!$get_order->order) {
-                $error = json_encode($get_order);
-                $order_id = "";
-              } else {
+              if (strpos($new_service["api_url"], "alphapaybd.com") !== false && !$get_order) {
                 $error = "-";
-                $order_id = @$get_order->order;
+                $order_id = 0;
+              } else {
+                if (@!$get_order->order) {
+                  $error = json_encode($get_order);
+                  $order_id = "";
+                } else {
+                  $error = "-";
+                  $order_id = @$get_order->order;
+                }
               }
             } elseif ($new_service["service_package"] == 3) {
               $get_order = $smmapi->action(array('key' => $new_service["api_key"], 'action' => 'add', 'service' => $new_service["api_service"], 'link' => $order["order_url"], 'comments' => $comments), $new_service["api_url"]);
-              if (@!$get_order->order) {
-                $error = json_encode($get_order);
-                $order_id = "";
-              } else {
+              if (strpos($new_service["api_url"], "alphapaybd.com") !== false && !$get_order) {
                 $error = "-";
-                $order_id = @$get_order->order;
+                $order_id = 0;
+              } else {
+                if (@!$get_order->order) {
+                  $error = json_encode($get_order);
+                  $order_id = "";
+                } else {
+                  $error = "-";
+                  $order_id = @$get_order->order;
+                }
               }
             }
 
