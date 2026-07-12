@@ -895,44 +895,7 @@
               <div class="tab-content tab_wrap" id="pills-tabContent">
                 <div class="tab-pane fade show active" id="pills-order" role="tabpanel" aria-labelledby="pills-order-tab">
                   <div class="gateway-shell">
-                    <div class="gateway-quick-grid" id="gatewayQuickGrid">
-                      <button type="button" class="gateway-quick-item is-active" data-alias="binance_pay">
-                        <span class="logo" style="background: linear-gradient(135deg, rgba(246, 194, 60, 0.2), rgba(246, 194, 60, 0.08)); color:#f0b90b;">B</span>
-                        <span class="meta"><strong>Binance</strong><span>Quick select</span></span>
-                      </button>
-                      <button type="button" class="gateway-quick-item" data-alias="cryptomus">
-                        <span class="logo" style="background: linear-gradient(135deg, rgba(17, 24, 39, 0.12), rgba(17, 24, 39, 0.04)); color:#111827;">C</span>
-                        <span class="meta"><strong>Cryptomus</strong><span>Quick select</span></span>
-                      </button>
-                      <button type="button" class="gateway-quick-item" data-alias="heleket">
-                        <span class="logo" style="background: linear-gradient(135deg, rgba(255, 57, 57, 0.16), rgba(255, 57, 57, 0.06)); color:#ff3838;">H</span>
-                        <span class="meta"><strong>Heleket</strong><span>Quick select</span></span>
-                      </button>
-                      <button type="button" class="gateway-quick-item" data-alias="bangladesh">
-                        <span class="logo" style="background: linear-gradient(135deg, rgba(0, 168, 89, 0.16), rgba(0, 168, 89, 0.06)); color:#008a4b;">BD</span>
-                        <span class="meta"><strong>BD</strong><span>Quick select</span></span>
-                      </button>
-                      <button type="button" class="gateway-quick-item" data-alias="bkash_nagad_rocket">
-                        <span class="logo" style="background: linear-gradient(135deg, rgba(233, 28, 101, 0.16), rgba(233, 28, 101, 0.06)); color:#e91c65;">Bk</span>
-                        <span class="meta"><strong>BKash</strong><span>Quick select</span></span>
-                      </button>
-                      <button type="button" class="gateway-quick-item" data-alias="phonepe">
-                        <span class="logo" style="background: linear-gradient(135deg, rgba(108, 57, 192, 0.18), rgba(108, 57, 192, 0.06)); color:#6c39c0;">P</span>
-                        <span class="meta"><strong>Phonepe</strong><span>Quick select</span></span>
-                      </button>
-                      <button type="button" class="gateway-quick-item" data-alias="bybit_pay">
-                        <span class="logo" style="background: linear-gradient(135deg, rgba(42, 47, 66, 0.16), rgba(42, 47, 66, 0.06)); color:#2a2f42;">By</span>
-                        <span class="meta"><strong>ByBit</strong><span>Quick select</span></span>
-                      </button>
-                      <button type="button" class="gateway-quick-item" data-alias="gcash_maya">
-                        <span class="logo" style="background: linear-gradient(135deg, rgba(0, 94, 255, 0.16), rgba(0, 94, 255, 0.06)); color:#005eff;">G/M</span>
-                        <span class="meta"><strong>GCash/Maya</strong><span>Quick select</span></span>
-                      </button>
-                      <button type="button" class="gateway-quick-item" data-alias="visa">
-                        <span class="logo" style="background: linear-gradient(135deg, rgba(0, 91, 187, 0.16), rgba(0, 91, 187, 0.06)); color:#005bbb;">V</span>
-                        <span class="meta"><strong>Visa</strong><span>Quick select</span></span>
-                      </button>
-                    </div>
+                    <div class="gateway-quick-grid" id="gatewayQuickGrid"></div>
 
                     <div class="form-group mb-0">
                       <label for="gateway_alias" class="control-label">Method</label>
@@ -1187,17 +1150,18 @@
   var bonusRateRules = {{ site["bonusRatesJSON"]|raw }};
   var globalDollarRate = parseFloat({{ site["dollarRate"] }});
   const addfundsRoute = "/addfunds";
-  const gatewayCatalog = {
-    binance_pay: { label: "Binance Pay [5% Bonus]" },
-    cryptomus: { label: "Cryptomus - USDT | BTC | BCH | ETH | LTC + More [5% Bonus]" },
-    heleket: { label: "Heleket - USDT | BTC | BCH | ETH | LTC + More [5% Bonus]" },
-    bybit_pay: { label: "Bybit Pay - [Auto Pay] - Min 1$ [5% Bonus]" },
-    visa: { label: "Credit Card / Debit Card ~ Visa - Mastercard - Amex [5% Fees Applied]" },
-    bangladesh: { label: "বিকাশ - নগদ - রকেট [ For Bangladeshi User ]" },
-    bkash_nagad_rocket: { label: "বিকাশ / নগদ / রকেট / উপায় + More [ For Bangladeshi User ]" },
-    phonepe: { label: "PhonePe - For Indian User [Auto Pay] - 10% Fees Applied" },
-    gcash_maya: { label: "GCash / Maya / Bank ~ Philippines [Manual] Min 1$" }
-  };
+  const defaultGatewayLogo = "/img/admin/payment-methods.svg";
+  const gatewayTiles = [
+    { alias: "binance_pay", label: "Binance", badge: "B", bg: "linear-gradient(135deg, rgba(246, 194, 60, 0.2), rgba(246, 194, 60, 0.08))", color: "#f0b90b" },
+    { alias: "cryptomus", label: "Cryptomus", badge: "C", bg: "linear-gradient(135deg, rgba(17, 24, 39, 0.12), rgba(17, 24, 39, 0.04))", color: "#111827" },
+    { alias: "heleket", label: "Heleket", badge: "H", bg: "linear-gradient(135deg, rgba(255, 57, 57, 0.16), rgba(255, 57, 57, 0.06))", color: "#ff3838" },
+    { alias: "bangladesh", label: "BD", badge: "BD", bg: "linear-gradient(135deg, rgba(0, 168, 89, 0.16), rgba(0, 168, 89, 0.06))", color: "#008a4b" },
+    { alias: "bkash_nagad_rocket", label: "BKash", badge: "Bk", bg: "linear-gradient(135deg, rgba(233, 28, 101, 0.16), rgba(233, 28, 101, 0.06))", color: "#e91c65" },
+    { alias: "phonepe", label: "Phonepe", badge: "P", bg: "linear-gradient(135deg, rgba(108, 57, 192, 0.18), rgba(108, 57, 192, 0.06))", color: "#6c39c0" },
+    { alias: "bybit_pay", label: "ByBit", badge: "By", bg: "linear-gradient(135deg, rgba(42, 47, 66, 0.16), rgba(42, 47, 66, 0.06))", color: "#2a2f42" },
+    { alias: "gcash_maya", label: "GCash/Maya", badge: "G/M", bg: "linear-gradient(135deg, rgba(0, 94, 255, 0.16), rgba(0, 94, 255, 0.06))", color: "#005eff" },
+    { alias: "visa", label: "Visa", badge: "V", bg: "linear-gradient(135deg, rgba(0, 91, 187, 0.16), rgba(0, 91, 187, 0.06))", color: "#005bbb" }
+  ];
 
   function escapeHtml(value) {
     return $("<div>").text(value == null ? "" : String(value)).html();
@@ -1208,6 +1172,111 @@
       return null;
     }
     return paymentMethods[methodId][0];
+  }
+
+  function getPaymentMethodList() {
+    var methods = [];
+
+    if (!paymentMethods) {
+      return methods;
+    }
+
+    var paymentMethodKeys = Object.keys(paymentMethods);
+    for (var i = 0; i < paymentMethodKeys.length; i++) {
+      var methodData = paymentMethods[paymentMethodKeys[i]] && paymentMethods[paymentMethodKeys[i]][0] ? paymentMethods[paymentMethodKeys[i]][0] : null;
+      if (methodData) {
+        methods.push(methodData);
+      }
+    }
+
+    methods.sort(function (a, b) {
+      var aPosition = parseInt(a.position, 10);
+      var bPosition = parseInt(b.position, 10);
+      if (isNaN(aPosition)) {
+        aPosition = 0;
+      }
+      if (isNaN(bPosition)) {
+        bPosition = 0;
+      }
+
+      if (aPosition !== bPosition) {
+        return aPosition - bPosition;
+      }
+
+      var aId = parseInt(a.id, 10);
+      var bId = parseInt(b.id, 10);
+      if (isNaN(aId)) {
+        aId = 0;
+      }
+      if (isNaN(bId)) {
+        bId = 0;
+      }
+
+      return aId - bId;
+    });
+
+    return methods;
+  }
+
+  function getMethodLogoUrl(methodData) {
+    if (!methodData || !methodData.logo) {
+      return defaultGatewayLogo;
+    }
+
+    if (methodData.logo.indexOf("http://") === 0 || methodData.logo.indexOf("https://") === 0 || methodData.logo.indexOf("/") === 0) {
+      return methodData.logo;
+    }
+
+    return "/" + methodData.logo.replace(/^\/+/, "");
+  }
+
+  function getMethodAlias(methodData) {
+    if (!methodData || !methodData.callback) {
+      return "";
+    }
+
+    return methodData.callback;
+  }
+
+  function findMethodByAlias(aliasKey) {
+    var methods = getPaymentMethodList();
+    for (var i = 0; i < methods.length; i++) {
+      if (getMethodAlias(methods[i]) === aliasKey) {
+        return methods[i];
+      }
+    }
+
+    return null;
+  }
+
+  function getGatewayTileLogo(aliasKey) {
+    var methodData = findMethodByAlias(aliasKey);
+    if (methodData && methodData.logo) {
+      return methodData.logo;
+    }
+
+    return "";
+  }
+
+  function renderGatewayQuickGrid() {
+    var activeAlias = $("#gateway_alias").val() || "binance_pay";
+    var html = "";
+
+    for (var i = 0; i < gatewayTiles.length; i++) {
+      var tile = gatewayTiles[i];
+      var tileLogo = getGatewayTileLogo(tile.alias);
+      var isActive = tile.alias === activeAlias ? " is-active" : "";
+
+      html +=
+        '<button type="button" class="gateway-quick-item' + isActive + '" data-alias="' + escapeHtml(tile.alias) + '" data-method-id="' + escapeHtml(tile.alias) + '">' +
+        '<span class="logo" style="background:' + tile.bg + ';color:' + tile.color + ';">' +
+        (tileLogo ? '<img src="' + escapeHtml(tileLogo) + '" alt="' + escapeHtml(tile.label) + '" style="width:100%;height:100%;object-fit:contain;">' : escapeHtml(tile.badge)) +
+        '</span>' +
+        '<span class="meta"><strong>' + escapeHtml(tile.label) + '</strong><span>Quick select</span></span>' +
+        '</button>';
+    }
+
+    $("#gatewayQuickGrid").html(html);
   }
 
   function isMethodBonusEnabled(methodData) {
@@ -1327,18 +1396,20 @@
     return isMethodBonusEnabled(methodData) ? "On" : "Off";
   }
 
-  function setActiveGateway(aliasKey) {
+  function setActiveGateway(methodId) {
     $("#gatewayQuickGrid .gateway-quick-item").removeClass("is-active");
-    $("#gatewayQuickGrid .gateway-quick-item[data-alias='" + aliasKey + "']").addClass("is-active");
+    $("#gatewayQuickGrid .gateway-quick-item[data-alias='" + methodId + "']").addClass("is-active");
   }
 
-  function syncAliasSelection(aliasKey) {
-    if (!gatewayCatalog[aliasKey]) {
-      aliasKey = "binance_pay";
+  function syncGatewaySelection(aliasKey) {
+    var methodData = findMethodByAlias(aliasKey);
+    if (methodData) {
+      $("#payment_type").val(methodData.id);
     }
 
-    $("#gateway_alias").val(aliasKey);
-    setActiveGateway(aliasKey);
+    $("#gateway_alias").val(aliasKey || "binance_pay");
+    setActiveGateway(aliasKey || "binance_pay");
+    renderGatewayQuickGrid();
   }
 
   function isLocalGateway(aliasKey) {
@@ -1447,6 +1518,7 @@
           }
           $("#addfunds_fields").html(bonusRatesMarkup + methodInstruction + json.content);
           extraFeeInit(selectedMethod);
+          renderGatewayQuickGrid();
           syncCurrencyConverter();
         }
       }
@@ -1478,15 +1550,17 @@
 
   $(document).ready(function () {
     if (!$("#payment_type").val() || $("#payment_type").val() === "0") {
-      var methodKeys = paymentMethods ? Object.keys(paymentMethods) : [];
-      if (paymentMethods && paymentMethods["42"]) {
-        $("#payment_type").val("42");
-      } else if (methodKeys.length) {
-        $("#payment_type").val(methodKeys[0]);
+      var defaultMethod = getPaymentMethodList()[0] || null;
+      if (defaultMethod) {
+        $("#payment_type").val(defaultMethod.id);
+        if (defaultMethod.callback) {
+          $("#gateway_alias").val(defaultMethod.callback);
+        }
       }
     }
 
-    syncAliasSelection($("#gateway_alias").val() || "binance_pay");
+    renderGatewayQuickGrid();
+    setActiveGateway($("#gateway_alias").val() || "binance_pay");
     syncCurrencyConverter();
 
     $(document).on("click", "#usdQuickSelect button", function () {
@@ -1496,9 +1570,8 @@
     });
 
     $(document).on("click", "#gatewayQuickGrid .gateway-quick-item", function () {
-      var aliasKey = $(this).data("alias");
-      syncAliasSelection(aliasKey);
-      $("#gateway_alias").trigger("change");
+      syncGatewaySelection($(this).data("alias"));
+      addfundsInit();
     });
 
     $(document).on("input", "#usdAmount", function () {
@@ -1547,6 +1620,8 @@
     });
 
     $("#gateway_alias").change(function () {
+      var aliasKey = $(this).val();
+      syncGatewaySelection(aliasKey);
       syncCurrencyConverter();
     });
 

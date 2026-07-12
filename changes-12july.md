@@ -11,6 +11,9 @@
 - Fixed the `payment-bonuses` page queries to use the live `paymentmethods` table instead of the missing `payment_methods` name.
 - Added a hosting migration helper to create the required DB columns and bonus tables safely on environments that are missing them.
 - Added a per-payment-method bonus enable/disable setting in the payment method editor so admins can turn bonuses on for gateways like bKash and off for gateways like Binance.
+- Added per-payment-method icon selection in the payment method editor so admins can pick uploaded files or upload a new icon there.
+- Restored individual gateway icons on the add-funds page and filtered the user-facing list to show only enabled payment gateways.
+- Fixed the international add-funds flow so the amount input stays visible while only the dollar conversion box hides.
 
 ## Updated Payment Labels
 
@@ -25,6 +28,7 @@
 - Hid the BDT converter unless a local gateway alias like BD, Bkash, Nagad, Rocket, Upay, PhonePe, GCash, or Maya is selected.
 - Added a new admin Rates page for the dollar rate and range-based bonus tiers, and wired add-funds to use those live settings.
 - Changed the user-side collapsed Bonus Rates panel to show the bonus on/off state for each payment method.
+- Added the payment method icon preview and upload handling to the admin editor so gateway logos can be assigned from uploaded media.
 
 ## Notes
 
@@ -40,10 +44,14 @@ Feature Name	File Name	Line Start	Line End	Function Name	Type	Comments	Descripti
 Client Ref Code Fix	admin/controller/clients.php	196	215	Create client with ref_code	Modify	Strict insert fix	Generated missing ref_code before inserting new client records	clients	:-	:-
 Alphapay Payment Insert Fix	app/controller/addfunds/Initiators/alphapaybd.php	15	38	alphapaybd gateway insert	Modify	Strict insert fix	Added payment_update_date and payment_bank to the Alphapay payment insert	payments	:-	:-
 Add Funds Gateway Routing	app/controller/addfunds.php	21	195	GET/POST addfunds flow	Modify	Gateway loader + payment routing	Loaded active methods, payment history, and routed supported gateways	addfunds, paymentmethods, payments	:-	:-
+Payment Method Icon Picker	admin/controller/settings/paymentMethods/getForm.php	1	40	Icon selection and upload	Modify	Admin method editor	Added per-method icon selection from uploaded files plus manual upload support	paymentmethods	:-	:-
+Enabled Gateway Filter	app/controller/addfunds.php	21	195	Active gateway list	Modify	User add-funds flow	Filtered the add-funds gateway list so only enabled payment methods appear	paymentmethods, addfunds	:-	:-
 Add Funds UI Rework	app/views/N1RentalPanel/addfunds.twig	772	853	Add Fund layout swap	Modify	UI section swap	Hid the old How to Add Money block and moved Add Fund Policy into that space	addfunds page	:-	:-
 Add Funds Quick Select	app/views/N1RentalPanel/addfunds.twig	530	739	Gateway quick tiles and converter	Modify	UI enhancement	Added eye-wash style quick select tiles, USD to BDT converter, and gateway alias dropdown	addfunds page, paymentmethods	:-	:-
 Add Funds Bonus Ladder	app/views/N1RentalPanel/addfunds.twig	685	1126	USD bonus calculator	Modify	UI update	Added tiered bonus handling and changed `Total you get` to display USD	addfunds page	:-	:-
+Add Funds Icon Restore	app/views/N1RentalPanel/addfunds.twig	898	980	Gateway quick icons	Modify	UI restoration	Restored the individual gateway icons in the add-funds quick selector	addfunds page, paymentmethods	:-	:-
 Local Converter Visibility	app/views/N1RentalPanel/addfunds.twig	1171	1360	Local payment converter toggle	Modify	UI behavior	Shows the BDT converter only for local payment gateways and keeps it hidden for other methods	addfunds page	:-	:-
+International Amount Input	app/views/N1RentalPanel/addfunds.twig	960	990	Converter visibility	Modify	UI fix	Kept the amount input visible for international gateways and hid only the conversion panel	addfunds page	:-	:-
 Rates Settings	admin/controller/settings.php	697	819	Rates page CRUD	Modify	Admin configuration	Adds the new Rates admin route for dollar rate updates and range-based bonus rule CRUD	rates, settings, rates_bonus_rules	:-	:-
 Rates Redirect Flow	admin/controller/settings.php	697	819	POST redirect handling	Modify	Admin form behavior	Redirects Rates dollar, add, edit, and delete actions back to the Rates page instead of echoing JSON	rates, settings, rates_bonus_rules	:-	:-
 Payments Bonus Table	netfollo_growthgalaxy.sql	1608	1622	New legacy table	New	Schema restore	Added the missing `payments_bonus` table so the payment-bonuses admin page can load again	payments_bonus	:-	:-

@@ -5,6 +5,57 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         $paymentMethods->execute();
         $paymentMethods = $paymentMethods->fetchAll(PDO::FETCH_ASSOC);
         $defaultMethodLogo = site_url("img/admin/payment-methods.svg");
+        $cachePaymentMethodLogo = function ($logo) {
+            $logo = trim((string) $logo);
+            if ($logo === "") {
+                return "";
+            }
+
+            if (!preg_match('#^https?://#i', $logo)) {
+                return $logo;
+            }
+
+            $cacheDir = $_SERVER["DOCUMENT_ROOT"] . "/img/files/payment-method-logos";
+            if (!is_dir($cacheDir)) {
+                @mkdir($cacheDir, 0775, true);
+            }
+
+            $parsedUrl = parse_url($logo);
+            $extension = "png";
+            if (!empty($parsedUrl["path"])) {
+                $pathInfo = pathinfo($parsedUrl["path"]);
+                if (!empty($pathInfo["extension"]) && preg_match('/^[a-z0-9]+$/i', $pathInfo["extension"])) {
+                    $extension = strtolower($pathInfo["extension"]);
+                }
+            }
+
+            $cacheFileName = md5($logo) . "." . $extension;
+            $cacheFilePath = $cacheDir . "/" . $cacheFileName;
+            $cacheWebPath = "/img/files/payment-method-logos/" . $cacheFileName;
+
+            if (!file_exists($cacheFilePath)) {
+                $remoteData = @file_get_contents($logo);
+                if ($remoteData !== false && $remoteData !== "") {
+                    @file_put_contents($cacheFilePath, $remoteData);
+                } else {
+                    return $logo;
+                }
+            }
+
+            return $cacheWebPath;
+        };
+        $normalizeMethodLogo = function ($logo) use ($cachePaymentMethodLogo) {
+            $logo = trim((string) $logo);
+            if ($logo === "") {
+                return site_url("img/admin/payment-methods.svg");
+            }
+
+            if (preg_match('#^https?://#i', $logo) || strpos($logo, "/") === 0) {
+                return $cachePaymentMethodLogo($logo);
+            }
+
+            return site_url(ltrim($logo, "/"));
+        };
         $methods = [];
         for ($i = 0; $i < count($paymentMethods); $i++) {
             $methodLogo = trim((string) $paymentMethods[$i]["methodLogo"]);
@@ -13,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             $methods[] = [
                 "id" => $paymentMethods[$i]["methodId"],
                 "name" => $paymentMethods[$i]["methodVisibleName"],
-                "logo" => $methodLogo !== "" ? $methodLogo : $defaultMethodLogo,
+                "logo" => $normalizeMethodLogo($methodLogo !== "" ? $methodLogo : $defaultMethodLogo),
                 "min" => $paymentMethods[$i]["methodMin"],
                 "max" => $paymentMethods[$i]["methodMax"],
                 "status" => $paymentMethods[$i]["methodStatus"],

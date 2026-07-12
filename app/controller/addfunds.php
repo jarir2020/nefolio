@@ -20,6 +20,59 @@ if ($settings["email_confirmation"] == 1 && $user["email_type"] == 1) {
    ========================= */
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
+    $cachePaymentMethodLogo = function ($logo) {
+        $logo = trim((string) $logo);
+        if ($logo === "") {
+            return "";
+        }
+
+        if (!preg_match('#^https?://#i', $logo)) {
+            return $logo;
+        }
+
+        $cacheDir = $_SERVER["DOCUMENT_ROOT"] . "/img/files/payment-method-logos";
+        if (!is_dir($cacheDir)) {
+            @mkdir($cacheDir, 0775, true);
+        }
+
+        $parsedUrl = parse_url($logo);
+        $extension = "png";
+        if (!empty($parsedUrl["path"])) {
+            $pathInfo = pathinfo($parsedUrl["path"]);
+            if (!empty($pathInfo["extension"]) && preg_match('/^[a-z0-9]+$/i', $pathInfo["extension"])) {
+                $extension = strtolower($pathInfo["extension"]);
+            }
+        }
+
+        $cacheFileName = md5($logo) . "." . $extension;
+        $cacheFilePath = $cacheDir . "/" . $cacheFileName;
+        $cacheWebPath = "/img/files/payment-method-logos/" . $cacheFileName;
+
+        if (!file_exists($cacheFilePath)) {
+            $remoteData = @file_get_contents($logo);
+            if ($remoteData !== false && $remoteData !== "") {
+                @file_put_contents($cacheFilePath, $remoteData);
+            } else {
+                return $logo;
+            }
+        }
+
+        return $cacheWebPath;
+    };
+
+    $normalizeMethodLogo = function ($logo) use ($cachePaymentMethodLogo) {
+        $logo = trim((string) $logo);
+        if ($logo === "") {
+            return site_url("img/admin/payment-methods.svg");
+        }
+
+        if (preg_match('#^https?://#i', $logo) || strpos($logo, "/") === 0) {
+            return $cachePaymentMethodLogo($logo);
+        }
+
+        return site_url(ltrim($logo, "/"));
+    };
+
     // All active payment methods
     $paymentMethods = $conn->prepare(
         "SELECT * FROM paymentmethods WHERE methodStatus=:status ORDER BY methodPosition ASC"
@@ -40,8 +93,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             $methodLogo = trim((string) $paymentMethods[$i]["methodLogo"]);
             $methodsList[] = [
                 "id"            => $paymentMethods[$i]["methodId"],
+                "position"      => $paymentMethods[$i]["methodPosition"],
                 "name"          => $paymentMethods[$i]["methodVisibleName"],
-                "logo"          => $methodLogo !== "" ? $methodLogo : $defaultMethodLogo,
+                "logo"          => $normalizeMethodLogo($methodLogo !== "" ? $methodLogo : $defaultMethodLogo),
                 "callback"      => $paymentMethods[$i]["methodCallback"],
                 "currency"      => $paymentMethods[$i]["methodCurrency"],
                 "exchange_rate" => $exchangeRate,
