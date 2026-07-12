@@ -794,6 +794,10 @@
                 class="img-responsive nav-li-href-logo" height="30" width="30"
                 src="<?php echo site_url("img/admin/payment-methods.svg"); ?>"> Payment Methods</a>
 
+            <a class="nav-link <?php if(route(2) == "rates"){echo "active";}?>" href="<?php echo site_url("admin/settings/rates"); ?>"><img
+                class="img-responsive nav-li-href-logo" height="30" width="30"
+                src="<?php echo site_url("img/admin/Site-currency-settings.svg"); ?>"> Rates</a>
+
             <a class="nav-link" href="<?php echo site_url("admin/settings/modules"); ?>"><img
                 class="img-responsive nav-li-href-logo" height="30" width="30"
                 src="<?php echo site_url("img/admin/modules.svg"); ?>"> Modules</a>

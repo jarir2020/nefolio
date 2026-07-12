@@ -547,6 +547,29 @@ if (route(0) != "admin" && route(0) != "ajax_data") {
 
 
 
+    $bonusRatesList = [];
+    try {
+      $bonusRates = $conn->prepare("SELECT range_from, range_to, bonus_percent FROM rates_bonus_rules WHERE is_active=1 ORDER BY range_from ASC, id ASC");
+      $bonusRates->execute();
+      $bonusRatesList = $bonusRates->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+      $bonusRatesList = [];
+    }
+
+    if (!count($bonusRatesList)) {
+      $bonusRatesList = [
+        ["range_from" => 0, "range_to" => 99, "bonus_percent" => 0],
+        ["range_from" => 100, "range_to" => 999, "bonus_percent" => 3],
+        ["range_from" => 1000, "range_to" => 4999, "bonus_percent" => 5],
+        ["range_from" => 5000, "range_to" => 9999, "bonus_percent" => 7],
+        ["range_from" => 10000, "range_to" => 49999, "bonus_percent" => 8],
+        ["range_from" => 50000, "range_to" => null, "bonus_percent" => 20],
+      ];
+    }
+
+    $bonusRatesJSON = json_encode($bonusRatesList, JSON_UNESCAPED_UNICODE);
+    $dollarRate = isset($settings["dolar_charge"]) && $settings["dolar_charge"] > 0 ? $settings["dolar_charge"] : 132;
+
     echo $twig->render(
       $templateDir . '.twig',
       [
@@ -573,6 +596,8 @@ if (route(0) != "admin" && route(0) != "ajax_data") {
           "popup" => $settings["popup"],
           "paymentMethods" => $methodsList,
           "paymentMethodsJSON" => $paymentMethodsJSON,
+          "bonusRatesJSON" => $bonusRatesJSON,
+          "dollarRate" => $dollarRate,
           "panelTotalOrders" => $settings["panel_orders"]
         ],
         "category_html" => $category_html,

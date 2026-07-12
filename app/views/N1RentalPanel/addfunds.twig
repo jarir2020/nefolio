@@ -1,280 +1,1434 @@
 {% include 'header.twig' %}
 <style>
-    .dashboard .btn-primary{
-        width:100%;
+  .addfunds-shell {
+    padding: 24px 0 40px;
+    background:
+      radial-gradient(circle at top left, rgba(255, 164, 0, 0.18), transparent 28%),
+      radial-gradient(circle at top right, rgba(42, 42, 114, 0.14), transparent 26%),
+      linear-gradient(180deg, #f6f8fc 0%, #eef2f7 100%);
+  }
+
+  .card_v2 {
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 24px;
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+  }
+
+  .tutorial-card .card-body,
+  .gateway-card .card-body,
+  .policy-card .card-body,
+  .main-card .card-body {
+    padding: 24px;
+  }
+
+  .section-title {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .section-title .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #6b7280;
+    font-weight: 700;
+  }
+
+  .section-title h2,
+  .section-title h3 {
+    margin: 0;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  .title-line {
+    width: 88px;
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #ff9f1c, #2a2a72);
+  }
+
+  .lead-copy {
+    color: #475569;
+    line-height: 1.8;
+    margin-bottom: 18px;
+  }
+
+  .support-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(42, 42, 114, 0.08), rgba(255, 164, 0, 0.08));
+    border: 1px solid rgba(42, 42, 114, 0.12);
+    color: #1e293b;
+    margin-bottom: 18px;
+  }
+
+  .support-alert i {
+    color: #2a2a72;
+    margin-top: 2px;
+    font-size: 18px;
+  }
+
+  .premium-balance-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    padding: 18px 20px;
+    background: linear-gradient(135deg, #0f172a 0%, #2a2a72 55%, #ff9f1c 130%);
+    color: #fff;
+    margin-bottom: 18px;
+    min-height: 126px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .premium-balance-card::after {
+    content: "";
+    position: absolute;
+    inset: auto -30px -30px auto;
+    width: 180px;
+    height: 180px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+  }
+
+  .balance-copy .label {
+    display: inline-block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    opacity: 0.82;
+    margin-bottom: 8px;
+  }
+
+  .balance-copy .amount {
+    margin: 0;
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .balance-copy .subline {
+    margin-top: 6px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 14px;
+  }
+
+  .balance-icon {
+    width: 74px;
+    height: 74px;
+    display: grid;
+    place-items: center;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+    font-size: 30px;
+    z-index: 1;
+    position: relative;
+    flex: 0 0 auto;
+  }
+
+  .video-frame {
+    border-radius: 20px;
+    overflow: hidden;
+    min-height: 260px;
+    background:
+      linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(42, 42, 114, 0.9)),
+      radial-gradient(circle at top right, rgba(255, 164, 0, 0.55), transparent 34%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .video-frame::before {
+    content: "";
+    position: absolute;
+    inset: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+  }
+
+  .video-copy {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: #fff;
+    max-width: 320px;
+    padding: 24px;
+  }
+
+  .video-play {
+    width: 82px;
+    height: 82px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, #ff9f1c, #f97316);
+    box-shadow: 0 18px 35px rgba(249, 115, 22, 0.35);
+    font-size: 30px;
+  }
+
+  .video-copy h4 {
+    margin: 0 0 8px;
+    font-weight: 800;
+  }
+
+  .video-copy p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.82);
+    line-height: 1.7;
+  }
+
+  .tab_btn_wrap {
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .tab_btn_wrap .nav-link {
+    border: 0;
+    border-radius: 999px;
+    padding: 12px 18px;
+    background: #eef2f7;
+    color: #0f172a;
+    font-weight: 700;
+    box-shadow: none;
+  }
+
+  .tab_btn_wrap .nav-link.active {
+    background: linear-gradient(135deg, #2a2a72, #ff9f1c);
+    color: #fff;
+    box-shadow: 0 12px 24px rgba(42, 42, 114, 0.22);
+  }
+
+  .tab_wrap {
+    padding-top: 18px;
+  }
+
+  .gateway-shell {
+    display: grid;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  .gateway-quick-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .gateway-quick-item {
+    width: 100%;
+    min-height: 86px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    border-radius: 20px;
+    background:
+      linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+    transition:
+      transform 0.18s ease,
+      box-shadow 0.18s ease,
+      border-color 0.18s ease,
+      background 0.18s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
+  }
+
+  .gateway-quick-item:hover,
+  .gateway-quick-item.is-active {
+    border-color: rgba(96, 47, 255, 0.28);
+    box-shadow: 0 16px 30px rgba(96, 47, 255, 0.12);
+    transform: translateY(-2px);
+    background:
+      linear-gradient(180deg, #f5efff 0%, #ffffff 100%);
+  }
+
+  .gateway-quick-item .logo {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    object-fit: contain;
+    background: #f8fafc;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.06);
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  .gateway-quick-item .meta {
+    min-width: 0;
+  }
+
+  .gateway-quick-item .meta strong {
+    display: block;
+    color: #0f172a;
+    font-size: 15px;
+    line-height: 1.2;
+    font-weight: 800;
+  }
+
+  .gateway-quick-item .meta span {
+    display: none;
+  }
+
+  .converter-panel {
+    margin-bottom: 18px;
+    padding: 18px;
+    border-radius: 22px;
+    background:
+      linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.05);
+  }
+
+  .converter-panel .converter-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .converter-panel .converter-head h4 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  .converter-panel .rate-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: #fff;
+    color: #2a2a72;
+    font-weight: 700;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+    white-space: nowrap;
+  }
+
+  .quick-amounts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .quick-amounts button {
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    background: #fff;
+    color: #1e293b;
+    border-radius: 14px;
+    min-width: 58px;
+    height: 46px;
+    padding: 0 14px;
+    font-weight: 700;
+    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+    transition: all 0.18s ease;
+  }
+
+  .quick-amounts button:hover,
+  .quick-amounts button.is-active {
+    background: linear-gradient(135deg, #6734f6, #8d55ff);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 14px 24px rgba(103, 52, 246, 0.22);
+  }
+
+  .converter-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 14px;
+    align-items: end;
+  }
+
+  .converter-grid .swap-icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: #fff;
+    color: #2a2a72;
+    font-size: 18px;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+    margin-bottom: 2px;
+  }
+
+  .converter-grid .form-control[readonly] {
+    background: #edf5ff;
+    cursor: not-allowed;
+  }
+
+  .rate-summary {
+    margin-top: 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .rate-summary .copy {
+    display: grid;
+    gap: 4px;
+  }
+
+  .rate-summary .copy .eyebrow {
+    color: #64748b;
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  .rate-summary .copy .value {
+    color: #0f172a;
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .rate-summary .badge-note {
+    flex: 0 0 auto;
+    border-radius: 14px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, rgba(103, 52, 246, 0.1), rgba(103, 52, 246, 0.16));
+    color: #4c1d95;
+    font-weight: 800;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .rate-summary .breakdown-note {
+    flex: 0 0 100%;
+    margin-top: 2px;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: left;
+  }
+
+  .pay-action {
+    margin-top: 18px;
+    border: 0;
+    min-height: 56px;
+    border-radius: 14px;
+    background: linear-gradient(90deg, #5b25ef 0%, #19b5d8 100%);
+    font-size: 17px;
+    font-weight: 800;
+    box-shadow: 0 18px 34px rgba(25, 181, 216, 0.2);
+  }
+
+  .pay-action:hover,
+  .pay-action:focus,
+  .pay-action:active {
+    background: linear-gradient(90deg, #5b25ef 0%, #19b5d8 100%) !important;
+    border: 0 !important;
+    box-shadow: 0 18px 34px rgba(25, 181, 216, 0.2) !important;
+  }
+
+  .form-control,
+  .form-select {
+    min-height: 48px;
+    border-radius: 14px;
+    border-color: rgba(15, 23, 42, 0.12);
+    box-shadow: none !important;
+  }
+
+  #addfunds_fields .form-group + .form-group {
+    margin-top: 14px;
+  }
+
+  .method-box {
+    margin-top: 14px;
+    border-radius: 16px;
+    background: #f8fafc;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    padding: 16px;
+  }
+
+  .method-box .panel-body {
+    color: #334155;
+    line-height: 1.75;
+    word-break: break-word;
+  }
+
+  .fee-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .history-table {
+    overflow-x: auto;
+  }
+
+  .history-table table {
+    margin-bottom: 0;
+  }
+
+  .history-table thead th {
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    color: #dc2626;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .history-table tbody td {
+    vertical-align: middle;
+    white-space: nowrap;
+    color: #334155;
+  }
+
+  .info-card .card-header,
+  .policy-card .card-header {
+    background: linear-gradient(135deg, #0f172a, #2a2a72);
+    color: #fff;
+    border-bottom: 0;
+    padding: 18px 24px;
+  }
+
+  .header-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 800;
+  }
+
+  .header-title .icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.12);
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+  }
+
+  .gateway-copy {
+    color: #475569;
+    line-height: 1.85;
+  }
+
+  .policy-card ul {
+    padding-left: 20px;
+    margin: 0;
+    color: #334155;
+    line-height: 1.8;
+  }
+
+  .policy-card li + li {
+    margin-top: 8px;
+  }
+
+  .content-stack {
+    display: grid;
+    gap: 22px;
+  }
+
+  .floating-support {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 9999;
+  }
+
+  .floating-support a {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, #25d366, #128c7e);
+    color: #fff;
+    box-shadow: 0 16px 30px rgba(18, 140, 126, 0.35);
+    text-decoration: none;
+    font-size: 28px;
+  }
+
+  @media (max-width: 991px) {
+    .gateway-quick-grid,
+    .converter-grid {
+      grid-template-columns: 1fr;
     }
+
+    .converter-panel .converter-head,
+    .rate-summary {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .premium-balance-card {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .balance-icon {
+      width: 62px;
+      height: 62px;
+      font-size: 26px;
+    }
+
+    .fee-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .addfunds-shell {
+      padding: 14px 0 28px;
+    }
+
+    .main-card .card-body,
+    .policy-card .card-body,
+    .tutorial-card .card-body,
+    .gateway-card .card-body {
+      padding: 14px;
+    }
+
+    .tab_btn_wrap {
+      gap: 8px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .tab_btn_wrap .nav-link {
+      padding: 9px 14px;
+      font-size: 14px;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    .gateway-shell {
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .gateway-quick-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .gateway-quick-item {
+      min-height: 46px;
+      padding: 8px 0;
+      justify-content: center;
+      border-radius: 14px;
+    }
+
+    .gateway-quick-item .logo {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+
+    .gateway-quick-item .meta {
+      display: none;
+    }
+
+    .form-group > label,
+    .control-label {
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .form-control,
+    .form-select {
+      min-height: 44px;
+      border-radius: 12px;
+    }
+
+    .converter-panel {
+      padding: 14px;
+      border-radius: 18px;
+      margin-bottom: 14px;
+    }
+
+    .converter-panel .converter-head h4 {
+      font-size: 15px;
+    }
+
+    .converter-panel .rate-badge {
+      padding: 7px 10px;
+      font-size: 12px;
+    }
+
+    .quick-amounts {
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .quick-amounts button {
+      min-width: 48px;
+      height: 40px;
+      padding: 0 10px;
+      border-radius: 12px;
+      font-size: 13px;
+    }
+
+    .converter-grid {
+      gap: 10px;
+    }
+
+    .converter-grid .swap-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      font-size: 16px;
+      align-self: center;
+      margin-bottom: 0;
+    }
+
+    .rate-summary {
+      padding: 14px;
+      gap: 10px;
+    }
+
+    .rate-summary .copy .value {
+      font-size: 26px;
+    }
+
+    .rate-summary .badge-note {
+      width: 100%;
+      font-size: 13px;
+      padding: 10px 12px;
+    }
+
+    .rate-summary .breakdown-note {
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .pay-action {
+      min-height: 50px;
+      font-size: 16px;
+      margin-top: 14px;
+      border-radius: 12px;
+    }
+
+    .method-box {
+      padding: 14px;
+      border-radius: 14px;
+    }
+
+    .policy-card {
+      display: none;
+    }
+
+    .content-stack {
+      gap: 16px;
+    }
+  }
 </style>
 
-<div class="content">
-        <!-- page and other top info -->
-        <div id="page_info">
-
-        </div>
-        <!-- // page and other top info -->
-        <!-- New Orders Part -->
-<div class="def_wraper">
+  <div class="addfunds-shell">
   <div class="container-fluid">
-      <div class="row">
-          <div class="col-md-6">
-              
-							
-									    
-									    <div class="card card_v2">
-                  <div class="card-body">
-                      <div id="newOrderTabsWrap">
-                          <ul class="nav nav-pills tab_btn_wrap mb-3" id="pills-tab" role="tablist">
-                                                            <li class="nav-item" role="presentation">
-                                  <button class="nav-link active" id="pills-order-tab" data-bs-toggle="pill"
-                                      data-bs-target="#pills-order" type="button" role="tab"
-                                      aria-controls="pills-order" aria-selected="true"><i
-                                          class="far fa-credit-card"></i> Add Fund</button>
-                              </li>
-                                                         <!------   <li class="nav-item" role="presentation">
-                                  <button class="nav-link" id="pills-favorite-tab" data-bs-toggle="pill"
-                                      data-bs-target="#pills-favorite" type="button" role="tab"
-                                      aria-controls="pills-favorite" aria-selected="false"> <i
-                                          class="fas fa-redo-alt"></i> Fund History</button>
-                              </li>---------->
-                          </ul>
-                      </div>
-                      <div class="tab-content tab_wrap" id="pills-tabContent">
-                                                    <div class="tab-pane fade show active" id="pills-order" role="tabpanel"
-                              aria-labelledby="pills-order-tab">
-										
+    <div class="content-stack">
+      <div class="row g-4">
+        <div class="col-lg-7">
+          <div class="card_v2 main-card h-100">
+            <div class="card-body">
+              <div id="newOrderTabsWrap">
+                <ul class="nav nav-pills tab_btn_wrap mb-0" id="pills-tab" role="tablist">
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pills-order-tab" data-bs-toggle="pill" data-bs-target="#pills-order" type="button" role="tab" aria-controls="pills-order" aria-selected="true">
+                      <i class="far fa-credit-card"></i> Add Fund
+                    </button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-favorite-tab" data-bs-toggle="pill" data-bs-target="#pills-favorite" type="button" role="tab" aria-controls="pills-favorite" aria-selected="false">
+                      <i class="fas fa-history"></i> Fund History
+                    </button>
+                  </li>
+                </ul>
+              </div>
 
+              <div class="tab-content tab_wrap" id="pills-tabContent">
+                <div class="tab-pane fade show active" id="pills-order" role="tabpanel" aria-labelledby="pills-order-tab">
+                  <div class="gateway-shell">
+                    <div class="gateway-quick-grid" id="gatewayQuickGrid">
+                      <button type="button" class="gateway-quick-item is-active" data-alias="binance_pay">
+                        <span class="logo" style="background: linear-gradient(135deg, rgba(246, 194, 60, 0.2), rgba(246, 194, 60, 0.08)); color:#f0b90b;">B</span>
+                        <span class="meta"><strong>Binance</strong><span>Quick select</span></span>
+                      </button>
+                      <button type="button" class="gateway-quick-item" data-alias="cryptomus">
+                        <span class="logo" style="background: linear-gradient(135deg, rgba(17, 24, 39, 0.12), rgba(17, 24, 39, 0.04)); color:#111827;">C</span>
+                        <span class="meta"><strong>Cryptomus</strong><span>Quick select</span></span>
+                      </button>
+                      <button type="button" class="gateway-quick-item" data-alias="heleket">
+                        <span class="logo" style="background: linear-gradient(135deg, rgba(255, 57, 57, 0.16), rgba(255, 57, 57, 0.06)); color:#ff3838;">H</span>
+                        <span class="meta"><strong>Heleket</strong><span>Quick select</span></span>
+                      </button>
+                      <button type="button" class="gateway-quick-item" data-alias="bangladesh">
+                        <span class="logo" style="background: linear-gradient(135deg, rgba(0, 168, 89, 0.16), rgba(0, 168, 89, 0.06)); color:#008a4b;">BD</span>
+                        <span class="meta"><strong>BD</strong><span>Quick select</span></span>
+                      </button>
+                      <button type="button" class="gateway-quick-item" data-alias="bkash_nagad_rocket">
+                        <span class="logo" style="background: linear-gradient(135deg, rgba(233, 28, 101, 0.16), rgba(233, 28, 101, 0.06)); color:#e91c65;">Bk</span>
+                        <span class="meta"><strong>BKash</strong><span>Quick select</span></span>
+                      </button>
+                      <button type="button" class="gateway-quick-item" data-alias="phonepe">
+                        <span class="logo" style="background: linear-gradient(135deg, rgba(108, 57, 192, 0.18), rgba(108, 57, 192, 0.06)); color:#6c39c0;">P</span>
+                        <span class="meta"><strong>Phonepe</strong><span>Quick select</span></span>
+                      </button>
+                      <button type="button" class="gateway-quick-item" data-alias="bybit_pay">
+                        <span class="logo" style="background: linear-gradient(135deg, rgba(42, 47, 66, 0.16), rgba(42, 47, 66, 0.06)); color:#2a2f42;">By</span>
+                        <span class="meta"><strong>ByBit</strong><span>Quick select</span></span>
+                      </button>
+                      <button type="button" class="gateway-quick-item" data-alias="gcash_maya">
+                        <span class="logo" style="background: linear-gradient(135deg, rgba(0, 94, 255, 0.16), rgba(0, 94, 255, 0.06)); color:#005eff;">G/M</span>
+                        <span class="meta"><strong>GCash/Maya</strong><span>Quick select</span></span>
+                      </button>
+                      <button type="button" class="gateway-quick-item" data-alias="visa">
+                        <span class="logo" style="background: linear-gradient(135deg, rgba(0, 91, 187, 0.16), rgba(0, 91, 187, 0.06)); color:#005bbb;">V</span>
+                        <span class="meta"><strong>Visa</strong><span>Quick select</span></span>
+                      </button>
+                    </div>
 
-										<form method="post" id="addfundsForm" action="/addfunds">
+                    <div class="form-group mb-0">
+                      <label for="gateway_alias" class="control-label">Method</label>
+                      <select class="form-control" id="gateway_alias" name="gateway_alias">
+                        <optgroup label="Crypto Payment">
+                          <option value="binance_pay">Binance Pay [5% Bonus]</option>
+                          <option value="cryptomus">Cryptomus - USDT | BTC | BCH | ETH | LTC + More [5% Bonus]</option>
+                          <option value="heleket">Heleket - USDT | BTC | BCH | ETH | LTC + More [5% Bonus]</option>
+                          <option value="bybit_pay">Bybit Pay - [Auto Pay] - Min 1$ [5% Bonus]</option>
+                        </optgroup>
+                        <optgroup label="Card Payment">
+                          <option value="visa">Credit Card / Debit Card ~ Visa - Mastercard - Amex [5% Fees Applied]</option>
+                        </optgroup>
+                        <optgroup label="Local Payment">
+                          <option value="bangladesh">বিকাশ - নগদ - রকেট [ For Bangladeshi User ]</option>
+                          <option value="bkash_nagad_rocket">বিকাশ / নগদ / রকেট / উপায় + More [ For Bangladeshi User ]</option>
+                          <option value="phonepe">PhonePe - For Indian User [Auto Pay] - 10% Fees Applied</option>
+                          <option value="gcash_maya">GCash / Maya / Bank ~ Philippines [Manual] Min 1$</option>
+                        </optgroup>
+                      </select>
+                    </div>
+                  </div>
 
-											<div class="form-group">
-												<label for="method" class="control-label">{{ lang['addfunds.method'] }}</label>
-												<select class="form-control" id="payment_method" name="payment_type">
-													{% for method in site["paymentMethods"] %}
-														<option value="{{ method['id'] }}">{{ method['name'] }}</option>
-													{% endfor %}
-												</select>
-											</div>
-											<div id="addfunds_fields"></div>
-										</form>
-										<div id="formSubmitResponseMessage"></div>
-										<div id="formSubmitResponseContent"></div>
-									</div>
-								</div>
-							</div>
-						</div>
-					
-					 </div>
-					 <div class="col-md-6">
-             <div class="card card_v2">
-                <div class="card-header v2_header">
-                  <div id="def_side_title">
-                      <div class="icon">
-                        <i class="fas fa-comment-dots"></i>
+                  <form method="post" id="addfundsForm" action="/addfunds">
+                    <input type="hidden" id="payment_type" name="payment_type" value="0">
+
+                    <div id="addfunds_fields"></div>
+
+                    <div class="converter-panel" id="currencyConverterWrap" style="display:none;">
+                      <div class="converter-head">
+                        <h4>Dollar Rate Conversion</h4>
+                        <div class="rate-badge">
+                          <i class="fas fa-exchange-alt"></i>
+                          <span id="exchangeRateLabel">1 USD = 132 BDT</span>
+                        </div>
                       </div>
-                      <div class="name">
-                        Payment Gateways Information
+                      <div class="quick-amounts" id="usdQuickSelect">
+                        <button type="button" data-amount="1">1</button>
+                        <button type="button" data-amount="5">5</button>
+                        <button type="button" data-amount="10">10</button>
+                        <button type="button" data-amount="20">20</button>
+                        <button type="button" data-amount="50">50</button>
+                        <button type="button" data-amount="100">100</button>
+                        <button type="button" data-amount="200">200</button>
+                        <button type="button" data-amount="300">300</button>
+                        <button type="button" data-amount="500">500</button>
+                        <button type="button" data-amount="1000">1000</button>
+                        <button type="button" data-amount="2000">2000</button>
+                        <button type="button" data-amount="3000">3000</button>
+                        <button type="button" data-amount="5000">5000</button>
+                        <button type="button" data-amount="10000">10000</button>
+                        <button type="button" data-amount="50000">50000</button>
                       </div>
+                      <div class="converter-grid">
+                        <div class="form-group mb-0">
+                          <label class="control-label">Amount, USD</label>
+                          <input type="number" id="usdAmount" class="form-control" min="0" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="swap-icon">
+                          <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="form-group mb-0">
+                          <label class="control-label">Amount, BDT</label>
+                          <input type="text" id="bdtAmount" class="form-control" readonly placeholder="0.00">
+                        </div>
+                      </div>
+                      <div class="rate-summary">
+                        <div class="copy">
+                          <span class="eyebrow">Total you get</span>
+                          <span class="value" id="totalAmountLabel">0.00 USD</span>
+                        </div>
+                        <div class="badge-note" id="rateNote">1 USD = 132.00 BDT | Bonus tier: 0%</div>
+                        <div class="breakdown-note" id="bonusBreakdownNote">For example: 0 USD = 0 USD + 0 USD</div>
+                      </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary d-block w-100 pay-action">Pay</button>
+
+                    <div id="formSubmitResponseMessage"></div>
+                    <div id="formSubmitResponseContent"></div>
+                  </form>
+                </div>
+
+                <div class="tab-pane fade" id="pills-favorite" role="tabpanel" aria-labelledby="pills-favorite-tab">
+                  <div class="history-table table-responsive">
+                    <table class="table" id="addfundTable">
+                      <thead>
+                        <tr>
+                          <th scope="col">ID</th>
+                          <th scope="col">Date</th>
+                          <th scope="col">Method</th>
+                          <th scope="col">Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for payment in payments %}
+                          <tr>
+                            <td>{{ payment['id'] }}</td>
+                            <td>{{ payment['date'] }}</td>
+                            <td>{{ payment['name'] }}</td>
+                            <td>{{ payment['amount'] }}</td>
+                          </tr>
+                        {% else %}
+                          <tr>
+                            <td colspan="4" class="text-center py-4">No fund history yet.</td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
-                <div class="card-body">
-                  <div class="methodName">
-                    <h5 class="mb-3" id="methodName"> {% if contentText %}
-					
-					
- 
-{{ contentText }}
-{% endif %}</h5>
-                  </div>
-                 
-                </div>
-             </div>
+              </div>
+            </div>
           </div>
-       </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="card_v2 policy-card h-100">
+            <div class="card-body">
+              <div class="section-title">
+                <span class="eyebrow">Add Funds</span>
+                <h2>Add Fund Policy</h2>
+                <div class="title-line"></div>
+              </div>
+              <p class="lead-copy">
+                Adding funds is instant for most payment methods. Please read the policy carefully before depositing.
+              </p>
+              <div class="support-alert">
+                <i class="fas fa-shield-alt"></i>
+                <span>All payments are final and non-refundable. If crediting is delayed, contact support right away.</span>
+              </div>
+
+              <div class="premium-balance-card">
+                <div class="balance-copy">
+                  <span class="label">Total Available Balance</span>
+                  <h3 class="amount">{{ currency['symbol'] }} {{ (user['balance'] * currency['value'])|number_format(2, '.', ',') }}</h3>
+                  <div class="subline">Your current wallet balance on the platform.</div>
+                </div>
+                <div class="balance-icon">
+                  <i class="fas fa-coins"></i>
+                </div>
+              </div>
+
+              <div class="video-frame" aria-label="Add fund policy guide">
+                <div class="video-copy">
+                  <div class="video-play">
+                    <i class="fas fa-file-shield"></i>
+                  </div>
+                  <h4>Policy summary</h4>
+                  <p>Review the funding rules below before you proceed with any balance top-up.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {#
+        <div class="col-lg-5">
+          <div class="card_v2 tutorial-card h-100">
+            <div class="card-body">
+              <div class="section-title">
+                <span class="eyebrow">Add Funds</span>
+                <h2>How to Add Money</h2>
+                <div class="title-line"></div>
+              </div>
+              <p class="lead-copy">
+                Adding balance to the panel is straightforward. Pick a gateway, read the instruction panel, and complete the payment exactly as shown.
+              </p>
+              <div class="support-alert">
+                <i class="fas fa-headset"></i>
+                <span>Contact support right away if a payment needs review. We keep the funding flow available around the clock.</span>
+              </div>
+
+              <div class="premium-balance-card">
+                <div class="balance-copy">
+                  <span class="label">Total Available Balance</span>
+                  <h3 class="amount">{{ currency['symbol'] }} {{ (user['balance'] * currency['value'])|number_format(2, '.', ',') }}</h3>
+                  <div class="subline">Your current wallet balance on the platform.</div>
+                </div>
+                <div class="balance-icon">
+                  <i class="fas fa-coins"></i>
+                </div>
+              </div>
+
+              <div class="video-frame" aria-label="How to add money guide">
+                <div class="video-copy">
+                  <div class="video-play">
+                    <i class="fas fa-play"></i>
+                  </div>
+                  <h4>Payment walkthrough</h4>
+                  <p>Use the gateway instructions below and complete the payment in one pass for automatic balance crediting.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      #}
+
+      {#
+      <div class="row g-4" id="addFundPolicyWrap">
+        <div class="col-12">
+          <div class="card_v2 policy-card">
+            <div class="card-header">
+              <div class="header-title">
+                <div class="icon">
+                  <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="name">Add Fund Policy</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="lead-copy">
+                Adding funds is instant for most payment methods. Please read the policy carefully before depositing.
+              </p>
+              <ul>
+                <li>All payments are final and non-refundable.</li>
+                <li>Funds are usually added automatically. If crediting is delayed, contact support.</li>
+                <li>Do not use any funds acquired from illegal sources.</li>
+                <li>By depositing, you agree to the Terms of Service.</li>
+                <li>If you have any issues with payment, please create a support ticket.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      #}
+
+      {% if contentText2 %}
+      <div class="row g-4">
+        <div class="col-12">
+          <div class="card_v2">
+            <div class="card-body">
+              {{ contentText2|raw }}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
     </div>
   </div>
-
-
-<div class="col-md-6">
-             <div class="card card_v2">
-                <div class="card-header v2_header">
-								<div class="component_content_card component_content_button component_content_headers">
-									<div class="table-wr table-responsive">
-										<table class="table">
-											<thead>
-												<tr>
-													<th><font size="3" color="red"><b>ID</b></font></th>
-													<th><font size="3" color="red"><b>Date</b></font></th>
-													<th><font size="3" color="red"><b>Method</b></font></th>
-													<th><font size="3" color="red"><b>Amount</b></font></th>
-												</tr>
-											</thead>
-											<tbody>
-											    
-												{% for payment in payments %}
-													<tr>
-														<td>{{ payment['id'] }}</td>
-														<td>{{ payment['date'] }}
-														</td>
-														<td>{{ payment['name'] }}</td>
-														<td>
-															{{ payment['amount'] }}
-														</td>
-													</tr>
-
-												{% endfor %}
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					
-				<div class="divider-top"></div>
-        <div class="divider-bottom"></div>
-        <div class="container ludd">
- {% if contentText2 %}
- <div class="super-lud mt-2 mb-4 ">	
-{{ contentText2 }}
-</div>
-{% endif %}
 </div>
 
+{% include 'footer.twig' %}
 
-			{% include 'footer.twig' %}
+<div class="floating-support">
+  <a href="https://wa.me/{{ whatsappnumber }}" target="_blank" rel="noopener noreferrer" aria-label="Contact support on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+</div>
 
 <script>
   var paymentMethods = {{ site["paymentMethodsJSON"]|raw }};
-</script>
+  var bonusRateRules = {{ site["bonusRatesJSON"]|raw }};
+  var globalDollarRate = parseFloat({{ site["dollarRate"] }});
+  const addfundsRoute = "/addfunds";
+  const gatewayCatalog = {
+    binance_pay: { label: "Binance Pay [5% Bonus]" },
+    cryptomus: { label: "Cryptomus - USDT | BTC | BCH | ETH | LTC + More [5% Bonus]" },
+    heleket: { label: "Heleket - USDT | BTC | BCH | ETH | LTC + More [5% Bonus]" },
+    bybit_pay: { label: "Bybit Pay - [Auto Pay] - Min 1$ [5% Bonus]" },
+    visa: { label: "Credit Card / Debit Card ~ Visa - Mastercard - Amex [5% Fees Applied]" },
+    bangladesh: { label: "বিকাশ - নগদ - রকেট [ For Bangladeshi User ]" },
+    bkash_nagad_rocket: { label: "বিকাশ / নগদ / রকেট / উপায় + More [ For Bangladeshi User ]" },
+    phonepe: { label: "PhonePe - For Indian User [Auto Pay] - 10% Fees Applied" },
+    gcash_maya: { label: "GCash / Maya / Bank ~ Philippines [Manual] Min 1$" }
+  };
 
-<script>
-const addfundsRoute = "/addfunds";
+  function getSelectedMethodData(methodId) {
+    if (!paymentMethods || !paymentMethods[methodId] || !paymentMethods[methodId][0]) {
+      return null;
+    }
+    return paymentMethods[methodId][0];
+  }
 
-function addfundsInit() {
-  var addfundsForm = $("#addfundsForm");
-  var fields = $("#addfunds_fields");
-  var selectedMethod = $("#payment_method").val();
-  var instructions = paymentMethods[selectedMethod][0].instructions;
+  function getMethodRate(methodData) {
+    if (!methodData) {
+      return 1;
+    }
 
-  $.ajax({
-    url: addfundsRoute,
-    data: "action=getForm&selectedMethod=" + selectedMethod,
-    type: "POST",
-    dataType: "json",
-    success: function (json) {
-      if (json.success === true) {
-        var methodInstruction = "";
-        if (instructions.length > 0) {
-          methodInstruction =
-            '<div class="form-group">' +
-            '<label class="control-label">Instructions</label>' +
-            '<div class="panel-body border-solid border-rounded">' +
-            instructions +
-            "</div></div>";
-        }
-        fields.html(methodInstruction + json.content);
-        extraFeeInit(selectedMethod);
+    var rate = parseFloat(methodData.exchange_rate);
+    return isNaN(rate) || rate <= 0 ? 1 : rate;
+  }
+
+  function getActiveBonusRules() {
+    if (Array.isArray(bonusRateRules) && bonusRateRules.length) {
+      return bonusRateRules;
+    }
+
+    return [
+      { range_from: 0, range_to: 99, bonus_percent: 0 },
+      { range_from: 100, range_to: 999, bonus_percent: 3 },
+      { range_from: 1000, range_to: 4999, bonus_percent: 5 },
+      { range_from: 5000, range_to: 9999, bonus_percent: 7 },
+      { range_from: 10000, range_to: 49999, bonus_percent: 8 },
+      { range_from: 50000, range_to: null, bonus_percent: 20 }
+    ];
+  }
+
+  function getBonusPercent(amount) {
+    amount = parseFloat(amount);
+    if (isNaN(amount)) {
+      return 0;
+    }
+
+    var rules = getActiveBonusRules();
+    for (var i = 0; i < rules.length; i++) {
+      var rule = rules[i];
+      var from = parseFloat(rule.range_from);
+      var to = rule.range_to === null || rule.range_to === "" ? null : parseFloat(rule.range_to);
+      var percent = parseFloat(rule.bonus_percent);
+
+      if (isNaN(from)) {
+        continue;
+      }
+
+      if (amount >= from && (to === null || amount <= to)) {
+        return isNaN(percent) ? 0 : percent;
       }
     }
-  });
-}
 
-function extraFeeInit(method) {
-  var fee = parseFloat(paymentMethods[method][0].fee).toFixed(2);
-  var fields = $("#fee_fields");
-  if (fee > 0) {
-    fields.html(
-      '<div class="form-group">' +
-      '<label class="control-label">Extra fee</label>' +
-      '<input type="text" class="form-control" id="methodExtraFee" disabled value="0.00"/></div>' +
-      '<div class="form-group"><label class="control-label">Total Amount</label>' +
-      '<input type="text" id="totalAmount" class="form-control" disabled value="0.00" /></div>'
-    );
+    return 0;
   }
-}
 
-function preparePrice(t) {
-  var n = 2;
-  t = $.trim(t.toString().replace(",", "."));
-  var r = t.split(".");
-  if (r[1] !== undefined) {
-    r[1] = r[1].replace(/0+$/g, "");
-    if (r[1].length > n) {
-      n = r[1].length > 2 ? 2 : r[1].length;
+  function getBonusAmount(amount) {
+    var bonusPercent = getBonusPercent(amount);
+    return amount + (amount * (bonusPercent / 100));
+  }
+
+  function getActiveMethodId() {
+    var methodId = $("#payment_type").val();
+    if (methodId) {
+      return methodId;
+    }
+
+    if (paymentMethods && Object.keys(paymentMethods).length) {
+      return Object.keys(paymentMethods)[0];
+    }
+
+    return 0;
+  }
+
+  function preparePrice(t) {
+    var n = 2;
+    t = $.trim(t.toString().replace(",", "."));
+    var r = t.split(".");
+    if (r[1] !== undefined) {
+      r[1] = r[1].replace(/0+$/g, "");
+      if (r[1].length > n) {
+        n = r[1].length > 2 ? 2 : r[1].length;
+      }
+    }
+    t = parseFloat(t);
+    t = t.toFixed(n);
+    if (t >= 1000) {
+      t = t.toString().replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, "$1");
+    }
+    return parseFloat(t).toFixed(n);
+  }
+
+  function formatDisplayAmount(value) {
+    var formatted = preparePrice(value);
+    formatted = formatted.replace(/\.00$/, "");
+    formatted = formatted.replace(/(\.\d)0$/, "$1");
+    return formatted;
+  }
+
+  function setActiveGateway(aliasKey) {
+    $("#gatewayQuickGrid .gateway-quick-item").removeClass("is-active");
+    $("#gatewayQuickGrid .gateway-quick-item[data-alias='" + aliasKey + "']").addClass("is-active");
+  }
+
+  function syncAliasSelection(aliasKey) {
+    if (!gatewayCatalog[aliasKey]) {
+      aliasKey = "binance_pay";
+    }
+
+    $("#gateway_alias").val(aliasKey);
+    setActiveGateway(aliasKey);
+  }
+
+  function isLocalGateway(aliasKey) {
+    return aliasKey === "bangladesh" || aliasKey === "bkash_nagad_rocket" || aliasKey === "phonepe" || aliasKey === "gcash_maya";
+  }
+
+  function syncCurrencyConverter(forceHide) {
+    var aliasKey = $("#gateway_alias").val() || "binance_pay";
+    var shouldShowConverter = !forceHide && isLocalGateway(aliasKey);
+    var methodData = getSelectedMethodData(getActiveMethodId());
+    var rate = !isNaN(globalDollarRate) && globalDollarRate > 0 ? globalDollarRate : getMethodRate(methodData);
+    var usdValue = parseFloat($("#usdAmount").val());
+    var bonusPercent = getBonusPercent(usdValue);
+    var bonusAmount = isNaN(usdValue) ? 0 : getBonusAmount(usdValue);
+    var bonusValue = isNaN(usdValue) ? 0 : bonusAmount - usdValue;
+
+    if (!shouldShowConverter) {
+      $("#currencyConverterWrap").hide();
+      return;
+    }
+
+    $("#currencyConverterWrap").show();
+    $("#exchangeRateLabel").text("1 USD = " + preparePrice(rate) + " BDT");
+    $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Bonus tier: " + bonusPercent + "%");
+
+    if (!isNaN(usdValue)) {
+      $("#paymentAmount").val(preparePrice(usdValue));
+      $("#bdtAmount").val(preparePrice(usdValue * rate));
+      $("#totalAmountLabel").text(preparePrice(bonusAmount) + " USD");
+      if (bonusValue > 0) {
+        $("#bonusBreakdownNote").text("For example: " + formatDisplayAmount(bonusAmount) + "USD = " + formatDisplayAmount(usdValue) + " USD + " + formatDisplayAmount(bonusValue) + " USD");
+      } else {
+        $("#bonusBreakdownNote").text("");
+      }
+    } else {
+      $("#paymentAmount").val("");
+      $("#bdtAmount").val("");
+      $("#totalAmountLabel").text("0.00 USD");
+      $("#bonusBreakdownNote").text("");
     }
   }
-  t = parseFloat(t);
-  t = t.toFixed(n);
-  if (t >= 1000) {
-    t = t.toString().replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, "$1");
-  }
-  return parseFloat(t).toFixed(n);
-}
 
-$(document).ready(function () {
+  function addfundsInit() {
+    var selectedMethod = getActiveMethodId();
+    var methodData = getSelectedMethodData(selectedMethod);
 
-  $(document).on("keyup", "#paymentAmount", function () {
-    var selectedMethod = $("#payment_method").val();
-    var amount = parseFloat($(this).val());
-    var feePercentage = parseFloat(paymentMethods[selectedMethod][0].fee);
-    var feeInput = $("#methodExtraFee");
-    var totalAmountInput = $("#totalAmount");
-    var fee = amount * (feePercentage / 100);
-    feeInput.val(preparePrice(fee));
-    totalAmountInput.val(preparePrice(amount + fee));
-  });
-
-  addfundsInit();
-});
-
-$("#payment_method").change(function () {
-  addfundsInit();
-});
-
-$("#addfundsForm").submit(function (e) {
-
-    var method = $("#payment_method").val();
-    if (method == "24") {
-        return true;
+    if (!methodData) {
+      $("#addfunds_fields").html('<div class="method-box"><div class="panel-body border-solid border-rounded">No payment gateway is available right now.</div></div>');
+      $("#fee_fields").empty();
+      return;
     }
-    e.preventDefault();
 
-  var data = $(this).serialize();
+    $.ajax({
+      url: addfundsRoute,
+      data: "action=getForm&selectedMethod=" + selectedMethod,
+      type: "POST",
+      dataType: "json",
+      success: function (json) {
+        if (json.success === true) {
+          var methodInstruction = "";
+          if (methodData.instructions && methodData.instructions.length > 0) {
+            methodInstruction =
+              '<div class="method-box">' +
+              '<label class="control-label">Instructions</label>' +
+              '<div class="panel-body border-solid border-rounded">' +
+              methodData.instructions +
+              "</div></div>";
+          }
+          $("#addfunds_fields").html(methodInstruction + json.content);
+          extraFeeInit(selectedMethod);
+          syncCurrencyConverter();
+        }
+      }
+    });
+  }
 
-  $.ajax({
-    url: addfundsRoute,
-    data: data,
-    type: "POST",
-    dataType: "json",
-    success: function (json) {
-      if (json.binance === true) {
-        $(".def_wraper, #addFundPolicyWrap, .divider-top, .divider-bottom, .ludd").hide();
-        $("#binance-qr-modal").remove();
-        $("body").append(json.html);
-        $("#binance-qr-modal").modal("show");
+  function extraFeeInit(method) {
+    var methodData = getSelectedMethodData(method);
+    var fee = methodData ? parseFloat(methodData.fee).toFixed(2) : "0.00";
+    var fields = $("#fee_fields");
+    var amount = parseFloat($("#usdAmount").val());
 
+    if (parseFloat(fee) > 0) {
+      fields.html(
+        '<div class="fee-grid">' +
+        '<div class="form-group">' +
+        '<label class="control-label">Extra fee</label>' +
+        '<input type="text" class="form-control" id="methodExtraFee" disabled value="' + (isNaN(amount) ? "0.00" : preparePrice(amount * (parseFloat(fee) / 100))) + '"/>' +
+        "</div>" +
+        '<div class="form-group">' +
+        '<label class="control-label">Total Amount</label>' +
+        '<input type="text" id="totalAmount" class="form-control" disabled value="' + (isNaN(amount) ? "0.00" : preparePrice(amount + (amount * (parseFloat(fee) / 100)))) + '" />' +
+        "</div></div>"
+      );
+    } else {
+      fields.empty();
+    }
+  }
+
+  $(document).ready(function () {
+    if (!$("#payment_type").val() || $("#payment_type").val() === "0") {
+      var methodKeys = paymentMethods ? Object.keys(paymentMethods) : [];
+      if (paymentMethods && paymentMethods["42"]) {
+        $("#payment_type").val("42");
+      } else if (methodKeys.length) {
+        $("#payment_type").val(methodKeys[0]);
+      }
+    }
+
+    syncAliasSelection($("#gateway_alias").val() || "binance_pay");
+    syncCurrencyConverter();
+
+    $(document).on("click", "#usdQuickSelect button", function () {
+      $("#usdQuickSelect button").removeClass("is-active");
+      $(this).addClass("is-active");
+      $("#usdAmount").val($(this).data("amount")).trigger("input");
+    });
+
+    $(document).on("input", "#usdAmount", function () {
+      var selectedMethod = getActiveMethodId();
+      var methodData = getSelectedMethodData(selectedMethod);
+      var amount = parseFloat($(this).val());
+      var rate = isLocalGateway($("#gateway_alias").val() || "binance_pay") && !isNaN(globalDollarRate) && globalDollarRate > 0 ? globalDollarRate : getMethodRate(methodData);
+
+      if (isNaN(amount)) {
+        $("#paymentAmount").val("");
+        $("#bdtAmount").val("");
+        $("#totalAmountLabel").text("0.00 USD");
+        $("#bonusBreakdownNote").text("");
+        $("#methodExtraFee").val("0.00");
+        $("#totalAmount").val("0.00");
         return;
       }
-      if (json.success === true) {
-        $("#formSubmitResponseMessage").html(
-          '<div class="alert alert-success alert-dismissible fade show mt-2" role="alert">' +
-          json.message +
-          '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-          '<span aria-hidden="true">×</span></button></div>'
-        );
-        $("#formSubmitResponseContent").html(json.content);
+
+      var bonusPercent = getBonusPercent(amount);
+      var bonusAmount = getBonusAmount(amount);
+      var bonusValue = bonusAmount - amount;
+      $("#paymentAmount").val(preparePrice(amount));
+      $("#bdtAmount").val(preparePrice(amount * rate));
+      $("#totalAmountLabel").text(preparePrice(bonusAmount) + " USD");
+      $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Bonus tier: " + bonusPercent + "%");
+      if (bonusValue > 0) {
+        $("#bonusBreakdownNote").text("For example: " + formatDisplayAmount(bonusAmount) + "USD = " + formatDisplayAmount(amount) + " USD + " + formatDisplayAmount(bonusValue) + " USD");
       } else {
-        $("#formSubmitResponseMessage").html(
-          '<div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">' +
-          json.message +
-          '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-          '<span aria-hidden="true">×</span></button></div>'
-        );
+        $("#bonusBreakdownNote").text("");
       }
-    }
+
+      if (!methodData) {
+        return;
+      }
+
+      var feePercentage = parseFloat(methodData.fee);
+      var feeInput = $("#methodExtraFee");
+      var totalAmountInput = $("#totalAmount");
+      var fee = amount * (feePercentage / 100);
+
+      if (feeInput.length && totalAmountInput.length) {
+        feeInput.val(preparePrice(fee));
+        totalAmountInput.val(preparePrice(amount + fee));
+      }
+    });
+
+    $(document).on("click", "#gatewayQuickGrid .gateway-quick-item", function () {
+      var aliasKey = $(this).data("alias");
+      syncAliasSelection(aliasKey);
+      $("#gateway_alias").trigger("change");
+    });
+
+    $("#gateway_alias").change(function () {
+      syncAliasSelection($(this).val());
+      syncCurrencyConverter();
+    });
+
+    addfundsInit();
   });
-});
-$(document).on('hidden.bs.modal', '#binance-qr-modal', function () {
-  $(".def_wraper, #addFundPolicyWrap, .divider-top, .divider-bottom, .ludd").show();
-  $("#binance-qr-modal").remove();
-});
+
+  $("#addfundsForm").submit(function (e) {
+    var method = getActiveMethodId();
+    if (method == "24" || method == "45") {
+      return true;
+    }
+
+    if ($("#usdAmount").length) {
+      $("#paymentAmount").val(preparePrice($("#usdAmount").val()));
+    }
+
+    e.preventDefault();
+
+    $.ajax({
+      url: addfundsRoute,
+      data: $(this).serialize(),
+      type: "POST",
+      dataType: "json",
+      success: function (json) {
+        if (json.binance === true) {
+          $(".addfunds-shell, #addFundPolicyWrap").hide();
+          $("#binance-qr-modal").remove();
+          $("body").append(json.html);
+          $("#binance-qr-modal").modal("show");
+          return;
+        }
+
+        if (json.bybit === true) {
+          $(".addfunds-shell, #addFundPolicyWrap").hide();
+          $("#bybit-qr-modal").remove();
+          $("body").append(json.html);
+          $("#bybit-qr-modal").modal("show");
+          return;
+        }
+
+        if (json.success === true) {
+          $("#formSubmitResponseMessage").html(
+            '<div class="alert alert-success alert-dismissible fade show mt-3" role="alert">' +
+            json.message +
+            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+            '<span aria-hidden="true">×</span></button></div>'
+          );
+          $("#formSubmitResponseContent").html(json.content);
+        } else {
+          $("#formSubmitResponseMessage").html(
+            '<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">' +
+            json.message +
+            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+            '<span aria-hidden="true">×</span></button></div>'
+          );
+        }
+      }
+    });
+  });
+
+  $(document).on("hidden.bs.modal", "#binance-qr-modal", function () {
+    $(".addfunds-shell, #addFundPolicyWrap").show();
+    $("#binance-qr-modal").remove();
+  });
+
+  $(document).on("hidden.bs.modal", "#bybit-qr-modal", function () {
+    $(".addfunds-shell, #addFundPolicyWrap").show();
+    $("#bybit-qr-modal").remove();
+  });
 </script>

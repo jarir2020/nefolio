@@ -19,8 +19,10 @@ payment_amount=:amount,
 payment_method=:method,
 payment_mode=:mode,
 payment_create_date=:date,
+payment_update_date=:update_date,
 payment_ip=:ip,
-payment_extra=:extra"
+payment_extra=:extra,
+payment_bank=:bank"
 );
 
 $insert->execute([
@@ -29,10 +31,11 @@ $insert->execute([
     "method" => $methodId,
     "mode" => "Automatic",
     "date" => date("Y.m.d H:i:s"),
+    "update_date" => date("Y.m.d H:i:s"),
     "ip" => GetIP(),
-    "extra" => $orderId
+    "extra" => $orderId,
+    "bank" => 0
 ]);
-
 
 $requestData = [
     'cus_name'     => $payeeName,

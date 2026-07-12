@@ -27,20 +27,27 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $paymentMethods->execute(["status" => 1]);
 
     $methodsList = [];
+    $paymentMethodsJSON = json_encode([], JSON_UNESCAPED_UNICODE);
 
     if ($paymentMethods->rowCount()) {
         $paymentMethods = $paymentMethods->fetchAll(PDO::FETCH_ASSOC);
 
         for ($i = 0; $i < count($paymentMethods); $i++) {
+            $methodExtras = json_decode($paymentMethods[$i]["methodExtras"], true);
+            $exchangeRate = isset($methodExtras["exchange_rate"]) ? $methodExtras["exchange_rate"] : null;
             $methodsList[] = [
-                "id"           => $paymentMethods[$i]["methodId"],
-                "name"         => $paymentMethods[$i]["methodVisibleName"],
-                "instructions" => trim(htmlspecialchars_decode($paymentMethods[$i]["methodInstructions"])),
-                "fee"          => $paymentMethods[$i]["methodFee"],
+                "id"            => $paymentMethods[$i]["methodId"],
+                "name"          => $paymentMethods[$i]["methodVisibleName"],
+                "logo"          => $paymentMethods[$i]["methodLogo"],
+                "callback"      => $paymentMethods[$i]["methodCallback"],
+                "currency"      => $paymentMethods[$i]["methodCurrency"],
+                "exchange_rate" => $exchangeRate,
+                "instructions"  => trim(htmlspecialchars_decode($paymentMethods[$i]["methodInstructions"])),
+                "fee"           => $paymentMethods[$i]["methodFee"],
             ];
-            // grouped by id for JS
-            $paymentMethodsJSON = json_encode(array_group_by($methodsList, "id"), JSON_UNESCAPED_UNICODE);
         }
+        // grouped by id for JS
+        $paymentMethodsJSON = json_encode(array_group_by($methodsList, "id"), JSON_UNESCAPED_UNICODE);
     } else {
         $methodsList[] = [
             "id"   => 0,

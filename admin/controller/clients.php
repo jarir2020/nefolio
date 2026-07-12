@@ -194,9 +194,25 @@ $clients       = $clients->fetchAll(PDO::FETCH_ASSOC);
           $icon     = "error";
         }else{
           $apikey = CreateApiKey($_POST);
+          $ref_code = substr(bin2hex(random_bytes(18)), 5, 6);
           $conn->beginTransaction();
-          $insert = $conn->prepare("INSERT INTO clients SET name=:name, username=:username, email=:email, password=:pass, lang=:lang, telephone=:phone, register_date=:date, apikey=:key, access=:access, tel_type=:tel_type, email_type=:email_type ");
-          $insert = $insert-> execute(array("lang"=>"en","name"=>$name,"username"=>$username,"email"=>$email,"pass"=>md5($pass),"phone"=>$tel,"date"=>date("Y.m.d H:i:s"),'key'=>$apikey,'access'=>json_encode($access),'tel_type'=>$tel_type,'email_type'=>$email_type ));
+          $insert = $conn->prepare("INSERT INTO clients SET name=:name, username=:username, email=:email, password=:pass, lang=:lang, telephone=:phone, register_date=:date, apikey=:key, ref_code=:ref_code, passwordreset_token=:passwordreset_token, discount_percentage=:discount_percentage, access=:access, tel_type=:tel_type, email_type=:email_type ");
+          $insert = $insert->execute(array(
+            "lang" => "en",
+            "name" => $name,
+            "username" => $username,
+            "email" => $email,
+            "pass" => md5($pass),
+            "phone" => $tel,
+            "date" => date("Y.m.d H:i:s"),
+            "key" => $apikey,
+            "ref_code" => $ref_code,
+            "passwordreset_token" => "",
+            "discount_percentage" => 0,
+            "access" => json_encode($access),
+            "tel_type" => $tel_type,
+            "email_type" => $email_type
+          ));
           if( $insert ):
             $conn->commit();
             $referrer = site_url("admin/clients");

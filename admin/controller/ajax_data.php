@@ -6525,7 +6525,7 @@ elseif ($action == "payment_edit"):
   $payment = $conn->prepare("SELECT * FROM payments INNER JOIN clients ON clients.client_id=payments.client_id WHERE payments.payment_id=:id");
   $payment->execute(array("id" => $id));
   $payment = $payment->fetch(PDO::FETCH_ASSOC);
-  $methods = $conn->prepare("SELECT * FROM payment_methods WHERE id!='4' ");
+  $methods = $conn->prepare("SELECT methodId AS id, methodVisibleName AS method_name FROM paymentmethods WHERE methodId!='4' ");
   $methods->execute();
   $methods = $methods->fetchAll(PDO::FETCH_ASSOC);
   $return = '<form class="form" action="' . site_url("admin/payments/edit-online/" . $id) . '" method="post" data-xhr="true">
@@ -6601,7 +6601,7 @@ elseif ($action == "reffered_users"):
 
 
 elseif ($action == "payment_new"):
-  $methods = $conn->prepare("SELECT * FROM payment_methods WHERE id!='4' ");
+  $methods = $conn->prepare("SELECT methodId AS id, methodVisibleName AS method_name FROM paymentmethods WHERE methodId!='4' ");
   $methods->execute();
   $methods = $methods->fetchAll(PDO::FETCH_ASSOC);
   $return = '<form class="form" action="' . site_url("admin/payments/new-online") . '" method="post" data-xhr="true">

@@ -44,6 +44,7 @@ $menuList = [
   "Modules" => "modules",
   "Support Settings" => "subject",
   "Payment Bonuses" => "payment-bonuses",
+  "Rates" => "rates",
   "Site Currency Manager" => "currency-manager",
   "Notification Settings" => "alert",
   "Fake Orders" => "site_count"
@@ -685,11 +686,123 @@ elseif (route(2) == "payment-bonuses"):
       echo json_encode(["t" => "error", "m" => $errorText, "s" => $icon, "r" => $referrer, "time" => 0]);
       exit();
     elseif (!route(3)):
-      $bonusList = $conn->prepare("SELECT * FROM payments_bonus INNER JOIN payment_methods WHERE payment_methods.id = payments_bonus.bonus_method ORDER BY payment_methods.id DESC ");
+      $bonusList = $conn->prepare("SELECT payments_bonus.*, paymentmethods.methodVisibleName AS method_name FROM payments_bonus INNER JOIN paymentmethods ON paymentmethods.methodId = payments_bonus.bonus_method ORDER BY paymentmethods.methodId DESC ");
       $bonusList->execute(array());
       $bonusList = $bonusList->fetchAll(PDO::FETCH_ASSOC);
     else:
       header("Location:" . site_url("admin/settings/payment-bonuses"));
+    endif;
+  endif;
+
+elseif (route(2) == "rates"):
+  $access = !empty($admin["access"]["payments_bonus"]) || !empty($admin["access"]["currency-manager"]) || !empty($admin["access"]["admin_access"]);
+  if ($access):
+    $currentDollarRate = isset($settings["dolar_charge"]) ? $settings["dolar_charge"] : 132;
+    $bonusRates = [];
+    $bonusRate = null;
+
+    if (route(3) == "dollar" && $_POST):
+      $dollar_rate = isset($_POST["dollar_rate"]) ? floatval($_POST["dollar_rate"]) : 0;
+      if ($dollar_rate <= 0):
+        $_SESSION["client"]["data"]["error"] = 1;
+        $_SESSION["client"]["data"]["errorText"] = "Dollar rate must be greater than zero";
+      else:
+        $update = $conn->prepare("UPDATE settings SET dolar_charge=:rate WHERE id=1");
+        $update = $update->execute(["rate" => $dollar_rate]);
+        if ($update):
+          $_SESSION["client"]["data"]["success"] = 1;
+          $_SESSION["client"]["data"]["successText"] = "Success";
+        else:
+          $_SESSION["client"]["data"]["error"] = 1;
+          $_SESSION["client"]["data"]["errorText"] = "Failed";
+        endif;
+      endif;
+      header("Location:" . site_url("admin/settings/rates"));
+      exit();
+    elseif (route(3) == "bonus-new" && $_POST):
+      $range_from = isset($_POST["range_from"]) ? floatval($_POST["range_from"]) : 0;
+      $range_to = (isset($_POST["range_to"]) && $_POST["range_to"] !== "") ? floatval($_POST["range_to"]) : null;
+      $bonus_percent = isset($_POST["bonus_percent"]) ? floatval($_POST["bonus_percent"]) : 0;
+
+      if ($range_from < 0):
+        $_SESSION["client"]["data"]["error"] = 1;
+        $_SESSION["client"]["data"]["errorText"] = "Range start must be zero or greater";
+      elseif ($bonus_percent < 0):
+        $_SESSION["client"]["data"]["error"] = 1;
+        $_SESSION["client"]["data"]["errorText"] = "Bonus percent must be zero or greater";
+      else:
+        $insert = $conn->prepare("INSERT INTO rates_bonus_rules SET range_from=:range_from, range_to=:range_to, bonus_percent=:bonus_percent, is_active=1");
+        $insert = $insert->execute([
+          "range_from" => $range_from,
+          "range_to" => $range_to,
+          "bonus_percent" => $bonus_percent
+        ]);
+        if ($insert):
+          $_SESSION["client"]["data"]["success"] = 1;
+          $_SESSION["client"]["data"]["successText"] = "Success";
+        else:
+          $_SESSION["client"]["data"]["error"] = 1;
+          $_SESSION["client"]["data"]["errorText"] = "Failed";
+        endif;
+      endif;
+      header("Location:" . site_url("admin/settings/rates"));
+      exit();
+    elseif (route(3) == "bonus-edit" && $_POST):
+      $id = route(4);
+      $range_from = isset($_POST["range_from"]) ? floatval($_POST["range_from"]) : 0;
+      $range_to = (isset($_POST["range_to"]) && $_POST["range_to"] !== "") ? floatval($_POST["range_to"]) : null;
+      $bonus_percent = isset($_POST["bonus_percent"]) ? floatval($_POST["bonus_percent"]) : 0;
+
+      if (!countRow(["table" => "rates_bonus_rules", "where" => ["id" => $id]])):
+        $_SESSION["client"]["data"]["error"] = 1;
+        $_SESSION["client"]["data"]["errorText"] = "Please choose a valid rate rule";
+      else:
+        $update = $conn->prepare("UPDATE rates_bonus_rules SET range_from=:range_from, range_to=:range_to, bonus_percent=:bonus_percent WHERE id=:id");
+        $update = $update->execute([
+          "range_from" => $range_from,
+          "range_to" => $range_to,
+          "bonus_percent" => $bonus_percent,
+          "id" => $id
+        ]);
+        if ($update):
+          $_SESSION["client"]["data"]["success"] = 1;
+          $_SESSION["client"]["data"]["successText"] = "Success";
+        else:
+          $_SESSION["client"]["data"]["error"] = 1;
+          $_SESSION["client"]["data"]["errorText"] = "Failed";
+        endif;
+      endif;
+      header("Location:" . site_url("admin/settings/rates"));
+      exit();
+    elseif (route(3) == "delete"):
+      $id = route(4);
+      if (!countRow(["table" => "rates_bonus_rules", "where" => ["id" => $id]])):
+        $_SESSION["client"]["data"]["error"] = 1;
+        $_SESSION["client"]["data"]["errorText"] = "Please choose a valid rate rule";
+      else:
+        $delete = $conn->prepare("DELETE FROM rates_bonus_rules WHERE id=:id");
+        $delete->execute(["id" => $id]);
+        if ($delete):
+          $_SESSION["client"]["data"]["success"] = 1;
+          $_SESSION["client"]["data"]["successText"] = "Success";
+        else:
+          $_SESSION["client"]["data"]["error"] = 1;
+          $_SESSION["client"]["data"]["errorText"] = "Failed";
+        endif;
+      endif;
+      header("Location:" . site_url("admin/settings/rates"));
+      exit();
+    else:
+      $bonusRates = $conn->prepare("SELECT * FROM rates_bonus_rules ORDER BY range_from ASC, id ASC");
+      $bonusRates->execute();
+      $bonusRates = $bonusRates->fetchAll(PDO::FETCH_ASSOC);
+
+      $bonusRate = null;
+      if (route(3) == "edit" && route(4)):
+        $bonusRate = $conn->prepare("SELECT * FROM rates_bonus_rules WHERE id=:id LIMIT 1");
+        $bonusRate->execute(["id" => route(4)]);
+        $bonusRate = $bonusRate->fetch(PDO::FETCH_ASSOC);
+      endif;
     endif;
   endif;
 

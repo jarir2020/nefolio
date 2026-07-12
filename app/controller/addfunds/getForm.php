@@ -4,12 +4,9 @@ if (!defined('ADDFUNDS')) {
     die();
 }
 
-$amountField = '<div class="form-group">
-<label class="control-label">Amount</label>
-<input type="number" id="paymentAmount" class="form-control" name="payment_amount" step="0.01" required />
-</div>';
+$amountField = '<input type="hidden" id="paymentAmount" name="payment_amount" value="" />';
 $feeField = '<div id="fee_fields"></div>';
-$paymentBtn = '<button type="submit" class="btn btn-primary d-block w-100">[text]</button>';
+$paymentBtn = '';
 
 if($selectedMethod == 1){
     $formData .= $amountField;
