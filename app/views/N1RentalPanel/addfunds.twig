@@ -547,6 +547,63 @@
     margin-top: 8px;
   }
 
+  .bonus-rates-box {
+    margin-bottom: 16px;
+  }
+
+  .bonus-rates-box .bonus-rates-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: #eef2f7;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+  }
+
+  .bonus-rates-box .bonus-rates-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  .bonus-rates-box .bonus-rates-title i {
+    color: #2a2a72;
+    font-size: 16px;
+  }
+
+  .bonus-rates-toggle {
+    border: 0;
+    border-radius: 12px;
+    padding: 9px 14px;
+    background: #fff;
+    color: #2f6fd6;
+    font-weight: 700;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+  }
+
+  .bonus-rates-collapse {
+    margin-top: 12px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+  }
+
+  .bonus-rates-collapse ul {
+    margin: 0;
+    padding-left: 18px;
+    color: #334155;
+    line-height: 1.7;
+  }
+
+  .bonus-rates-collapse li + li {
+    margin-top: 6px;
+  }
+
   .content-stack {
     display: grid;
     gap: 22px;
@@ -602,7 +659,7 @@
 
   @media (max-width: 767px) {
     .addfunds-shell {
-      padding: 14px 0 28px;
+      padding: 24px 0 28px;
     }
 
     .main-card .card-body,
@@ -610,6 +667,10 @@
     .tutorial-card .card-body,
     .gateway-card .card-body {
       padding: 14px;
+    }
+
+    .main-card .card-body {
+      padding-top: 18px;
     }
 
     .tab_btn_wrap {
@@ -726,6 +787,21 @@
     .rate-summary .breakdown-note {
       font-size: 13px;
       line-height: 1.45;
+    }
+
+    .bonus-rates-box .bonus-rates-head {
+      padding: 12px 14px;
+      border-radius: 14px;
+    }
+
+    .bonus-rates-toggle {
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+
+    .bonus-rates-collapse {
+      padding: 12px 14px;
+      border-radius: 14px;
     }
 
     .pay-action {
@@ -1252,6 +1328,47 @@
       success: function (json) {
         if (json.success === true) {
           var methodInstruction = "";
+          var bonusRatesMarkup = "";
+          var activeBonusRules = getActiveBonusRules();
+
+          if (activeBonusRules.length > 0) {
+            var bonusItems = "";
+            for (var i = 0; i < activeBonusRules.length; i++) {
+              var rule = activeBonusRules[i];
+              var rangeFrom = parseFloat(rule.range_from);
+              var rangeTo = rule.range_to === null || rule.range_to === "" ? null : parseFloat(rule.range_to);
+              var bonusPercent = parseFloat(rule.bonus_percent);
+              var rangeLabel = "";
+
+              if (!isNaN(rangeFrom) && rangeTo === null) {
+                rangeLabel = formatDisplayAmount(rangeFrom) + " USD or more";
+              } else if (!isNaN(rangeFrom) && !isNaN(rangeTo)) {
+                rangeLabel = formatDisplayAmount(rangeFrom) + " - " + formatDisplayAmount(rangeTo) + " USD";
+              }
+
+              bonusItems +=
+                '<li>' +
+                rangeLabel +
+                ' = ' +
+                (isNaN(bonusPercent) ? 0 : bonusPercent) +
+                '% bonus' +
+                '</li>';
+            }
+
+            bonusRatesMarkup =
+              '<div class="bonus-rates-box">' +
+              '<div class="bonus-rates-head">' +
+              '<div class="bonus-rates-title"><i class="fas fa-gift"></i><span>Bonus Rates</span></div>' +
+              '<button type="button" class="bonus-rates-toggle" data-bs-toggle="collapse" data-bs-target="#bonusRatesCollapse" aria-expanded="false" aria-controls="bonusRatesCollapse">Click to show</button>' +
+              '</div>' +
+              '<div class="collapse" id="bonusRatesCollapse">' +
+              '<div class="bonus-rates-collapse">' +
+              '<ul>' + bonusItems + '</ul>' +
+              '</div>' +
+              '</div>' +
+              '</div>';
+          }
+
           if (methodData.instructions && methodData.instructions.length > 0) {
             methodInstruction =
               '<div class="method-box">' +
@@ -1260,7 +1377,7 @@
               methodData.instructions +
               "</div></div>";
           }
-          $("#addfunds_fields").html(methodInstruction + json.content);
+          $("#addfunds_fields").html(bonusRatesMarkup + methodInstruction + json.content);
           extraFeeInit(selectedMethod);
           syncCurrencyConverter();
         }

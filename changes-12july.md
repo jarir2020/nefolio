@@ -9,7 +9,7 @@
 - Changed the new admin Rates saves to redirect back to the Rates page instead of printing raw JSON after submit, including the bonus edit route.
 - Restored the missing legacy `payments_bonus` table so the admin `payment-bonuses` screen stops crashing on load.
 - Fixed the `payment-bonuses` page queries to use the live `paymentmethods` table instead of the missing `payment_methods` name.
-- Added a hosting migration helper to create the required DB columns safely on environments that are missing them.
+- Added a hosting migration helper to create the required DB columns and bonus tables safely on environments that are missing them.
 
 ## Updated Payment Labels
 
@@ -49,7 +49,7 @@ Payment Method Table Alias	admin/controller/settings.php	689	689	Bonus list join
 Client Ref Code Column	netfollo_growthgalaxy.sql	227	227	Client referral code column	New	Schema column	Added the `ref_code` client column used by the strict insert flow	clients	:-	:-
 Payment Update Date Column	netfollo_growthgalaxy.sql	1585	1586	Payment timestamp column	New	Schema column	Added the `payment_update_date` column required by the add-funds insert flow	payments	:-	:-
 Payment Bank Column	netfollo_growthgalaxy.sql	1588	1589	Payment bank column	New	Schema column	Added the `payment_bank` column required by the add-funds insert flow	payments	:-	:-
-Hosting DB Columns Script	hosting-db-columns.php	1	43	Portable schema migration	New	Hosting helper	One-off helper that creates the required missing columns on hosting if they are absent	clients, payments, settings	:-	:-
+Hosting DB Columns Script	hosting-db-columns.php	1	95	Portable schema migration	New	Hosting helper	One-off helper that creates the required missing columns and bonus tables on hosting if they are absent	clients, payments, settings, payments_bonus, rates_bonus_rules	:-	:-
 Rates Data Plumbing	index.php	552	600	Bonus rules site JSON	Modify	Data exposure	Loads active bonus rules and the dollar rate into the shared site payload	addfunds page, settings, rates_bonus_rules	:-	:-
 Add Funds Bonus Source	app/views/N1RentalPanel/addfunds.twig	1068	1335	Dynamic bonus ladder	Modify	UI behavior	Swapped hardcoded bonus thresholds for live bonus rules and the admin-configured dollar rate	addfunds page, rates_bonus_rules	:-	:-
 Alphapay API Key Refresh	netfollo_growthgalaxy.sql	1550	1552	Payment method api_key update	Modify	Credential rotation	Replaced the Alphapay API key in the live payment-method seed rows	paymentmethods	:-	:-
