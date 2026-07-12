@@ -40,6 +40,7 @@ $methodMax = intval($_POST["method_max"]);
 $methodFee = floatval($_POST["method_fee"]);
 $methodBonusPercentage = floatval($_POST["method_bonus"]);
 $methodBonusStartAmount = intval($_POST["method_bonus_start_amount"]);
+$methodBonusEnabled = isset($_POST["method_bonus_enabled"]) ? intval($_POST["method_bonus_enabled"]) : 1;
 $methodStatus = in_array($_POST["method_status"], [0, 1]) ? $_POST["method_status"] : 1;
 $methodInstructions = htmlspecialchars($_POST["method_instructions"]);
 $methodInstructions = str_replace("&lt;p&gt;&lt;br&gt;&lt;/p&gt;","",$methodInstructions);
@@ -56,6 +57,7 @@ if (in_array($methodId, $automaticMethods)) {
                           methodFee=:fee,
                           methodBonusPercentage=:bonus,
                           methodBonusStartAmount=:bonus_start_amount,
+                          methodBonusEnabled=:bonus_enabled,
                           methodStatus=:status,
                           methodInstructions=:instructions
                         WHERE methodId=:id");
@@ -66,6 +68,7 @@ if (in_array($methodId, $automaticMethods)) {
         "fee" => $methodFee,
         "bonus" => $methodBonusPercentage,
         "bonus_start_amount" => $methodBonusStartAmount,
+        "bonus_enabled" => $methodBonusEnabled,
         "status" => $methodStatus,
         "instructions" => $methodInstructions,
         "id" => $methodId
@@ -81,11 +84,13 @@ if (in_array($methodId, $automaticMethods)) {
 } else {
     $update = $conn->prepare("UPDATE paymentmethods SET 
                           methodVisibleName=:name,
+                          methodBonusEnabled=:bonus_enabled,
                           methodStatus=:status,
                           methodInstructions=:instructions
                         WHERE methodId=:id");
     $update->execute([
         "name" => $methodVisibleName,
+        "bonus_enabled" => $methodBonusEnabled,
         "status" => $methodStatus,
         "instructions" => $methodInstructions,
         "id" => $methodId

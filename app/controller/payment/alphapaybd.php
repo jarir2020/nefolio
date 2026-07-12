@@ -100,7 +100,8 @@ if (isset($data['status']) && $data['status'] == 'COMPLETED') {
                 $fee = ($paidAmount * ($paymentFee / 100));
                 $paidAmount -= $fee;
             }
-            if ($paymentBonusStartAmount != 0 && $paidAmount > $paymentBonusStartAmount) {
+            $paymentBonusEnabled = isset($paymentMethod["methodBonusEnabled"]) ? intval($paymentMethod["methodBonusEnabled"]) : 1;
+            if ($paymentBonusEnabled && $paymentBonusStartAmount != 0 && $paidAmount > $paymentBonusStartAmount) {
                 $bonus = $paidAmount * ($paymentBonus / 100);
                 $paidAmount += $bonus;
             }

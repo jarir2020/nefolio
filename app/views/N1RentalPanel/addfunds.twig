@@ -1164,6 +1164,14 @@
     return paymentMethods[methodId][0];
   }
 
+  function isMethodBonusEnabled(methodData) {
+    if (!methodData || typeof methodData.bonus_enabled === "undefined") {
+      return true;
+    }
+
+    return parseInt(methodData.bonus_enabled, 10) === 1;
+  }
+
   function getMethodRate(methodData) {
     if (!methodData) {
       return 1;
@@ -1280,8 +1288,9 @@
     var methodData = getSelectedMethodData(getActiveMethodId());
     var rate = !isNaN(globalDollarRate) && globalDollarRate > 0 ? globalDollarRate : getMethodRate(methodData);
     var usdValue = parseFloat($("#usdAmount").val());
-    var bonusPercent = getBonusPercent(usdValue);
-    var bonusAmount = isNaN(usdValue) ? 0 : getBonusAmount(usdValue);
+    var bonusEnabled = isMethodBonusEnabled(methodData);
+    var bonusPercent = bonusEnabled ? getBonusPercent(usdValue) : 0;
+    var bonusAmount = isNaN(usdValue) ? 0 : (bonusEnabled ? getBonusAmount(usdValue) : usdValue);
     var bonusValue = isNaN(usdValue) ? 0 : bonusAmount - usdValue;
 
     if (!shouldShowConverter) {
@@ -1297,7 +1306,7 @@
       $("#paymentAmount").val(preparePrice(usdValue));
       $("#bdtAmount").val(preparePrice(usdValue * rate));
       $("#totalAmountLabel").text(preparePrice(bonusAmount) + " USD");
-      if (bonusValue > 0) {
+      if (bonusEnabled && bonusValue > 0) {
         $("#bonusBreakdownNote").text("For example: " + formatDisplayAmount(bonusAmount) + "USD = " + formatDisplayAmount(usdValue) + " USD + " + formatDisplayAmount(bonusValue) + " USD");
       } else {
         $("#bonusBreakdownNote").text("");
@@ -1330,8 +1339,9 @@
           var methodInstruction = "";
           var bonusRatesMarkup = "";
           var activeBonusRules = getActiveBonusRules();
+          var bonusEnabled = isMethodBonusEnabled(methodData);
 
-          if (activeBonusRules.length > 0) {
+          if (bonusEnabled && activeBonusRules.length > 0) {
             var bonusItems = "";
             for (var i = 0; i < activeBonusRules.length; i++) {
               var rule = activeBonusRules[i];
@@ -1432,6 +1442,7 @@
       var methodData = getSelectedMethodData(selectedMethod);
       var amount = parseFloat($(this).val());
       var rate = isLocalGateway($("#gateway_alias").val() || "binance_pay") && !isNaN(globalDollarRate) && globalDollarRate > 0 ? globalDollarRate : getMethodRate(methodData);
+      var bonusEnabled = isMethodBonusEnabled(methodData);
 
       if (isNaN(amount)) {
         $("#paymentAmount").val("");
@@ -1443,14 +1454,14 @@
         return;
       }
 
-      var bonusPercent = getBonusPercent(amount);
-      var bonusAmount = getBonusAmount(amount);
+      var bonusPercent = bonusEnabled ? getBonusPercent(amount) : 0;
+      var bonusAmount = bonusEnabled ? getBonusAmount(amount) : amount;
       var bonusValue = bonusAmount - amount;
       $("#paymentAmount").val(preparePrice(amount));
       $("#bdtAmount").val(preparePrice(amount * rate));
       $("#totalAmountLabel").text(preparePrice(bonusAmount) + " USD");
       $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Bonus tier: " + bonusPercent + "%");
-      if (bonusValue > 0) {
+      if (bonusEnabled && bonusValue > 0) {
         $("#bonusBreakdownNote").text("For example: " + formatDisplayAmount(bonusAmount) + "USD = " + formatDisplayAmount(amount) + " USD + " + formatDisplayAmount(bonusValue) + " USD");
       } else {
         $("#bonusBreakdownNote").text("");

@@ -1513,6 +1513,7 @@ CREATE TABLE `paymentmethods` (
   `methodFee` float NOT NULL DEFAULT 0,
   `methodBonusPercentage` float NOT NULL DEFAULT 0,
   `methodBonusStartAmount` int(11) NOT NULL DEFAULT 0,
+  `methodBonusEnabled` tinyint(1) NOT NULL DEFAULT 1,
   `methodCurrency` varchar(3) DEFAULT NULL,
   `methodStatus` enum('0','1') NOT NULL DEFAULT '0' COMMENT '0 -> off, 1 -> on',
   `methodExtras` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,

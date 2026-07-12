@@ -26,6 +26,19 @@ if (!in_array($method["methodId"], $manualMethods)) {
 <input type="number"  name="method_bonus_start_amount" class="form-control" value="' . $method["methodBonusStartAmount"] . '"/></div>';
 }
 
+$form .= '<div class="form-group mb-3"><label class="form-label">Bonus Enabled</label><select name="method_bonus_enabled" class="form-select">';
+$form .= '<option value="1"';
+if (!isset($method["methodBonusEnabled"]) || $method["methodBonusEnabled"] == "1") {
+    $form .= ' selected';
+}
+$form .= '>Enabled</option>';
+$form .= '<option value="0"';
+if (isset($method["methodBonusEnabled"]) && $method["methodBonusEnabled"] == "0") {
+    $form .= ' selected';
+}
+$form .= '>Disabled</option>';
+$form .= '</select></div>';
+
 $form .= '<div class="form-group mb-3"><label class="form-label">Status</label><select name="method_status" class="form-select">';
 $form .= '<option value="1"';
 if ($method["methodStatus"] == "1") {

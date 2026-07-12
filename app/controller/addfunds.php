@@ -42,6 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 "callback"      => $paymentMethods[$i]["methodCallback"],
                 "currency"      => $paymentMethods[$i]["methodCurrency"],
                 "exchange_rate" => $exchangeRate,
+                "bonus_enabled" => isset($paymentMethods[$i]["methodBonusEnabled"]) ? intval($paymentMethods[$i]["methodBonusEnabled"]) : 1,
                 "instructions"  => trim(htmlspecialchars_decode($paymentMethods[$i]["methodInstructions"])),
                 "fee"           => $paymentMethods[$i]["methodFee"],
             ];

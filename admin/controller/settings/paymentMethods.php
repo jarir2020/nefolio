@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (route(3) == "getForm") {
         $methodId = intval($_POST["methodId"]);
         $response = [];
-        $method = $conn->prepare("SELECT methodId, methodVisibleName, methodMin, methodMax, methodFee, methodBonusPercentage, methodBonusStartAmount, methodStatus, methodExtras, methodInstructions FROM paymentmethods WHERE methodId=:id");
+        $method = $conn->prepare("SELECT * FROM paymentmethods WHERE methodId=:id");
         $method->execute([
             "id" => $methodId
         ]);
