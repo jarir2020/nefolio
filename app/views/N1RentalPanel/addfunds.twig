@@ -959,6 +959,11 @@
                   <form method="post" id="addfundsForm" action="/addfunds">
                     <input type="hidden" id="payment_type" name="payment_type" value="0">
 
+                    <div class="form-group mb-3" id="usdAmountWrap">
+                      <label class="control-label">Amount, USD</label>
+                      <input type="number" id="usdAmount" class="form-control" min="0" step="0.01" placeholder="0.00">
+                    </div>
+
                     <div id="addfunds_fields"></div>
 
                     <div class="converter-panel" id="currencyConverterWrap" style="display:none;">
@@ -969,37 +974,13 @@
                           <span id="exchangeRateLabel">1 USD = 132 BDT</span>
                         </div>
                       </div>
-                      <div class="quick-amounts" id="usdQuickSelect">
-                        <button type="button" data-amount="1">1</button>
-                        <button type="button" data-amount="5">5</button>
-                        <button type="button" data-amount="10">10</button>
-                        <button type="button" data-amount="20">20</button>
-                        <button type="button" data-amount="50">50</button>
-                        <button type="button" data-amount="100">100</button>
-                        <button type="button" data-amount="200">200</button>
-                        <button type="button" data-amount="300">300</button>
-                        <button type="button" data-amount="500">500</button>
-                        <button type="button" data-amount="1000">1000</button>
-                        <button type="button" data-amount="2000">2000</button>
-                        <button type="button" data-amount="3000">3000</button>
-                        <button type="button" data-amount="5000">5000</button>
-                        <button type="button" data-amount="10000">10000</button>
-                        <button type="button" data-amount="50000">50000</button>
-                      </div>
                       <div class="converter-grid">
-                        <div class="form-group mb-0">
-                          <label class="control-label">Amount, USD</label>
-                          <input type="number" id="usdAmount" class="form-control" min="0" step="0.01" placeholder="0.00">
-                        </div>
-                        <div class="swap-icon">
-                          <i class="fas fa-exchange-alt"></i>
-                        </div>
-                        <div class="form-group mb-0">
+                        <div class="form-group mb-0" id="bdtAmountWrap">
                           <label class="control-label">Amount, BDT</label>
                           <input type="text" id="bdtAmount" class="form-control" readonly placeholder="0.00">
                         </div>
                       </div>
-                      <div class="rate-summary">
+                      <div class="rate-summary" id="rateSummaryWrap">
                         <div class="copy">
                           <span class="eyebrow">Total you get</span>
                           <span class="value" id="totalAmountLabel">0.00 USD</span>
@@ -1007,6 +988,23 @@
                         <div class="badge-note" id="rateNote">1 USD = 132.00 BDT | Bonus tier: 0%</div>
                         <div class="breakdown-note" id="bonusBreakdownNote">For example: 0 USD = 0 USD + 0 USD</div>
                       </div>
+                    </div>
+                    <div class="quick-amounts mb-3" id="usdQuickSelect">
+                      <button type="button" data-amount="1">1</button>
+                      <button type="button" data-amount="5">5</button>
+                      <button type="button" data-amount="10">10</button>
+                      <button type="button" data-amount="20">20</button>
+                      <button type="button" data-amount="50">50</button>
+                      <button type="button" data-amount="100">100</button>
+                      <button type="button" data-amount="200">200</button>
+                      <button type="button" data-amount="300">300</button>
+                      <button type="button" data-amount="500">500</button>
+                      <button type="button" data-amount="1000">1000</button>
+                      <button type="button" data-amount="2000">2000</button>
+                      <button type="button" data-amount="3000">3000</button>
+                      <button type="button" data-amount="5000">5000</button>
+                      <button type="button" data-amount="10000">10000</button>
+                      <button type="button" data-amount="50000">50000</button>
                     </div>
 
                     <button type="submit" class="btn btn-primary d-block w-100 pay-action">Pay</button>
@@ -1201,6 +1199,10 @@
     gcash_maya: { label: "GCash / Maya / Bank ~ Philippines [Manual] Min 1$" }
   };
 
+  function escapeHtml(value) {
+    return $("<div>").text(value == null ? "" : String(value)).html();
+  }
+
   function getSelectedMethodData(methodId) {
     if (!paymentMethods || !paymentMethods[methodId] || !paymentMethods[methodId][0]) {
       return null;
@@ -1354,12 +1356,12 @@
     var bonusAmount = isNaN(usdValue) ? 0 : (bonusEnabled ? getBonusAmount(usdValue, methodData) : usdValue);
     var bonusValue = isNaN(usdValue) ? 0 : bonusAmount - usdValue;
 
-    if (!shouldShowConverter) {
+    if (shouldShowConverter) {
+      $("#currencyConverterWrap").show();
+    } else {
       $("#currencyConverterWrap").hide();
-      return;
     }
 
-    $("#currencyConverterWrap").show();
     $("#exchangeRateLabel").text("1 USD = " + preparePrice(rate) + " BDT");
     $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Bonus tier: " + bonusPercent + "%");
 
@@ -1493,6 +1495,12 @@
       $("#usdAmount").val($(this).data("amount")).trigger("input");
     });
 
+    $(document).on("click", "#gatewayQuickGrid .gateway-quick-item", function () {
+      var aliasKey = $(this).data("alias");
+      syncAliasSelection(aliasKey);
+      $("#gateway_alias").trigger("change");
+    });
+
     $(document).on("input", "#usdAmount", function () {
       var selectedMethod = getActiveMethodId();
       var methodData = getSelectedMethodData(selectedMethod);
@@ -1538,14 +1546,7 @@
       }
     });
 
-    $(document).on("click", "#gatewayQuickGrid .gateway-quick-item", function () {
-      var aliasKey = $(this).data("alias");
-      syncAliasSelection(aliasKey);
-      $("#gateway_alias").trigger("change");
-    });
-
     $("#gateway_alias").change(function () {
-      syncAliasSelection($(this).val());
       syncCurrencyConverter();
     });
 
