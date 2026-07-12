@@ -31,18 +31,22 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
     if ($paymentMethods->rowCount()) {
         $paymentMethods = $paymentMethods->fetchAll(PDO::FETCH_ASSOC);
+        $defaultMethodLogo = site_url("img/admin/payment-methods.svg");
 
         for ($i = 0; $i < count($paymentMethods); $i++) {
             $methodExtras = json_decode($paymentMethods[$i]["methodExtras"], true);
             $exchangeRate = isset($methodExtras["exchange_rate"]) ? $methodExtras["exchange_rate"] : null;
+            $bonusRules = isset($methodExtras["bonus_rules"]) && is_array($methodExtras["bonus_rules"]) ? $methodExtras["bonus_rules"] : [];
+            $methodLogo = trim((string) $paymentMethods[$i]["methodLogo"]);
             $methodsList[] = [
                 "id"            => $paymentMethods[$i]["methodId"],
                 "name"          => $paymentMethods[$i]["methodVisibleName"],
-                "logo"          => $paymentMethods[$i]["methodLogo"],
+                "logo"          => $methodLogo !== "" ? $methodLogo : $defaultMethodLogo,
                 "callback"      => $paymentMethods[$i]["methodCallback"],
                 "currency"      => $paymentMethods[$i]["methodCurrency"],
                 "exchange_rate" => $exchangeRate,
                 "bonus_enabled" => isset($paymentMethods[$i]["methodBonusEnabled"]) ? intval($paymentMethods[$i]["methodBonusEnabled"]) : 1,
+                "bonus_rules"   => $bonusRules,
                 "instructions"  => trim(htmlspecialchars_decode($paymentMethods[$i]["methodInstructions"])),
                 "fee"           => $paymentMethods[$i]["methodFee"],
             ];

@@ -4,6 +4,56 @@ $form .= '<input type="hidden" name="method_id" value="' . $method["methodId"] .
 $form .= '<div class="form-group mb-3"><label class="form-label">Method Name</label>
 <input type="text"  name="method_name" class="form-control" value="' . $method["methodVisibleName"] . '"/></div>';
 
+$selectedMethodLogo = trim((string) $method["methodLogo"]);
+if ($selectedMethodLogo === "") {
+    $selectedMethodLogo = site_url("img/admin/payment-methods.svg");
+}
+
+$bonusRules = [];
+if (!empty($methodExtras["bonus_rules"]) && is_array($methodExtras["bonus_rules"])) {
+    $bonusRules = $methodExtras["bonus_rules"];
+} else {
+    $globalBonusRules = $conn->prepare("SELECT * FROM rates_bonus_rules ORDER BY range_from ASC, id ASC");
+    $globalBonusRules->execute();
+    $bonusRules = $globalBonusRules->fetchAll(PDO::FETCH_ASSOC);
+}
+
+if (!count($bonusRules)) {
+    $bonusRules = [
+        [
+            "range_from" => 0,
+            "range_to" => 99,
+            "bonus_percent" => 0,
+            "is_active" => 1
+        ]
+    ];
+}
+
+$form .= '<div class="form-group mb-3"><label class="form-label">Icon</label>';
+$form .= '<input type="hidden" name="method_logo" id="payment_method_logo" value="' . htmlspecialchars($selectedMethodLogo, ENT_QUOTES, "UTF-8") . '"/>';
+$form .= '<div class="payment-method-logo-preview mb-3"><img id="payment_method_logo_preview" src="' . htmlspecialchars($selectedMethodLogo, ENT_QUOTES, "UTF-8") . '" alt="Payment method icon" style="max-width: 160px; max-height: 52px; object-fit: contain;"></div>';
+$form .= '<div class="row g-2" id="payment_method_logo_grid">';
+if (!empty($uploadedFiles) && is_array($uploadedFiles)) {
+    foreach ($uploadedFiles as $file) {
+        $fileLink = trim((string) $file["link"]);
+        if ($fileLink === "") {
+            continue;
+        }
+
+        $isActive = $fileLink === $selectedMethodLogo ? " is-active" : "";
+        $form .= '<div class="col-6 col-md-4 col-lg-3">';
+        $form .= '<button type="button" class="payment-method-logo-option' . $isActive . '" data-logo="' . htmlspecialchars($fileLink, ENT_QUOTES, "UTF-8") . '" onclick="selectPaymentMethodLogo(this)" style="width:100%;min-height:74px;border:1px solid #d8dee9;border-radius:12px;background:#fff;padding:10px;display:flex;align-items:center;justify-content:center;transition:all .15s ease;">';
+        $form .= '<img src="' . htmlspecialchars($fileLink, ENT_QUOTES, "UTF-8") . '" alt="Uploaded icon" style="max-width:100%;max-height:48px;object-fit:contain;">';
+        $form .= '</button>';
+        $form .= '</div>';
+    }
+}
+$form .= '</div>';
+$form .= '<div class="form-text mt-2">Pick an uploaded image or upload a new one below.</div>';
+$form .= '<div class="mt-3"><label class="form-label">Upload New Icon</label><input type="file" class="form-control" id="payment_method_logo_upload" accept="image/*" onchange="uploadPaymentMethodLogo(this)"></div>';
+$form .= '<style>.payment-method-logo-option.is-active{border-color:#0d6efd !important;box-shadow:0 0 0 2px rgba(13,110,253,.15);}</style>';
+$form .= '</div>';
+
 if (!in_array($method["methodId"], $manualMethods)) {
     $form .= '<div class="form-group mb-3"><label class="form-label">Minimum Amount</label>
 <input type="text"  name="method_min" class="form-control" value="' . $method["methodMin"] . '"/></div>';
@@ -17,12 +67,29 @@ if (!in_array($method["methodId"], $manualMethods)) {
 <span class="input-group-text"><i class="bi bi-percent"></i></span>
 </div></div>';
 
-    $form .= '<div class="form-group mb-3"><label class="form-label">Bonus Percentage</label><div class="input-group">
+$form .= '<div class="form-group mb-3"><label class="form-label">Bonus Percentage</label><div class="input-group">
 <input type="number" class="form-control" name="method_bonus" step="0.01" value="' . $method["methodBonusPercentage"] . '">
 <span class="input-group-text"><i class="bi bi-percent"></i></span>
 </div></div>';
 
-    $form .= '<div class="form-group mb-3"><label class="form-label">Bonus Start Amount</label>
+$form .= '<div class="form-group mb-3"><label class="form-label">Gateway Rate Settings</label><div class="table-responsive"><table class="table table-bordered align-middle method-rates-table"><thead><tr><th style="width: 22%">Range From</th><th style="width: 22%">Range To</th><th style="width: 22%">Bonus %</th><th style="width: 14%">Active</th><th style="width: 20%" class="text-end">Action</th></tr></thead><tbody id="method_bonus_rules_body">';
+foreach ($bonusRules as $index => $bonusRule) {
+    $rangeFrom = isset($bonusRule["range_from"]) ? htmlspecialchars($bonusRule["range_from"]) : "";
+    $rangeTo = isset($bonusRule["range_to"]) && $bonusRule["range_to"] !== null ? htmlspecialchars($bonusRule["range_to"]) : "";
+    $bonusPercent = isset($bonusRule["bonus_percent"]) ? htmlspecialchars($bonusRule["bonus_percent"]) : "";
+    $isActive = !isset($bonusRule["is_active"]) || intval($bonusRule["is_active"]) === 1;
+    $form .= '<tr class="method-rate-row">';
+    $form .= '<td><input type="number" step="0.01" min="0" class="form-control" name="method_bonus_rules[' . $index . '][range_from]" value="' . $rangeFrom . '"></td>';
+    $form .= '<td><input type="number" step="0.01" min="0" class="form-control" name="method_bonus_rules[' . $index . '][range_to]" value="' . $rangeTo . '" placeholder="Optional"></td>';
+    $form .= '<td><input type="number" step="0.01" min="0" class="form-control" name="method_bonus_rules[' . $index . '][bonus_percent]" value="' . $bonusPercent . '"></td>';
+    $form .= '<td><select class="form-select" name="method_bonus_rules[' . $index . '][is_active]"><option value="1"' . ($isActive ? ' selected' : '') . '>Active</option><option value="0"' . (!$isActive ? ' selected' : '') . '>Inactive</option></select></td>';
+    $form .= '<td class="text-end"><button type="button" class="btn btn-outline-danger btn-sm" data-rate-row-remove="1">Remove</button></td>';
+    $form .= '</tr>';
+}
+$form .= '</tbody></table></div>';
+$form .= '<div class="d-flex gap-2 flex-wrap mt-3"><button type="button" class="btn btn-outline-secondary btn-sm" id="addMethodRateRow">Add Row</button><span class="text-muted small align-self-center">These rules apply only to this payment method.</span></div></div>';
+
+$form .= '<div class="form-group mb-3"><label class="form-label">Bonus Start Amount</label>
 <input type="number"  name="method_bonus_start_amount" class="form-control" value="' . $method["methodBonusStartAmount"] . '"/></div>';
 }
 

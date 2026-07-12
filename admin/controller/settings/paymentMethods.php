@@ -4,15 +4,20 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         $paymentMethods = $conn->prepare("SELECT methodId, methodLogo, methodVisibleName, methodMin, methodMax, methodStatus FROM paymentmethods ORDER BY methodPosition ASC");
         $paymentMethods->execute();
         $paymentMethods = $paymentMethods->fetchAll(PDO::FETCH_ASSOC);
+        $defaultMethodLogo = site_url("img/admin/payment-methods.svg");
         $methods = [];
         for ($i = 0; $i < count($paymentMethods); $i++) {
+            $methodLogo = trim((string) $paymentMethods[$i]["methodLogo"]);
+            $methodExtras = json_decode($paymentMethods[$i]["methodExtras"], true);
+            $bonusRules = isset($methodExtras["bonus_rules"]) && is_array($methodExtras["bonus_rules"]) ? $methodExtras["bonus_rules"] : [];
             $methods[] = [
                 "id" => $paymentMethods[$i]["methodId"],
                 "name" => $paymentMethods[$i]["methodVisibleName"],
-                "logo" => $paymentMethods[$i]["methodLogo"],
+                "logo" => $methodLogo !== "" ? $methodLogo : $defaultMethodLogo,
                 "min" => $paymentMethods[$i]["methodMin"],
                 "max" => $paymentMethods[$i]["methodMax"],
-                "status" => $paymentMethods[$i]["methodStatus"]
+                "status" => $paymentMethods[$i]["methodStatus"],
+                "bonus_rules" => $bonusRules
             ];
         }
         header("Content-Type: application/json");
@@ -47,6 +52,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($method->rowCount()) {
             $method = $method->fetch(PDO::FETCH_ASSOC);
             $methodExtras = json_decode($method["methodExtras"], 1);
+            $uploadedFiles = $conn->prepare("SELECT id, link FROM files ORDER BY date DESC");
+            $uploadedFiles->execute();
+            $uploadedFiles = $uploadedFiles->fetchAll(PDO::FETCH_ASSOC);
             require_once("paymentMethods/getForm.php");
             $response = [
                 "success" => true,

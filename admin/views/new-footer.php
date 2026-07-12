@@ -230,6 +230,92 @@
 
   }
 
+  function selectPaymentMethodLogo(button) {
+    var $button = $(button);
+    var logo = $button.data("logo");
+
+    $("#payment_method_logo").val(logo);
+    $("#payment_method_logo_preview").attr("src", logo);
+    $(".payment-method-logo-option").removeClass("is-active");
+    $button.addClass("is-active");
+  }
+
+  function uploadPaymentMethodLogo(input) {
+    if (!input.files || !input.files[0]) {
+      return;
+    }
+
+    var file = input.files[0];
+    var formData = new FormData();
+    formData.append("logo", file);
+
+    $.ajax({
+      url: "admin/appearance/files",
+      contentType: false,
+      processData: false,
+      cache: false,
+      data: formData,
+      type: "POST",
+      success: function (response) {
+        var json = response;
+        if (typeof response === "string") {
+          try {
+            json = JSON.parse(response);
+          } catch (e) {
+            json = {};
+          }
+        }
+
+        if (json && json.link) {
+          iziToast.show({
+            icon: "bi bi-check2",
+            title: "Image uploaded successfully.",
+            message: "",
+            color: "green",
+            position: "topCenter"
+          });
+
+          $("#payment_method_logo").val(json.link);
+          $("#payment_method_logo_preview").attr("src", json.link);
+
+          var grid = $("#payment_method_logo_grid");
+          if (grid.length) {
+            var safeLink = $("<div>").text(json.link).html();
+            var option = '' +
+              '<div class="col-6 col-md-4 col-lg-3">' +
+              '<button type="button" class="payment-method-logo-option is-active" data-logo="' + safeLink + '" onclick="selectPaymentMethodLogo(this)">' +
+              '<img src="' + safeLink + '" alt="Uploaded icon">' +
+              '</button>' +
+              '</div>';
+            grid.prepend(option);
+            grid.find(".payment-method-logo-option").removeClass("is-active");
+            grid.find(".payment-method-logo-option").first().addClass("is-active");
+          }
+        }
+      }
+    });
+  }
+
+  function buildPaymentMethodRateRow(index) {
+    return '' +
+      '<tr class="method-rate-row">' +
+      '<td><input type="number" step="0.01" min="0" class="form-control" name="method_bonus_rules[' + index + '][range_from]" value=""></td>' +
+      '<td><input type="number" step="0.01" min="0" class="form-control" name="method_bonus_rules[' + index + '][range_to]" value="" placeholder="Optional"></td>' +
+      '<td><input type="number" step="0.01" min="0" class="form-control" name="method_bonus_rules[' + index + '][bonus_percent]" value=""></td>' +
+      '<td><select class="form-select" name="method_bonus_rules[' + index + '][is_active]"><option value="1" selected>Active</option><option value="0">Inactive</option></select></td>' +
+      '<td class="text-end"><button type="button" class="btn btn-outline-danger btn-sm" data-rate-row-remove="1">Remove</button></td>' +
+      '</tr>';
+  }
+
+  function syncPaymentMethodRateRowNames() {
+    $("#method_bonus_rules_body .method-rate-row").each(function (index) {
+      $(this).find("input[name*='[range_from]']").attr("name", "method_bonus_rules[" + index + "][range_from]");
+      $(this).find("input[name*='[range_to]']").attr("name", "method_bonus_rules[" + index + "][range_to]");
+      $(this).find("input[name*='[bonus_percent]']").attr("name", "method_bonus_rules[" + index + "][bonus_percent]");
+      $(this).find("select[name*='[is_active]']").attr("name", "method_bonus_rules[" + index + "][is_active]");
+    });
+  }
+
   function initialize_quillEditor() {
     toolbarOptions = [
       ['bold', 'italic', 'underline', 'strike'],
@@ -299,6 +385,7 @@
           open_modal(title, body);
           FancySelect.init(".form-select");
           initialize_quillEditor();
+          $("#payment_method_logo_upload").val("");
         }
       });
 
@@ -519,9 +606,30 @@
               color: 'red',
               position: 'topCenter'
             });
-          }
-        }
-      });
+      }
+    }
+  });
+
+  $(document).on("click", "#addMethodRateRow", function () {
+    var body = $("#method_bonus_rules_body");
+    if (!body.length) {
+      return;
+    }
+
+    body.append(buildPaymentMethodRateRow(body.find(".method-rate-row").length));
+    syncPaymentMethodRateRowNames();
+  });
+
+  $(document).on("click", "[data-rate-row-remove='1']", function () {
+    var body = $("#method_bonus_rules_body");
+    $(this).closest(".method-rate-row").remove();
+
+    if (body.find(".method-rate-row").length === 0) {
+      body.append(buildPaymentMethodRateRow(0));
+    }
+
+    syncPaymentMethodRateRowNames();
+  });
     });
 
     $(document).on("submit", "form", function (e) {

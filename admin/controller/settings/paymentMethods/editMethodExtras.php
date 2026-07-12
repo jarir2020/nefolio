@@ -1,5 +1,6 @@
 <?php
 $methodExtras = [];
+
 if ($methodId == 1) {
     $merchantId = htmlspecialchars($_POST["merchantId"]);
     $merchantKey = htmlspecialchars($_POST["merchantKey"]);
@@ -272,6 +273,32 @@ if ($methodId == 88) {
         "domain" => $domain,
         "exchange_rate" => $exchangeRate
     ];
+}
+
+$hasBonusRules = isset($_POST["method_bonus_rules"]);
+$normalizedBonusRules = [];
+if ($hasBonusRules && is_array($_POST["method_bonus_rules"])) {
+    foreach ($_POST["method_bonus_rules"] as $bonusRule) {
+        $rangeFrom = isset($bonusRule["range_from"]) && $bonusRule["range_from"] !== "" ? floatval($bonusRule["range_from"]) : null;
+        $bonusPercent = isset($bonusRule["bonus_percent"]) && $bonusRule["bonus_percent"] !== "" ? floatval($bonusRule["bonus_percent"]) : null;
+        if ($rangeFrom === null || $bonusPercent === null) {
+            continue;
+        }
+
+        $rangeTo = isset($bonusRule["range_to"]) && $bonusRule["range_to"] !== "" ? floatval($bonusRule["range_to"]) : null;
+        $isActive = isset($bonusRule["is_active"]) ? intval($bonusRule["is_active"]) : 1;
+
+        $normalizedBonusRules[] = [
+            "range_from" => $rangeFrom,
+            "range_to" => $rangeTo,
+            "bonus_percent" => $bonusPercent,
+            "is_active" => $isActive ? 1 : 0
+        ];
+    }
+}
+
+if ($hasBonusRules) {
+    $methodExtras["bonus_rules"] = $normalizedBonusRules;
 }
 
 $methodExtras = json_encode($methodExtras);

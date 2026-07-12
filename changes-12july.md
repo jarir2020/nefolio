@@ -24,6 +24,7 @@
 - Rotated the Alphapay API key in both Alphapay payment-method rows to the new live key.
 - Hid the BDT converter unless a local gateway alias like BD, Bkash, Nagad, Rocket, Upay, PhonePe, GCash, or Maya is selected.
 - Added a new admin Rates page for the dollar rate and range-based bonus tiers, and wired add-funds to use those live settings.
+- Changed the user-side collapsed Bonus Rates panel to show the bonus on/off state for each payment method.
 
 ## Notes
 
@@ -55,6 +56,7 @@ Payment Method Bonus Toggle	admin/controller/settings/paymentMethods/getForm.php
 Payment Method Bonus Column	hosting-db-columns.php	1	95	Schema migration	New	Hosting helper	Adds the `methodBonusEnabled` column on paymentmethods and defaults it on for existing methods	paymentmethods	:-	:-
 Rates Data Plumbing	index.php	552	600	Bonus rules site JSON	Modify	Data exposure	Loads active bonus rules and the dollar rate into the shared site payload	addfunds page, settings, rates_bonus_rules	:-	:-
 Add Funds Bonus Source	app/views/N1RentalPanel/addfunds.twig	1068	1335	Dynamic bonus ladder	Modify	UI behavior	Swapped hardcoded bonus thresholds for live bonus rules and the admin-configured dollar rate	addfunds page, rates_bonus_rules	:-	:-
+User Bonus Status Panel	app/views/N1RentalPanel/addfunds.twig	1338	1394	Collapsed bonus status list	Modify	UI behavior	Changed the user-side Bonus Rates collapse to show payment-method bonus on/off settings	addfunds page, paymentmethods	:-	:-
 Alphapay API Key Refresh	netfollo_growthgalaxy.sql	1550	1552	Payment method api_key update	Modify	Credential rotation	Replaced the Alphapay API key in the live payment-method seed rows	paymentmethods	:-	:-
 USD Rate Storage	netfollo_growthgalaxy.sql	1550	1552	Payment method exchange_rate	Modify	Local data update	Set Alphapay method exchange_rate to 132 for the working USD rate	paymentmethods	:-	:-
 Rates Bonus Rules	netfollo_growthgalaxy.sql	1916	1927	New bonus rule seed	New	Seed data	Added the default global bonus ranges and seeded the live dollar rate as 132	settings, rates_bonus_rules	:-	:-

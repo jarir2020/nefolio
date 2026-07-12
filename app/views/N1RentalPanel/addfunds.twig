@@ -604,6 +604,46 @@
     margin-top: 6px;
   }
 
+  .bonus-rate-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+  }
+
+  .bonus-rate-item + .bonus-rate-item {
+    border-top: 1px dashed rgba(15, 23, 42, 0.08);
+  }
+
+  .bonus-rate-name {
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  .bonus-rate-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 56px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .bonus-rate-status.is-on {
+    background: rgba(22, 163, 74, 0.12);
+    color: #15803d;
+  }
+
+  .bonus-rate-status.is-off {
+    background: rgba(239, 68, 68, 0.12);
+    color: #b91c1c;
+  }
+
   .content-stack {
     display: grid;
     gap: 22px;
@@ -802,6 +842,10 @@
     .bonus-rates-collapse {
       padding: 12px 14px;
       border-radius: 14px;
+    }
+
+    .bonus-rate-item {
+      padding: 8px 0;
     }
 
     .pay-action {
@@ -1181,28 +1225,41 @@
     return isNaN(rate) || rate <= 0 ? 1 : rate;
   }
 
-  function getActiveBonusRules() {
-    if (Array.isArray(bonusRateRules) && bonusRateRules.length) {
-      return bonusRateRules;
+  function getActiveBonusRules(methodData) {
+    var rules = [];
+
+    if (methodData && Array.isArray(methodData.bonus_rules) && methodData.bonus_rules.length) {
+      rules = methodData.bonus_rules;
+    } else if (Array.isArray(bonusRateRules) && bonusRateRules.length) {
+      rules = bonusRateRules;
     }
 
-    return [
-      { range_from: 0, range_to: 99, bonus_percent: 0 },
-      { range_from: 100, range_to: 999, bonus_percent: 3 },
-      { range_from: 1000, range_to: 4999, bonus_percent: 5 },
-      { range_from: 5000, range_to: 9999, bonus_percent: 7 },
-      { range_from: 10000, range_to: 49999, bonus_percent: 8 },
-      { range_from: 50000, range_to: null, bonus_percent: 20 }
-    ];
+    if (!rules.length) {
+      rules = [
+        { range_from: 0, range_to: 99, bonus_percent: 0, is_active: 1 },
+        { range_from: 100, range_to: 999, bonus_percent: 3, is_active: 1 },
+        { range_from: 1000, range_to: 4999, bonus_percent: 5, is_active: 1 },
+        { range_from: 5000, range_to: 9999, bonus_percent: 7, is_active: 1 },
+        { range_from: 10000, range_to: 49999, bonus_percent: 8, is_active: 1 },
+        { range_from: 50000, range_to: null, bonus_percent: 20, is_active: 1 }
+      ];
+    }
+
+    return rules.filter(function (rule) {
+      if (typeof rule.is_active === "undefined") {
+        return true;
+      }
+      return parseInt(rule.is_active, 10) === 1;
+    });
   }
 
-  function getBonusPercent(amount) {
+  function getBonusPercent(amount, methodData) {
     amount = parseFloat(amount);
     if (isNaN(amount)) {
       return 0;
     }
 
-    var rules = getActiveBonusRules();
+    var rules = getActiveBonusRules(methodData);
     for (var i = 0; i < rules.length; i++) {
       var rule = rules[i];
       var from = parseFloat(rule.range_from);
@@ -1221,8 +1278,8 @@
     return 0;
   }
 
-  function getBonusAmount(amount) {
-    var bonusPercent = getBonusPercent(amount);
+  function getBonusAmount(amount, methodData) {
+    var bonusPercent = getBonusPercent(amount, methodData);
     return amount + (amount * (bonusPercent / 100));
   }
 
@@ -1264,6 +1321,10 @@
     return formatted;
   }
 
+  function getMethodBonusStatusLabel(methodData) {
+    return isMethodBonusEnabled(methodData) ? "On" : "Off";
+  }
+
   function setActiveGateway(aliasKey) {
     $("#gatewayQuickGrid .gateway-quick-item").removeClass("is-active");
     $("#gatewayQuickGrid .gateway-quick-item[data-alias='" + aliasKey + "']").addClass("is-active");
@@ -1289,8 +1350,8 @@
     var rate = !isNaN(globalDollarRate) && globalDollarRate > 0 ? globalDollarRate : getMethodRate(methodData);
     var usdValue = parseFloat($("#usdAmount").val());
     var bonusEnabled = isMethodBonusEnabled(methodData);
-    var bonusPercent = bonusEnabled ? getBonusPercent(usdValue) : 0;
-    var bonusAmount = isNaN(usdValue) ? 0 : (bonusEnabled ? getBonusAmount(usdValue) : usdValue);
+    var bonusPercent = bonusEnabled ? getBonusPercent(usdValue, methodData) : 0;
+    var bonusAmount = isNaN(usdValue) ? 0 : (bonusEnabled ? getBonusAmount(usdValue, methodData) : usdValue);
     var bonusValue = isNaN(usdValue) ? 0 : bonusAmount - usdValue;
 
     if (!shouldShowConverter) {
@@ -1338,46 +1399,41 @@
         if (json.success === true) {
           var methodInstruction = "";
           var bonusRatesMarkup = "";
-          var activeBonusRules = getActiveBonusRules();
-          var bonusEnabled = isMethodBonusEnabled(methodData);
+          var bonusItems = "";
+          var paymentMethodKeys = paymentMethods ? Object.keys(paymentMethods) : [];
 
-          if (bonusEnabled && activeBonusRules.length > 0) {
-            var bonusItems = "";
-            for (var i = 0; i < activeBonusRules.length; i++) {
-              var rule = activeBonusRules[i];
-              var rangeFrom = parseFloat(rule.range_from);
-              var rangeTo = rule.range_to === null || rule.range_to === "" ? null : parseFloat(rule.range_to);
-              var bonusPercent = parseFloat(rule.bonus_percent);
-              var rangeLabel = "";
-
-              if (!isNaN(rangeFrom) && rangeTo === null) {
-                rangeLabel = formatDisplayAmount(rangeFrom) + " USD or more";
-              } else if (!isNaN(rangeFrom) && !isNaN(rangeTo)) {
-                rangeLabel = formatDisplayAmount(rangeFrom) + " - " + formatDisplayAmount(rangeTo) + " USD";
+          if (paymentMethodKeys.length) {
+            for (var i = 0; i < paymentMethodKeys.length; i++) {
+              var paymentMethodRow = paymentMethods[paymentMethodKeys[i]] && paymentMethods[paymentMethodKeys[i]][0] ? paymentMethods[paymentMethodKeys[i]][0] : null;
+              if (!paymentMethodRow) {
+                continue;
               }
 
               bonusItems +=
-                '<li>' +
-                rangeLabel +
-                ' = ' +
-                (isNaN(bonusPercent) ? 0 : bonusPercent) +
-                '% bonus' +
+                '<li class="bonus-rate-item">' +
+                '<span class="bonus-rate-name">' +
+                '<img src="' + (paymentMethodRow.logo || "") + '" alt="" style="width:18px;height:18px;object-fit:contain;margin-right:8px;border-radius:4px;">' +
+                (paymentMethodRow.name || "Payment Method") +
+                '</span>' +
+                '<span class="bonus-rate-status ' + (isMethodBonusEnabled(paymentMethodRow) ? "is-on" : "is-off") + '">' +
+                getMethodBonusStatusLabel(paymentMethodRow) +
+                '</span>' +
                 '</li>';
             }
-
-            bonusRatesMarkup =
-              '<div class="bonus-rates-box">' +
-              '<div class="bonus-rates-head">' +
-              '<div class="bonus-rates-title"><i class="fas fa-gift"></i><span>Bonus Rates</span></div>' +
-              '<button type="button" class="bonus-rates-toggle" data-bs-toggle="collapse" data-bs-target="#bonusRatesCollapse" aria-expanded="false" aria-controls="bonusRatesCollapse">Click to show</button>' +
-              '</div>' +
-              '<div class="collapse" id="bonusRatesCollapse">' +
-              '<div class="bonus-rates-collapse">' +
-              '<ul>' + bonusItems + '</ul>' +
-              '</div>' +
-              '</div>' +
-              '</div>';
           }
+
+          bonusRatesMarkup =
+            '<div class="bonus-rates-box">' +
+            '<div class="bonus-rates-head">' +
+            '<div class="bonus-rates-title"><i class="fas fa-gift"></i><span>Bonus Rates</span></div>' +
+            '<button type="button" class="bonus-rates-toggle" data-bs-toggle="collapse" data-bs-target="#bonusRatesCollapse" aria-expanded="false" aria-controls="bonusRatesCollapse">Click to show</button>' +
+            '</div>' +
+            '<div class="collapse" id="bonusRatesCollapse">' +
+            '<div class="bonus-rates-collapse">' +
+            '<ul>' + bonusItems + '</ul>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
 
           if (methodData.instructions && methodData.instructions.length > 0) {
             methodInstruction =
@@ -1454,8 +1510,8 @@
         return;
       }
 
-      var bonusPercent = bonusEnabled ? getBonusPercent(amount) : 0;
-      var bonusAmount = bonusEnabled ? getBonusAmount(amount) : amount;
+      var bonusPercent = bonusEnabled ? getBonusPercent(amount, methodData) : 0;
+      var bonusAmount = bonusEnabled ? getBonusAmount(amount, methodData) : amount;
       var bonusValue = bonusAmount - amount;
       $("#paymentAmount").val(preparePrice(amount));
       $("#bdtAmount").val(preparePrice(amount * rate));

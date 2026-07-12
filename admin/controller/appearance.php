@@ -979,6 +979,14 @@ elseif (route(2) == "files"):
         $insert = $conn->prepare("INSERT INTO files SET link=:link, date=:date");
         $insert = $insert->execute(array("link" => $url, "date" => date("Y-m-d H:i:s")));
 
+        header("Content-Type: application/json; charset=utf-8");
+        echo json_encode([
+          "success" => true,
+          "link" => $url,
+          "message" => "Image uploaded successfully."
+        ], JSON_UNESCAPED_UNICODE);
+        exit();
+
       endif;
 
     endif;
