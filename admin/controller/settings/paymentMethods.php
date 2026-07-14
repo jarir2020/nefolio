@@ -1,10 +1,70 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    $isValidLogoLink = function ($link) {
+        $link = trim((string) $link);
+        if ($link === "") {
+            return false;
+        }
+
+        if (preg_match('#^https?://#i', $link)) {
+            $parsedUrl = parse_url($link);
+            if (!empty($parsedUrl["host"]) && !empty($parsedUrl["path"]) && isset($_SERVER["HTTP_HOST"]) && strcasecmp($parsedUrl["host"], $_SERVER["HTTP_HOST"]) === 0) {
+                return file_exists($_SERVER["DOCUMENT_ROOT"] . $parsedUrl["path"]);
+            }
+
+            $ch = curl_init($link);
+            curl_setopt_array($ch, [
+                CURLOPT_NOBODY => true,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => false,
+                CURLOPT_CONNECTTIMEOUT => 3,
+                CURLOPT_TIMEOUT => 5
+            ]);
+            curl_exec($ch);
+            $statusCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            return $statusCode >= 200 && $statusCode < 400;
+        }
+
+        $localPath = $_SERVER["DOCUMENT_ROOT"] . "/" . ltrim($link, "/");
+        return file_exists($localPath);
+    };
+
+    $pruneBrokenLogoFiles = function (&$files) use ($conn, $isValidLogoLink) {
+        $cleanFiles = [];
+        $deleteFile = $conn->prepare("DELETE FROM files WHERE id=:id");
+
+        foreach ($files as $file) {
+            $fileLink = trim((string) ($file["link"] ?? ""));
+            if ($fileLink === "") {
+                if (!empty($file["id"])) {
+                    $deleteFile->execute(["id" => $file["id"]]);
+                }
+                continue;
+            }
+
+            if (!$isValidLogoLink($fileLink)) {
+                if (!empty($file["id"])) {
+                    $deleteFile->execute(["id" => $file["id"]]);
+                }
+                continue;
+            }
+
+            $cleanFiles[] = $file;
+        }
+
+        $files = $cleanFiles;
+    };
+
     if ($_GET["action"] == "getData") {
         $paymentMethods = $conn->prepare("SELECT methodId, methodLogo, methodVisibleName, methodMin, methodMax, methodStatus FROM paymentmethods ORDER BY methodPosition ASC");
         $paymentMethods->execute();
         $paymentMethods = $paymentMethods->fetchAll(PDO::FETCH_ASSOC);
         $defaultMethodLogo = site_url("img/admin/payment-methods.svg");
+        $clearBrokenMethodLogo = $conn->prepare("UPDATE paymentmethods SET methodLogo=:logo WHERE methodId=:id");
         $cachePaymentMethodLogo = function ($logo) {
             $logo = trim((string) $logo);
             if ($logo === "") {
@@ -61,6 +121,13 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             $methodLogo = trim((string) $paymentMethods[$i]["methodLogo"]);
             $methodExtras = json_decode($paymentMethods[$i]["methodExtras"], true);
             $bonusRules = isset($methodExtras["bonus_rules"]) && is_array($methodExtras["bonus_rules"]) ? $methodExtras["bonus_rules"] : [];
+            if ($methodLogo !== "" && !$isValidLogoLink($methodLogo)) {
+                $clearBrokenMethodLogo->execute([
+                    "logo" => "",
+                    "id" => $paymentMethods[$i]["methodId"]
+                ]);
+                $methodLogo = "";
+            }
             $methods[] = [
                 "id" => $paymentMethods[$i]["methodId"],
                 "name" => $paymentMethods[$i]["methodVisibleName"],
@@ -106,6 +173,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $uploadedFiles = $conn->prepare("SELECT id, link FROM files ORDER BY date DESC");
             $uploadedFiles->execute();
             $uploadedFiles = $uploadedFiles->fetchAll(PDO::FETCH_ASSOC);
+            $pruneBrokenLogoFiles($uploadedFiles);
             require_once("paymentMethods/getForm.php");
             $response = [
                 "success" => true,

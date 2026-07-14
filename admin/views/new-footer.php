@@ -230,6 +230,10 @@
 
   }
 
+  function isPaymentMethodLogoUploadPending() {
+    return window.paymentMethodLogoUploadPromise && typeof window.paymentMethodLogoUploadPromise.state === "function" && window.paymentMethodLogoUploadPromise.state() === "pending";
+  }
+
   window.selectPaymentMethodLogo = function (button) {
     var $button = $(button);
     var logo = $button.data("logo");
@@ -249,7 +253,7 @@
     var formData = new FormData();
     formData.append("logo", file);
 
-    $.ajax({
+    window.paymentMethodLogoUploadPromise = $.ajax({
       url: "admin/appearance/files",
       contentType: false,
       processData: false,
@@ -292,6 +296,9 @@
             grid.find(".payment-method-logo-option").first().addClass("is-active");
           }
         }
+      },
+      complete: function () {
+        window.paymentMethodLogoUploadPromise = null;
       }
     });
   };
@@ -634,6 +641,13 @@
 
     $(document).on("submit", "form", function (e) {
       e.preventDefault();
+      if (isPaymentMethodLogoUploadPending()) {
+        var form = $(this);
+        window.paymentMethodLogoUploadPromise.always(function () {
+          form.trigger("submit");
+        });
+        return;
+      }
       var action_url = $(this).attr("action");
       var method = $(this).attr("method");
       var post_data = $(this).serialize();
