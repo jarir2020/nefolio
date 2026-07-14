@@ -96,15 +96,18 @@ if (isset($data['status']) && $data['status'] == 'COMPLETED') {
             ])
         ) {
             $paidAmount = floatval($paymentDetails["payment_amount"]);
-            if ($paymentFee > 0) {
-                $fee = ($paidAmount * ($paymentFee / 100));
-                $paidAmount -= $fee;
-            }
+            $bonusAmount = 0;
+            $feeAmount = 0;
+
             $paymentBonusEnabled = isset($paymentMethod["methodBonusEnabled"]) ? intval($paymentMethod["methodBonusEnabled"]) : 1;
             if ($paymentBonusEnabled && $paymentBonusStartAmount != 0 && $paidAmount > $paymentBonusStartAmount) {
-                $bonus = $paidAmount * ($paymentBonus / 100);
-                $paidAmount += $bonus;
+                $bonusAmount = $paidAmount * ($paymentBonus / 100);
             }
+
+            if ($paymentFee > 0) {
+                $feeAmount = $paidAmount * ($paymentFee / 100);
+            }
+            $paidAmount = $paidAmount + $bonusAmount - $feeAmount;
 
             $update = $conn->prepare('UPDATE payments SET 
                     client_balance=:balance,

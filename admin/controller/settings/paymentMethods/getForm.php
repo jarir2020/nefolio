@@ -31,27 +31,46 @@ if (!count($bonusRules)) {
 
 $form .= '<div class="form-group mb-3"><label class="form-label">Select Icon</label>';
 $form .= '<input type="hidden" name="method_logo" id="payment_method_logo" value="' . htmlspecialchars($selectedMethodLogo, ENT_QUOTES, "UTF-8") . '"/>';
-$form .= '<div class="payment-method-logo-preview mb-3"><img id="payment_method_logo_preview" src="' . htmlspecialchars($selectedMethodLogo, ENT_QUOTES, "UTF-8") . '" alt="Payment method icon" style="max-width: 160px; max-height: 52px; object-fit: contain;"></div>';
-$form .= '<div class="row g-2" id="payment_method_logo_grid">';
+$form .= '<input type="hidden" name="payment_method_deleted_files" id="payment_method_deleted_files" value=""/>';
+$currentSelectedFileId = "";
+$defaultMethodLogo = site_url("img/admin/payment-methods.svg");
 if (!empty($uploadedFiles) && is_array($uploadedFiles)) {
     foreach ($uploadedFiles as $file) {
+        if (trim((string) ($file["link"] ?? "")) === $selectedMethodLogo) {
+            $currentSelectedFileId = intval($file["id"]);
+            break;
+        }
+    }
+}
+$form .= '<input type="hidden" name="payment_method_current_file_id" id="payment_method_current_file_id" value="' . htmlspecialchars((string) $currentSelectedFileId, ENT_QUOTES, "UTF-8") . '"/>';
+$form .= '<div class="payment-method-logo-preview mb-3" style="position:relative;display:inline-block;">';
+$form .= '<button type="button" class="payment-method-logo-delete" onclick="deleteCurrentPaymentMethodLogo()" aria-label="Delete selected icon" style="position:absolute;top:-8px;right:-8px;z-index:2;width:28px;height:28px;border:none;border-radius:50%;background:rgba(220,53,69,.96);color:#fff;font-size:18px;line-height:28px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.18);cursor:pointer;">&times;</button>';
+$form .= '<img id="payment_method_logo_preview" src="' . htmlspecialchars($selectedMethodLogo, ENT_QUOTES, "UTF-8") . '" alt="Payment method icon" style="max-width: 160px; max-height: 52px; object-fit: contain;" onerror="this.onerror=null;this.src=\'' . htmlspecialchars($defaultMethodLogo, ENT_QUOTES, "UTF-8") . '\';">';
+$form .= '</div>';
+$form .= '<div class="row g-2" id="payment_method_logo_grid" data-default-logo="' . htmlspecialchars($defaultMethodLogo, ENT_QUOTES, "UTF-8") . '" style="max-height:340px;overflow-y:auto;">';
+if (!empty($uploadedFiles) && is_array($uploadedFiles)) {
+    foreach ($uploadedFiles as $file) {
+        $fileId = intval($file["id"]);
         $fileLink = trim((string) $file["link"]);
         if ($fileLink === "") {
             continue;
         }
 
         $isActive = $fileLink === $selectedMethodLogo ? " is-active" : "";
-        $form .= '<div class="col-6 col-md-4 col-lg-3">';
-        $form .= '<button type="button" class="payment-method-logo-option' . $isActive . '" data-logo="' . htmlspecialchars($fileLink, ENT_QUOTES, "UTF-8") . '" onclick="selectPaymentMethodLogo(this)" style="width:100%;min-height:74px;border:1px solid #d8dee9;border-radius:12px;background:#fff;padding:10px;display:flex;align-items:center;justify-content:center;transition:all .15s ease;">';
-        $form .= '<img src="' . htmlspecialchars($fileLink, ENT_QUOTES, "UTF-8") . '" alt="Uploaded icon" style="max-width:100%;max-height:48px;object-fit:contain;">';
+        $form .= '<div class="col-6 col-md-4 col-lg-3" data-file-id="' . $fileId . '" data-file-link="' . htmlspecialchars($fileLink, ENT_QUOTES, "UTF-8") . '">';
+        $form .= '<div class="payment-method-logo-option-wrap" style="position:relative;">';
+        $form .= '<button type="button" class="payment-method-logo-delete" data-file-id="' . $fileId . '" data-file-link="' . htmlspecialchars($fileLink, ENT_QUOTES, "UTF-8") . '" onclick="deletePaymentMethodLogoFile(this)" aria-label="Delete uploaded icon" style="position:absolute;top:8px;right:8px;z-index:2;width:28px;height:28px;border:none;border-radius:50%;background:rgba(220,53,69,.96);color:#fff;font-size:18px;line-height:28px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.18);cursor:pointer;">&times;</button>';
+        $form .= '<button type="button" class="payment-method-logo-option' . $isActive . '" data-logo="' . htmlspecialchars($fileLink, ENT_QUOTES, "UTF-8") . '" data-file-id="' . $fileId . '" onclick="selectPaymentMethodLogo(this)" style="width:100%;min-height:74px;border:1px solid #d8dee9;border-radius:12px;background:#fff;padding:10px;display:flex;align-items:center;justify-content:center;transition:all .15s ease;">';
+        $form .= '<img src="' . htmlspecialchars($fileLink, ENT_QUOTES, "UTF-8") . '" alt="Uploaded icon" style="max-width:100%;max-height:48px;object-fit:contain;" onerror="this.onerror=null;this.src=\'' . htmlspecialchars($defaultMethodLogo, ENT_QUOTES, "UTF-8") . '\';">';
         $form .= '</button>';
+        $form .= '</div>';
         $form .= '</div>';
     }
 }
 $form .= '</div>';
 $form .= '<div class="form-text mt-2">Pick an uploaded image or upload a new one below. This logo is shown in the add-funds gateway list.</div>';
-$form .= '<div class="mt-3"><label class="form-label">Upload New Icon</label><input type="file" class="form-control" id="payment_method_logo_upload" accept="image/*" onchange="uploadPaymentMethodLogo(this)"></div>';
-$form .= '<style>.payment-method-logo-option.is-active{border-color:#0d6efd !important;box-shadow:0 0 0 2px rgba(13,110,253,.15);}</style>';
+$form .= '<div class="mt-3"><label class="form-label">Upload New Icon</label><input type="file" class="form-control" id="payment_method_logo_upload" accept="image/*" multiple onchange="uploadPaymentMethodLogo(this)"></div>';
+$form .= '<style>.payment-method-logo-option.is-active{border-color:#0d6efd !important;box-shadow:0 0 0 2px rgba(13,110,253,.15);} .payment-method-logo-option-wrap{transition:transform .15s ease,opacity .15s ease;} .payment-method-logo-option-wrap:hover{transform:translateY(-1px);} .payment-method-logo-delete{box-sizing:border-box;}</style>';
 $form .= '</div>';
 
 $methodShortName = htmlspecialchars($method["methodShortName"] ?? "", ENT_QUOTES, "UTF-8");

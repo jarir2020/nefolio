@@ -965,28 +965,65 @@ elseif (route(2) == "files"):
 
   if ($access):
     if ($_FILES["logo"]):
-      if ($_FILES["logo"] && ($_FILES["logo"]["type"] == "image/jpeg" || $_FILES["logo"]["type"] == "image/jpg" || $_FILES["logo"]["type"] == "image/png" || $_FILES["logo"]["type"] == "image/gif")):
-        $logo_name = $_FILES["logo"]["name"];
-        if (strpos($logo_name, "php") !== false) {
-          exit;
+      $logo_name = $_FILES["logo"]["name"] ?? "";
+      $logo_tmp_name = $_FILES["logo"]["tmp_name"] ?? "";
+      $logo_error = $_FILES["logo"]["error"] ?? UPLOAD_ERR_NO_FILE;
+
+      if ($logo_error === UPLOAD_ERR_OK && is_uploaded_file($logo_tmp_name)):
+        $mimeInfo = function_exists("finfo_open") ? @finfo_open(FILEINFO_MIME_TYPE) : false;
+        $mimeType = $mimeInfo ? @finfo_file($mimeInfo, $logo_tmp_name) : ($_FILES["logo"]["type"] ?? "");
+        if ($mimeInfo) {
+          @finfo_close($mimeInfo);
         }
-        $uzanti = substr($logo_name, -4, 4);
-        $logo_newname = "img/files/" . md5(rand(1, 999999)) . ".png";
-        $upload_logo = move_uploaded_file($_FILES["logo"]["tmp_name"], $logo_newname);
 
-        $url = site_url($logo_newname);
+        if ($mimeType && strpos($mimeType, "image/") === 0):
+          if (strpos($logo_name, "php") !== false) {
+            exit;
+          }
 
-        $insert = $conn->prepare("INSERT INTO files SET link=:link, date=:date");
-        $insert = $insert->execute(array("link" => $url, "date" => date("Y-m-d H:i:s")));
+          $pathInfo = pathinfo($logo_name);
+          $extension = isset($pathInfo["extension"]) ? strtolower(trim(preg_replace('/[^a-z0-9]+/i', '', $pathInfo["extension"]))) : "";
+          if ($extension === "") {
+            $mimeToExt = [
+              "image/jpeg" => "jpg",
+              "image/jpg" => "jpg",
+              "image/png" => "png",
+              "image/gif" => "gif",
+              "image/webp" => "webp",
+              "image/avif" => "avif",
+              "image/svg+xml" => "svg",
+              "image/bmp" => "bmp",
+              "image/tiff" => "tiff"
+            ];
+            $extension = isset($mimeToExt[$mimeType]) ? $mimeToExt[$mimeType] : "img";
+          }
 
-        header("Content-Type: application/json; charset=utf-8");
-        echo json_encode([
-          "success" => true,
-          "link" => $url,
-          "message" => "Image uploaded successfully."
-        ], JSON_UNESCAPED_UNICODE);
-        exit();
+          $safeBaseName = md5(random_bytes(16));
+          $logo_newname = "img/files/" . $safeBaseName . "." . $extension;
+          $upload_logo = move_uploaded_file($logo_tmp_name, $logo_newname);
 
+          if ($upload_logo):
+            $url = site_url($logo_newname);
+            $fileSize = isset($_FILES["logo"]["size"]) ? floatval($_FILES["logo"]["size"]) : 0;
+            $insert = $conn->prepare("INSERT INTO files SET name=:name, link=:link, size=:size, date=:date");
+            $insert = $insert->execute(array(
+              "name" => $logo_name,
+              "link" => $url,
+              "size" => $fileSize,
+              "date" => date("Y-m-d H:i:s")
+            ));
+            $fileId = $conn->lastInsertId();
+
+            header("Content-Type: application/json; charset=utf-8");
+            echo json_encode([
+              "success" => true,
+              "id" => $fileId,
+              "link" => $url,
+              "message" => "Image uploaded successfully."
+            ], JSON_UNESCAPED_UNICODE);
+            exit();
+          endif;
+        endif;
       endif;
 
     endif;
@@ -999,7 +1036,19 @@ elseif (route(2) == "files"):
     if (route(3) == "delete"):
       $id = route(4);
 
-      if (countRow(["table" => "files", "where" => ["id" => $id]])):
+        if (countRow(["table" => "files", "where" => ["id" => $id]])):
+        $file = $conn->prepare("SELECT link FROM files WHERE id=:id");
+        $file->execute(["id" => $id]);
+        $file = $file->fetch(PDO::FETCH_ASSOC);
+        if (!empty($file["link"])) {
+          $parsedLink = parse_url($file["link"], PHP_URL_PATH);
+          if ($parsedLink) {
+            $localPath = rtrim($_SERVER["DOCUMENT_ROOT"], "/") . "/" . ltrim($parsedLink, "/");
+            if (file_exists($localPath)) {
+              @unlink($localPath);
+            }
+          }
+        }
         $delete = $conn->prepare("DELETE FROM files WHERE id=:id ");
         $delete->execute(array("id" => $id));
       endif;

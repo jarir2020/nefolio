@@ -19,55 +19,18 @@ if ($settings["email_confirmation"] == 1 && $user["email_type"] == 1) {
    GET  – LOAD DATA
    ========================= */
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
-
-    $cachePaymentMethodLogo = function ($logo) {
-        $logo = trim((string) $logo);
-        if ($logo === "") {
-            return "";
-        }
-
-        if (!preg_match('#^https?://#i', $logo)) {
-            return $logo;
-        }
-
-        $cacheDir = $_SERVER["DOCUMENT_ROOT"] . "/img/files/payment-method-logos";
-        if (!is_dir($cacheDir)) {
-            @mkdir($cacheDir, 0775, true);
-        }
-
-        $parsedUrl = parse_url($logo);
-        $extension = "png";
-        if (!empty($parsedUrl["path"])) {
-            $pathInfo = pathinfo($parsedUrl["path"]);
-            if (!empty($pathInfo["extension"]) && preg_match('/^[a-z0-9]+$/i', $pathInfo["extension"])) {
-                $extension = strtolower($pathInfo["extension"]);
-            }
-        }
-
-        $cacheFileName = md5($logo) . "." . $extension;
-        $cacheFilePath = $cacheDir . "/" . $cacheFileName;
-        $cacheWebPath = "/img/files/payment-method-logos/" . $cacheFileName;
-
-        if (!file_exists($cacheFilePath)) {
-            $remoteData = @file_get_contents($logo);
-            if ($remoteData !== false && $remoteData !== "") {
-                @file_put_contents($cacheFilePath, $remoteData);
-            } else {
-                return $logo;
-            }
-        }
-
-        return $cacheWebPath;
-    };
-
-    $normalizeMethodLogo = function ($logo) use ($cachePaymentMethodLogo) {
+    $normalizeMethodLogo = function ($logo) {
         $logo = trim((string) $logo);
         if ($logo === "") {
             return site_url("img/admin/payment-methods.svg");
         }
 
-        if (preg_match('#^https?://#i', $logo) || strpos($logo, "/") === 0) {
-            return $cachePaymentMethodLogo($logo);
+        if (preg_match('#^https?://#i', $logo)) {
+            return $logo;
+        }
+
+        if (strpos($logo, "/") === 0) {
+            return site_url(ltrim($logo, "/"));
         }
 
         return site_url(ltrim($logo, "/"));
@@ -215,11 +178,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && (!isset($_POST["action"]) || $_POST[
     $paymentBonusStartAmount = $method["methodBonusStartAmount"];
 
     $paymentAmount = floatval($_POST["payment_amount"] ?? 0);
-
-    if ($paymentFee > 0) {
-        $fee = ($paymentAmount * ($paymentFee / 100));
-        $paymentAmount += $fee;
-    }
 
     if ($paymentAmount < $methodMin) {
         errorExit("Minimum amount : $methodCurrencySymbol $methodMin");

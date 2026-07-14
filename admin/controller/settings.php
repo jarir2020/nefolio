@@ -505,6 +505,9 @@ referral_status=:referral_status WHERE id=:id ");
     endif;
   endif;
 elseif (route(2) == "paymentMethods"):
+  $paymentMethodsList = $conn->prepare("SELECT methodId, methodLogo, methodVisibleName, methodMin, methodMax, methodStatus FROM paymentmethods ORDER BY methodPosition ASC");
+  $paymentMethodsList->execute();
+  $paymentMethodsList = $paymentMethodsList->fetchAll(PDO::FETCH_ASSOC);
   require("settings/paymentMethods.php");
   require admin_view("new-header");
   require admin_view("settings/paymentMethods");

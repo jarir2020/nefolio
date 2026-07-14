@@ -1,6 +1,6 @@
 <div class="modal fade" id="staticBackdropModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
   aria-labelledby="staticBackdropModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="staticBackdropModalLabel"></h5><button type="button" class="btn-close"
@@ -237,70 +237,158 @@
   window.selectPaymentMethodLogo = function (button) {
     var $button = $(button);
     var logo = $button.data("logo");
+    var fileId = $button.data("file-id") || "";
 
     $("#payment_method_logo").val(logo);
     $("#payment_method_logo_preview").attr("src", logo);
+    $("#payment_method_current_file_id").val(fileId);
     $(".payment-method-logo-option").removeClass("is-active");
     $button.addClass("is-active");
   };
+
+  function addPaymentMethodDeletedFileId(fileId) {
+    var $deletedFiles = $("#payment_method_deleted_files");
+    if (!$deletedFiles.length || !fileId) {
+      return;
+    }
+
+    var current = ($deletedFiles.val() || "").split(",").map(function (value) {
+      return value.trim();
+    }).filter(Boolean);
+
+    if (current.indexOf(String(fileId)) === -1) {
+      current.push(String(fileId));
+      $deletedFiles.val(current.join(","));
+    }
+  }
+
+  function removePaymentMethodDeletedFileId(fileId) {
+    var $deletedFiles = $("#payment_method_deleted_files");
+    if (!$deletedFiles.length || !fileId) {
+      return;
+    }
+
+    var current = ($deletedFiles.val() || "").split(",").map(function (value) {
+      return value.trim();
+    }).filter(Boolean);
+    var next = current.filter(function (value) {
+      return String(value) !== String(fileId);
+    });
+    $deletedFiles.val(next.join(","));
+  }
 
   window.uploadPaymentMethodLogo = function (input) {
     if (!input.files || !input.files[0]) {
       return;
     }
 
-    var file = input.files[0];
-    var formData = new FormData();
-    formData.append("logo", file);
+    var files = Array.prototype.slice.call(input.files);
+    var requests = [];
 
-    window.paymentMethodLogoUploadPromise = $.ajax({
-      url: "admin/appearance/files",
-      contentType: false,
-      processData: false,
-      cache: false,
-      data: formData,
-      type: "POST",
-      success: function (response) {
-        var json = response;
-        if (typeof response === "string") {
-          try {
-            json = JSON.parse(response);
-          } catch (e) {
-            json = {};
+    files.forEach(function (file) {
+      var formData = new FormData();
+      formData.append("logo", file);
+
+      requests.push($.ajax({
+        url: "admin/appearance/files",
+        contentType: false,
+        processData: false,
+        cache: false,
+        data: formData,
+        type: "POST",
+        success: function (response) {
+          var json = response;
+          if (typeof response === "string") {
+            try {
+              json = JSON.parse(response);
+            } catch (e) {
+              json = {};
+            }
           }
-        }
 
-        if (json && json.link) {
-          iziToast.show({
-            icon: "bi bi-check2",
-            title: "Image uploaded successfully.",
-            message: "",
-            color: "green",
-            position: "topCenter"
-          });
+          if (json && json.link) {
+            iziToast.show({
+              icon: "bi bi-check2",
+              title: "Image uploaded successfully.",
+              message: "",
+              color: "green",
+              position: "topCenter"
+            });
 
-          $("#payment_method_logo").val(json.link);
-          $("#payment_method_logo_preview").attr("src", json.link);
-
-          var grid = $("#payment_method_logo_grid");
-          if (grid.length) {
+            var grid = $("#payment_method_logo_grid");
             var safeLink = $("<div>").text(json.link).html();
-            var option = '' +
-              '<div class="col-6 col-md-4 col-lg-3">' +
-              '<button type="button" class="payment-method-logo-option is-active" data-logo="' + safeLink + '" onclick="selectPaymentMethodLogo(this)">' +
-              '<img src="' + safeLink + '" alt="Uploaded icon">' +
-              '</button>' +
-              '</div>';
-            grid.prepend(option);
-            grid.find(".payment-method-logo-option").removeClass("is-active");
-            grid.find(".payment-method-logo-option").first().addClass("is-active");
+            var fileId = json.id ? String(json.id) : "";
+            var defaultLogo = grid.data("default-logo") || safeLink;
+
+            $("#payment_method_logo").val(json.link);
+            $("#payment_method_logo_preview").attr("src", json.link);
+            $("#payment_method_current_file_id").val(fileId);
+
+            if (grid.length) {
+              var option = '' +
+                '<div class="col-6 col-md-4 col-lg-3" data-file-id="' + fileId + '" data-file-link="' + safeLink + '">' +
+                '<div class="payment-method-logo-option-wrap" style="position:relative;">' +
+                '<button type="button" class="payment-method-logo-delete" data-file-id="' + fileId + '" data-file-link="' + safeLink + '" onclick="deletePaymentMethodLogoFile(this)" aria-label="Delete uploaded icon" style="position:absolute;top:8px;right:8px;z-index:2;width:28px;height:28px;border:none;border-radius:50%;background:rgba(220,53,69,.96);color:#fff;font-size:18px;line-height:28px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.18);cursor:pointer;">&times;</button>' +
+                '<button type="button" class="payment-method-logo-option is-active" data-logo="' + safeLink + '" data-file-id="' + fileId + '" onclick="selectPaymentMethodLogo(this)" style="width:100%;min-height:74px;border:1px solid #d8dee9;border-radius:12px;background:#fff;padding:10px;display:flex;align-items:center;justify-content:center;transition:all .15s ease;">' +
+                '<img src="' + safeLink + '" alt="Uploaded icon" onerror="this.onerror=null;this.src=\'' + defaultLogo + '\';" style="max-width:100%;max-height:48px;object-fit:contain;">' +
+                '</button>' +
+                '</div>' +
+                '</div>';
+              grid.prepend(option);
+              grid.find(".payment-method-logo-option").removeClass("is-active");
+              grid.find(".payment-method-logo-option").first().addClass("is-active");
+            }
           }
         }
-      },
-      complete: function () {
-        window.paymentMethodLogoUploadPromise = null;
-      }
+      }));
     });
+
+    window.paymentMethodLogoUploadPromise = $.when.apply($, requests).always(function () {
+      window.paymentMethodLogoUploadPromise = null;
+    });
+  };
+
+  window.deletePaymentMethodLogoFile = function (button) {
+    var $button = $(button);
+    var fileId = $button.data("file-id");
+    var fileLink = $button.data("file-link");
+    var $tile = $button.closest("[data-file-id]");
+    var currentLogo = $("#payment_method_logo").val();
+    var defaultLogo = $("#payment_method_logo_grid").data("default-logo") || currentLogo;
+
+    if (!fileId) {
+      return;
+    }
+
+    addPaymentMethodDeletedFileId(fileId);
+
+    if (currentLogo && fileLink && currentLogo === fileLink) {
+      $("#payment_method_logo").val(defaultLogo);
+      $("#payment_method_logo_preview").attr("src", defaultLogo);
+      $("#payment_method_current_file_id").val("");
+      $(".payment-method-logo-option").removeClass("is-active");
+    }
+
+    $tile.addClass("opacity-50");
+    $tile.find(".payment-method-logo-option, .payment-method-logo-delete").prop("disabled", true);
+    $tile.attr("data-deleted", "1");
+  };
+
+  window.deleteCurrentPaymentMethodLogo = function () {
+    var currentFileId = $("#payment_method_current_file_id").val();
+    if (currentFileId) {
+      var $tile = $('#payment_method_logo_grid [data-file-id="' + currentFileId + '"] .payment-method-logo-delete');
+      if ($tile.length) {
+        deletePaymentMethodLogoFile($tile.get(0));
+        return;
+      }
+    }
+
+    var defaultLogo = $("#payment_method_logo_grid").data("default-logo") || $("#payment_method_logo_preview").attr("src");
+    $("#payment_method_logo").val(defaultLogo);
+    $("#payment_method_logo_preview").attr("src", defaultLogo);
+    $("#payment_method_current_file_id").val("");
+    $(".payment-method-logo-option").removeClass("is-active");
   };
 
   function buildPaymentMethodRateRow(index) {
@@ -478,29 +566,10 @@
     }
 
     if (Route == "settings" && settingsRoute == "paymentMethods") {
-      $.ajax({
-        url: site_url + "admin/settings/paymentMethods?action=getData",
-        type: "GET",
-        success: function (response) {
-          data = response;
-          page_loader.hide();
-          var page = $(".page-content");
-          var pageContent = '';
-          for (i = 0; i < data.length; i++) {
-            if (data[i].status == 1) {
-              var circle = "green-circle";
-            } else {
-              var circle = "red-circle";
-            }
-            pageContent += '<div class="payment-card col-md-4" data-method-id="' + data[i].id + '" data-method-position="' + (i + 1) + '"><div data-method-id="' + data[i].id + '" class="method-status ' + circle + '"></div><div class="method-sort-handle">=</div><div class="method-logo"><img width="120" height="30" src="' + data[i].logo + '" alt="method Logo"></div><div class="method_name">' + data[i].name + '</div><div class="method_min_max"><span class="min">' + data[i].min + '</span>-<span class="max">' + data[i].max + '</span></div><div class="vertical-line"></div><div class="actions"><button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-form="edit_payment_method" data-method-id="' + data[i].id + '" data-bs-target="#staticBackdropModal">Edit</button></div></div>';
-          }
-          page.html(pageContent);
-          count = 0;
-          $(".payment-card").each(function () {
-            paymentMethodsSequence[count] = "" + $(this).data("method-id") + "";
-            count++;
-          });
-        }
+      count = 0;
+      $(".payment-card").each(function () {
+        paymentMethodsSequence[count] = "" + $(this).data("method-id") + "";
+        count++;
       });
     }
 

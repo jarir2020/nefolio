@@ -47,6 +47,7 @@ $dollarRateConversionEnabled = isset($_POST["dollar_rate_conversion_enabled"]) ?
 $methodStatus = in_array($_POST["method_status"], [0, 1]) ? $_POST["method_status"] : 1;
 $methodInstructions = htmlspecialchars($_POST["method_instructions"]);
 $methodLogo = isset($_POST["method_logo"]) ? trim(htmlspecialchars($_POST["method_logo"])) : "";
+$deletedFilesRaw = isset($_POST["payment_method_deleted_files"]) ? trim((string) $_POST["payment_method_deleted_files"]) : "";
 $methodInstructions = str_replace("&lt;p&gt;&lt;br&gt;&lt;/p&gt;","",$methodInstructions);
 $methodRateRulesPosted = isset($_POST["method_bonus_rules"]) && is_array($_POST["method_bonus_rules"]);
 $methodRateRules = [];
@@ -70,6 +71,33 @@ if ($methodRateRulesPosted) {
 $currentMethod = $conn->prepare("SELECT methodExtras FROM paymentmethods WHERE methodId=:id");
 $currentMethod->execute(["id" => $methodId]);
 $currentMethod = $currentMethod->fetch(PDO::FETCH_ASSOC);
+
+$deletedFileIds = [];
+if ($deletedFilesRaw !== "") {
+    foreach (explode(",", $deletedFilesRaw) as $deletedFileId) {
+        $deletedFileId = intval(trim($deletedFileId));
+        if ($deletedFileId > 0) {
+            $deletedFileIds[$deletedFileId] = $deletedFileId;
+        }
+    }
+    $deletedFileIds = array_values($deletedFileIds);
+}
+
+$deletedFileLinks = [];
+if (!empty($deletedFileIds)) {
+    $placeholders = implode(",", array_fill(0, count($deletedFileIds), "?"));
+    $deletedFiles = $conn->prepare("SELECT id, link FROM files WHERE id IN ($placeholders)");
+    $deletedFiles->execute($deletedFileIds);
+    $deletedFiles = $deletedFiles->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($deletedFiles as $deletedFile) {
+        $deletedFileLinks[] = trim((string) ($deletedFile["link"] ?? ""));
+    }
+}
+
+$defaultMethodLogo = site_url("img/admin/payment-methods.svg");
+if ($methodLogo !== "" && in_array($methodLogo, $deletedFileLinks, true)) {
+    $methodLogo = $defaultMethodLogo;
+}
 
 if (!in_array($methodId, $allMethods)) {
     errorExit("Invalid payment method");
@@ -155,4 +183,24 @@ if ($methodRateRulesPosted && !in_array($methodId, $automaticMethods) && isset($
         "extras" => json_encode($existingExtras),
         "id" => $methodId
     ]);
+}
+
+if (!empty($deletedFileIds)) {
+    $deleteFile = $conn->prepare("DELETE FROM files WHERE id=:id");
+    $fileLookup = $conn->prepare("SELECT link FROM files WHERE id=:id");
+
+    foreach ($deletedFileIds as $deletedFileId) {
+        $fileLookup->execute(["id" => $deletedFileId]);
+        $file = $fileLookup->fetch(PDO::FETCH_ASSOC);
+        if (!empty($file["link"])) {
+            $parsedLink = parse_url($file["link"], PHP_URL_PATH);
+            if ($parsedLink) {
+                $localPath = rtrim($_SERVER["DOCUMENT_ROOT"], "/") . "/" . ltrim($parsedLink, "/");
+                if (file_exists($localPath)) {
+                    @unlink($localPath);
+                }
+            }
+        }
+        $deleteFile->execute(["id" => $deletedFileId]);
+    }
 }

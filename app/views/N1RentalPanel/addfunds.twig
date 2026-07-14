@@ -3,16 +3,19 @@
   .addfunds-shell {
     padding: 24px 0 40px;
     background:
-      radial-gradient(circle at top left, rgba(255, 164, 0, 0.18), transparent 28%),
-      radial-gradient(circle at top right, rgba(42, 42, 114, 0.14), transparent 26%),
-      linear-gradient(180deg, #f6f8fc 0%, #eef2f7 100%);
+      linear-gradient(180deg, #eef4ff 0%, #f7f9ff 100%);
+  }
+
+  .addfunds-shell .container-fluid {
+    max-width: 1180px;
+    margin: 0 auto;
   }
 
   .card_v2 {
     background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: 24px;
-    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    border-radius: 22px;
+    box-shadow: 0 12px 34px rgba(15, 23, 42, 0.08);
     overflow: hidden;
   }
 
@@ -20,7 +23,7 @@
   .gateway-card .card-body,
   .policy-card .card-body,
   .main-card .card-body {
-    padding: 24px;
+    padding: 22px;
   }
 
   .section-title {
@@ -192,25 +195,30 @@
   }
 
   .tab_btn_wrap {
-    gap: 10px;
+    gap: 0;
     flex-wrap: wrap;
-    margin-top: 10px;
+    margin-top: 0;
+    background: #f0f4ff;
+    padding: 8px;
+    border-radius: 16px;
   }
 
   .tab_btn_wrap .nav-link {
     border: 0;
-    border-radius: 999px;
-    padding: 12px 18px;
-    background: #eef2f7;
-    color: #0f172a;
-    font-weight: 700;
+    border-radius: 14px;
+    padding: 14px 18px;
+    background: transparent;
+    color: #1f2b4d;
+    font-weight: 800;
     box-shadow: none;
+    flex: 1 1 0;
+    min-height: 56px;
   }
 
   .tab_btn_wrap .nav-link.active {
-    background: linear-gradient(135deg, #2a2a72, #ff9f1c);
+    background: linear-gradient(135deg, #1280ff 0%, #19a0f4 100%);
     color: #fff;
-    box-shadow: 0 12px 24px rgba(42, 42, 114, 0.22);
+    box-shadow: 0 12px 24px rgba(18, 128, 255, 0.24);
   }
 
   .tab_wrap {
@@ -220,27 +228,28 @@
   .gateway-shell {
     display: grid;
     gap: 14px;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
   }
 
   .gateway-quick-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
+    gap: 14px;
   }
 
   .gateway-quick-item {
     width: 100%;
-    min-height: 86px;
-    border: 1px solid rgba(148, 163, 184, 0.24);
-    border-radius: 20px;
-    background:
-      linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
-    padding: 14px 16px;
+    min-height: 94px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 18px;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    padding: 14px 12px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    text-align: left;
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
     transition:
       transform 0.18s ease,
       box-shadow 0.18s ease,
@@ -253,17 +262,16 @@
 
   .gateway-quick-item:hover,
   .gateway-quick-item.is-active {
-    border-color: rgba(96, 47, 255, 0.28);
-    box-shadow: 0 16px 30px rgba(96, 47, 255, 0.12);
+    border-color: rgba(118, 84, 255, 0.55);
+    box-shadow: 0 14px 28px rgba(118, 84, 255, 0.14);
     transform: translateY(-2px);
-    background:
-      linear-gradient(180deg, #f5efff 0%, #ffffff 100%);
+    background: linear-gradient(180deg, #faf8ff 0%, #ffffff 100%);
   }
 
   .gateway-quick-item .logo {
-    width: 42px;
-    height: 42px;
-    border-radius: 14px;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
     object-fit: contain;
     background: #f8fafc;
     flex: 0 0 auto;
@@ -282,8 +290,8 @@
     display: block;
     color: #0f172a;
     font-size: 15px;
-    line-height: 1.2;
-    font-weight: 800;
+    line-height: 1.25;
+    font-weight: 700;
   }
 
   .gateway-quick-item .meta span {
@@ -293,11 +301,10 @@
   .converter-panel {
     margin-bottom: 18px;
     padding: 18px;
-    border-radius: 22px;
-    background:
-      linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-    border: 1px solid rgba(148, 163, 184, 0.2);
-    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.05);
+    border-radius: 18px;
+    background: #fff;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.05);
   }
 
   .converter-panel .converter-head {
@@ -331,20 +338,20 @@
   .quick-amounts {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: 12px;
+    margin-bottom: 18px;
   }
 
   .quick-amounts button {
     border: 1px solid rgba(148, 163, 184, 0.28);
     background: #fff;
-    color: #1e293b;
+    color: #2f6fd6;
     border-radius: 14px;
-    min-width: 58px;
+    min-width: 72px;
     height: 46px;
-    padding: 0 14px;
-    font-weight: 700;
-    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+    padding: 0 16px;
+    font-weight: 800;
+    box-shadow: 0 8px 16px rgba(15, 23, 42, 0.05);
     transition: all 0.18s ease;
   }
 
@@ -358,8 +365,8 @@
 
   .converter-grid {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    gap: 14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
     align-items: end;
   }
 
@@ -381,11 +388,15 @@
     cursor: not-allowed;
   }
 
+  .converter-grid .form-group {
+    min-width: 0;
+  }
+
   .rate-summary {
     margin-top: 16px;
     border-radius: 18px;
-    border: 1px solid rgba(148, 163, 184, 0.18);
-    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    background: linear-gradient(180deg, #ffffff 0%, #fafcff 100%);
     padding: 16px 18px;
     display: flex;
     align-items: center;
@@ -409,17 +420,17 @@
 
   .rate-summary .copy .value {
     color: #0f172a;
-    font-size: 32px;
+    font-size: 34px;
     font-weight: 900;
     line-height: 1;
   }
 
   .rate-summary .badge-note {
     flex: 0 0 auto;
-    border-radius: 14px;
-    padding: 12px 16px;
-    background: linear-gradient(135deg, rgba(103, 52, 246, 0.1), rgba(103, 52, 246, 0.16));
-    color: #4c1d95;
+    border-radius: 12px;
+    padding: 10px 14px;
+    background: rgba(34, 197, 94, 0.12);
+    color: #16a34a;
     font-weight: 800;
     font-size: 14px;
     text-align: center;
@@ -432,6 +443,10 @@
     font-size: 14px;
     font-weight: 700;
     text-align: left;
+  }
+
+  .converter-fee-fields {
+    margin-top: 16px;
   }
 
   .pay-action {
@@ -558,8 +573,9 @@
     gap: 12px;
     padding: 14px 16px;
     border-radius: 16px;
-    background: #eef2f7;
+    background: #ffffff;
     border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
   }
 
   .bonus-rates-box .bonus-rates-title {
@@ -571,18 +587,18 @@
   }
 
   .bonus-rates-box .bonus-rates-title i {
-    color: #2a2a72;
+    color: #ef4444;
     font-size: 16px;
   }
 
   .bonus-rates-toggle {
     border: 0;
     border-radius: 12px;
-    padding: 9px 14px;
-    background: #fff;
+    padding: 10px 18px;
+    background: #e8efff;
     color: #2f6fd6;
     font-weight: 700;
-    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+    box-shadow: none;
   }
 
   .bonus-rates-collapse {
@@ -605,11 +621,10 @@
   }
 
   .bonus-rate-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 10px 0;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px 12px;
+    padding: 12px 0;
   }
 
   .bonus-rate-item + .bonus-rate-item {
@@ -617,8 +632,20 @@
   }
 
   .bonus-rate-name {
-    font-weight: 700;
+    font-weight: 800;
     color: #0f172a;
+  }
+
+  .bonus-rate-details {
+    grid-column: 1 / -1;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .bonus-rates-collapse ul {
+    list-style: none;
+    padding-left: 0;
   }
 
   .bonus-rate-status {
@@ -647,6 +674,23 @@
   .content-stack {
     display: grid;
     gap: 22px;
+  }
+
+  .addfunds-mock-ui .policy-card {
+    display: none;
+  }
+
+  .addfunds-mock-ui .col-lg-7 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .addfunds-mock-ui #usdAmountWrap {
+    display: none;
+  }
+
+  .addfunds-mock-ui .main-card .card-body {
+    padding-bottom: 26px;
   }
 
   .floating-support {
@@ -692,6 +736,11 @@
       font-size: 26px;
     }
 
+    .addfunds-mock-ui .col-lg-7 {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+
     .fee-grid {
       grid-template-columns: 1fr;
     }
@@ -734,15 +783,16 @@
     }
 
     .gateway-quick-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
     }
 
     .gateway-quick-item {
-      min-height: 46px;
-      padding: 8px 0;
+      min-height: 78px;
+      padding: 10px 8px;
       justify-content: center;
       border-radius: 14px;
+      flex-direction: column;
     }
 
     .gateway-quick-item .logo {
@@ -753,7 +803,12 @@
     }
 
     .gateway-quick-item .meta {
-      display: none;
+      display: block;
+    }
+
+    .gateway-quick-item .meta strong {
+      font-size: 13px;
+      text-align: center;
     }
 
     .form-group > label,
@@ -870,7 +925,7 @@
   }
 </style>
 
-  <div class="addfunds-shell">
+  <div class="addfunds-shell addfunds-mock-ui">
   <div class="container-fluid">
     <div class="content-stack">
       <div class="row g-4">
@@ -909,10 +964,12 @@
 
                     <div class="form-group mb-3" id="usdAmountWrap">
                       <label class="control-label">Amount, USD</label>
-                      <input type="number" id="usdAmount" class="form-control" min="0" step="0.01" placeholder="0.00">
+                      <input type="text" id="usdAmount" class="form-control" inputmode="decimal" autocomplete="off" placeholder="0.00">
                     </div>
 
                     <div id="addfunds_fields"></div>
+
+                    <div class="quick-amounts mb-3" id="usdQuickSelect"></div>
 
                     <div class="converter-panel" id="currencyConverterWrap" style="display:none;">
                       <div class="converter-head">
@@ -923,11 +980,16 @@
                         </div>
                       </div>
                       <div class="converter-grid">
+                        <div class="form-group mb-0" id="usdConvertedAmountWrap">
+                          <label class="control-label">Amount, USD</label>
+                          <input type="text" id="usdConvertedAmount" class="form-control" placeholder="0.00">
+                        </div>
                         <div class="form-group mb-0" id="bdtAmountWrap">
                           <label class="control-label">Amount, BDT</label>
                           <input type="text" id="bdtAmount" class="form-control" readonly placeholder="0.00">
                         </div>
                       </div>
+                      <div id="converterFeeFields" class="converter-fee-fields"></div>
                       <div class="rate-summary" id="rateSummaryWrap">
                         <div class="copy">
                           <span class="eyebrow">Total you get</span>
@@ -937,8 +999,6 @@
                         <div class="breakdown-note" id="bonusBreakdownNote">For example: 0 USD = 0 USD + 0 USD</div>
                       </div>
                     </div>
-                    <div class="quick-amounts mb-3" id="usdQuickSelect"></div>
-
                     <button type="submit" class="btn btn-primary d-block w-100 pay-action">Pay</button>
 
                     <div id="formSubmitResponseMessage"></div>
@@ -1116,6 +1176,7 @@
 
 <script>
   var paymentMethods = {{ site["paymentMethodsJSON"]|raw }};
+  var defaultPaymentMethodLogo = "/img/admin/payment-methods.svg";
   var bonusRateRules = {{ site["bonusRatesJSON"]|raw }};
   var globalDollarRate = parseFloat({{ site["dollarRate"] }});
   const addfundsRoute = "/addfunds";
@@ -1296,7 +1357,7 @@
       html +=
         '<button type="button" class="gateway-quick-item' + isActive + '" data-alias="' + escapeHtml(tile.alias) + '" data-method-id="' + escapeHtml(tile.alias) + '">' +
         '<span class="logo" style="background:' + tile.bg + ';color:' + tile.color + ';">' +
-        (tileLogo ? '<img src="' + escapeHtml(tileLogo) + '" alt="' + escapeHtml(displayLabel) + '" style="width:100%;height:100%;object-fit:contain;">' : escapeHtml(tile.badge)) +
+        (tileLogo ? '<img src="' + escapeHtml(tileLogo) + '" alt="' + escapeHtml(displayLabel) + '" onerror="this.onerror=null;this.src=\'' + defaultPaymentMethodLogo + '\';" style="width:100%;height:100%;object-fit:contain;">' : escapeHtml(tile.badge)) +
         '</span>' +
         '<span class="meta"><strong>' + escapeHtml(displayLabel) + '</strong></span>' +
         '</button>';
@@ -1388,6 +1449,38 @@
     return amount + (amount * (bonusPercent / 100));
   }
 
+  function getBonusValue(amount, methodData) {
+    amount = parseFloat(amount);
+    if (isNaN(amount) || !isMethodBonusEnabled(methodData)) {
+      return 0;
+    }
+
+    return getBonusAmount(amount, methodData) - amount;
+  }
+
+  function getFeeAmount(amount, methodData) {
+    amount = parseFloat(amount);
+    if (isNaN(amount) || !methodData) {
+      return 0;
+    }
+
+    var feePercent = parseFloat(methodData.fee);
+    if (isNaN(feePercent) || feePercent <= 0) {
+      return 0;
+    }
+
+    return amount * (feePercent / 100);
+  }
+
+  function getNetTotalAmount(amount, methodData) {
+    amount = parseFloat(amount);
+    if (isNaN(amount)) {
+      return 0;
+    }
+
+    return amount + getBonusValue(amount, methodData) - getFeeAmount(amount, methodData);
+  }
+
   function getActiveMethodId() {
     var methodId = $("#payment_type").val();
     if (methodId && methodId !== "0") {
@@ -1431,6 +1524,93 @@
     return isMethodBonusEnabled(methodData) ? "On" : "Off";
   }
 
+  function formatGatewayAmountRange(value) {
+    if (value === null || value === undefined || value === "") {
+      return "No limit";
+    }
+
+    return formatDisplayAmount(value) + " USD";
+  }
+
+  function buildGatewayBonusRuleText(methodData) {
+    var rules = [];
+
+    if (methodData && Array.isArray(methodData.bonus_rules) && methodData.bonus_rules.length) {
+      rules = methodData.bonus_rules;
+    } else if (Array.isArray(bonusRateRules) && bonusRateRules.length) {
+      rules = bonusRateRules;
+    }
+
+    if (!rules.length) {
+      return "";
+    }
+
+    var parts = [];
+    for (var i = 0; i < rules.length; i++) {
+      var rule = rules[i];
+      if (rule && typeof rule.is_active !== "undefined" && parseInt(rule.is_active, 10) !== 1) {
+        continue;
+      }
+
+      var fromAmount = formatGatewayAmountRange(rule.range_from);
+      var toAmount = formatGatewayAmountRange(rule.range_to);
+      var percent = parseFloat(rule.bonus_percent);
+      if (isNaN(percent)) {
+        percent = 0;
+      }
+
+      if (toAmount === "No limit") {
+        parts.push(fromAmount + " and up: " + formatDisplayAmount(percent) + "%");
+      } else {
+        parts.push(fromAmount + " - " + toAmount + ": " + formatDisplayAmount(percent) + "%");
+      }
+    }
+
+    return parts.join(" | ");
+  }
+
+  function buildGatewayBonusDetails(methodData) {
+    if (!methodData) {
+      return "";
+    }
+
+    var details = [];
+    var bonusStatus = isMethodBonusEnabled(methodData) ? "On" : "Off";
+    var feePercent = parseFloat(methodData.fee);
+    var bonusPercent = parseFloat(methodData.bonus_percentage);
+    var bonusStartAmount = parseFloat(methodData.bonus_start_amount);
+
+    details.push("Bonus: " + bonusStatus);
+
+    if (!isNaN(bonusPercent) && bonusPercent > 0) {
+      details.push("Default bonus: " + formatDisplayAmount(bonusPercent) + "%");
+    }
+
+    if (!isNaN(bonusStartAmount) && bonusStartAmount > 0) {
+      details.push("Starts from: " + formatDisplayAmount(bonusStartAmount) + " USD");
+    }
+
+    if (!isNaN(feePercent) && feePercent > 0) {
+      details.push("Fee: " + formatDisplayAmount(feePercent) + "%");
+    }
+
+    var ruleText = buildGatewayBonusRuleText(methodData);
+    if (ruleText) {
+      details.push("Rules: " + ruleText);
+    }
+
+    if (methodData.min_amount || methodData.max_amount) {
+      details.push(
+        "Limits: " +
+        formatGatewayAmountRange(methodData.min_amount) +
+        " - " +
+        formatGatewayAmountRange(methodData.max_amount)
+      );
+    }
+
+    return details.join(" | ");
+  }
+
   function setActiveGateway(methodId) {
     $("#gatewayQuickGrid .gateway-quick-item").removeClass("is-active");
     $("#gatewayQuickGrid .gateway-quick-item[data-alias='" + methodId + "']").addClass("is-active");
@@ -1459,32 +1639,37 @@
     var methodRate = getMethodRate(methodData);
     var fallbackRate = !isNaN(globalDollarRate) && globalDollarRate > 0 ? globalDollarRate : 132;
     var rate = methodRate !== null ? methodRate : fallbackRate;
-    var shouldShowConverter = !forceHide && isDollarRateConversionEnabled(methodData) && (methodRate !== null || fallbackRate > 0);
-    var usdValue = parseFloat($("#usdAmount").val());
+    var usdRawValue = $("#usdAmount").val();
+    var usdValue = parseFloat(usdRawValue);
     var bonusEnabled = isMethodBonusEnabled(methodData);
     var bonusPercent = bonusEnabled ? getBonusPercent(usdValue, methodData) : 0;
-    var bonusAmount = isNaN(usdValue) ? 0 : (bonusEnabled ? getBonusAmount(usdValue, methodData) : usdValue);
-    var bonusValue = isNaN(usdValue) ? 0 : bonusAmount - usdValue;
+    var bonusValue = bonusEnabled ? getBonusValue(usdValue, methodData) : 0;
+    var feeValue = getFeeAmount(usdValue, methodData);
+    var totalAmount = getNetTotalAmount(usdValue, methodData);
+    var feePercent = methodData && methodData.fee !== undefined && methodData.fee !== null ? parseFloat(methodData.fee) : 0;
+    var feePercentLabel = isNaN(feePercent) ? 0 : feePercent;
 
-    if (shouldShowConverter) {
-      $("#currencyConverterWrap").show();
-    } else {
+    if (forceHide) {
       $("#currencyConverterWrap").hide();
+      return;
     }
 
+    $("#currencyConverterWrap").show();
+
     $("#exchangeRateLabel").text("1 USD = " + preparePrice(rate) + " BDT");
-    $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Bonus tier: " + bonusPercent + "%");
+    $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Bonus tier: " + bonusPercent + "% | Fee: " + feePercentLabel + "%");
 
     if (!isNaN(usdValue)) {
-      $("#paymentAmount").val(preparePrice(usdValue));
+      $("#paymentAmount").val(usdRawValue);
       $("#bdtAmount").val(preparePrice(usdValue * rate));
-      $("#totalAmountLabel").text(preparePrice(bonusAmount) + " USD");
-      if (bonusEnabled && bonusValue > 0) {
-        $("#bonusBreakdownNote").text("For example: " + formatDisplayAmount(bonusAmount) + "USD = " + formatDisplayAmount(usdValue) + " USD + " + formatDisplayAmount(bonusValue) + " USD");
+      $("#totalAmountLabel").text(preparePrice(totalAmount) + " USD");
+      if (bonusValue > 0 || feeValue > 0) {
+        $("#bonusBreakdownNote").text("For example: " + formatDisplayAmount(usdValue) + " USD + " + formatDisplayAmount(bonusValue) + " USD - " + formatDisplayAmount(feeValue) + " USD = " + formatDisplayAmount(totalAmount) + " USD");
       } else {
         $("#bonusBreakdownNote").text("");
       }
     } else {
+      $("#usdConvertedAmount").val("");
       $("#paymentAmount").val("");
       $("#bdtAmount").val("");
       $("#totalAmountLabel").text("0.00 USD");
@@ -1533,12 +1718,13 @@
               bonusItems +=
                 '<li class="bonus-rate-item">' +
                 '<span class="bonus-rate-name">' +
-                '<img src="' + (paymentMethodRow.logo || "") + '" alt="" style="width:18px;height:18px;object-fit:contain;margin-right:8px;border-radius:4px;">' +
+                '<img src="' + (paymentMethodRow.logo || "") + '" alt="" onerror="this.onerror=null;this.src=\'' + defaultPaymentMethodLogo + '\';" style="width:18px;height:18px;object-fit:contain;margin-right:8px;border-radius:4px;">' +
                 (paymentMethodRow.name || "Payment Method") +
                 '</span>' +
                 '<span class="bonus-rate-status ' + (isMethodBonusEnabled(paymentMethodRow) ? "is-on" : "is-off") + '">' +
                 getMethodBonusStatusLabel(paymentMethodRow) +
                 '</span>' +
+                '<div class="bonus-rate-details">' + escapeHtml(buildGatewayBonusDetails(paymentMethodRow)) + '</div>' +
                 '</li>';
             }
           }
@@ -1574,6 +1760,7 @@
               '</div></div>';
           }
           $("#addfunds_fields").html(bonusRatesMarkup + methodInstruction + json.content);
+          $("#converterFeeFields").append($("#fee_fields"));
           extraFeeInit(selectedMethod);
           renderGatewayQuickGrid();
           syncCurrencyConverter();
@@ -1587,17 +1774,33 @@
     var fee = methodData ? parseFloat(methodData.fee).toFixed(2) : "0.00";
     var fields = $("#fee_fields");
     var amount = parseFloat($("#usdAmount").val());
+    var bonusValue = getBonusValue(amount, methodData);
+    var feeValue = getFeeAmount(amount, methodData);
+    var totalAmount = getNetTotalAmount(amount, methodData);
+    var breakdownNote = "";
+
+    if (!isNaN(amount)) {
+      breakdownNote = "For example: " + formatDisplayAmount(amount) + " USD";
+      if (bonusValue > 0) {
+        breakdownNote += " + " + formatDisplayAmount(bonusValue) + " USD";
+      }
+      if (feeValue > 0) {
+        breakdownNote += " - " + formatDisplayAmount(feeValue) + " USD";
+      }
+      breakdownNote += " = " + formatDisplayAmount(totalAmount) + " USD";
+    }
 
     if (parseFloat(fee) > 0) {
       fields.html(
         '<div class="fee-grid">' +
         '<div class="form-group">' +
         '<label class="control-label">Extra fee</label>' +
-        '<input type="text" class="form-control" id="methodExtraFee" disabled value="' + (isNaN(amount) ? "0.00" : preparePrice(amount * (parseFloat(fee) / 100))) + '"/>' +
+        '<input type="text" class="form-control" id="methodExtraFee" disabled value="' + (isNaN(amount) ? "0.00" : preparePrice(getFeeAmount(amount, methodData))) + '"/>' +
         "</div>" +
         '<div class="form-group">' +
         '<label class="control-label">Total Amount</label>' +
-        '<input type="text" id="totalAmount" class="form-control" disabled value="' + (isNaN(amount) ? "0.00" : preparePrice(amount + (amount * (parseFloat(fee) / 100)))) + '" />' +
+        '<input type="text" id="totalAmount" class="form-control" disabled value="' + (isNaN(amount) ? "0.00" : preparePrice(totalAmount)) + '" />' +
+        '<div class="breakdown-note mt-2" id="totalAmountCalculationNote">' + breakdownNote + '</div>' +
         "</div></div>"
       );
     } else {
@@ -1638,6 +1841,7 @@
     $(document).on("click", "#usdQuickSelect button", function () {
       $("#usdQuickSelect button").removeClass("is-active");
       $(this).addClass("is-active");
+      $("#usdConvertedAmount").val($(this).data("amount"));
       $("#usdAmount").val($(this).data("amount")).trigger("input");
     });
 
@@ -1645,6 +1849,10 @@
       syncGatewaySelection($(this).data("alias"));
       addfundsInit();
       renderQuickAmounts();
+    });
+
+    $(document).on("input", "#usdConvertedAmount", function () {
+      $("#usdAmount").val($(this).val()).trigger("input");
     });
 
     $(document).on("input", "#usdAmount", function () {
@@ -1657,24 +1865,28 @@
       var bonusEnabled = isMethodBonusEnabled(methodData);
 
       if (isNaN(amount)) {
+        $("#usdConvertedAmount").val("");
         $("#paymentAmount").val("");
         $("#bdtAmount").val("");
         $("#totalAmountLabel").text("0.00 USD");
         $("#bonusBreakdownNote").text("");
         $("#methodExtraFee").val("0.00");
         $("#totalAmount").val("0.00");
+        $("#totalAmountCalculationNote").text("");
         return;
       }
 
       var bonusPercent = bonusEnabled ? getBonusPercent(amount, methodData) : 0;
-      var bonusAmount = bonusEnabled ? getBonusAmount(amount, methodData) : amount;
-      var bonusValue = bonusAmount - amount;
-      $("#paymentAmount").val(preparePrice(amount));
+      var bonusValue = getBonusValue(amount, methodData);
+      var feeValue = getFeeAmount(amount, methodData);
+      var totalAmount = getNetTotalAmount(amount, methodData);
+      $("#usdConvertedAmount").val($(this).val());
+      $("#paymentAmount").val($(this).val());
       $("#bdtAmount").val(preparePrice(amount * rate));
-      $("#totalAmountLabel").text(preparePrice(bonusAmount) + " USD");
-      $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Bonus tier: " + bonusPercent + "%");
-      if (bonusEnabled && bonusValue > 0) {
-        $("#bonusBreakdownNote").text("For example: " + formatDisplayAmount(bonusAmount) + "USD = " + formatDisplayAmount(amount) + " USD + " + formatDisplayAmount(bonusValue) + " USD");
+      $("#totalAmountLabel").text(preparePrice(totalAmount) + " USD");
+      $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Bonus tier: " + bonusPercent + "% | Fee: " + formatDisplayAmount(feeValue) + " USD");
+      if (bonusValue > 0 || feeValue > 0) {
+        $("#bonusBreakdownNote").text("For example: " + formatDisplayAmount(amount) + " USD + " + formatDisplayAmount(bonusValue) + " USD - " + formatDisplayAmount(feeValue) + " USD = " + formatDisplayAmount(totalAmount) + " USD");
       } else {
         $("#bonusBreakdownNote").text("");
       }
@@ -1684,14 +1896,20 @@
       }
 
       var feePercentage = parseFloat(methodData.fee);
+      if (isNaN(feePercentage)) {
+        feePercentage = 0;
+      }
       var feeInput = $("#methodExtraFee");
       var totalAmountInput = $("#totalAmount");
       var fee = amount * (feePercentage / 100);
+      var bonusValue = getBonusValue(amount, methodData);
+      var totalAmount = getNetTotalAmount(amount, methodData);
 
       if (feeInput.length && totalAmountInput.length) {
         feeInput.val(preparePrice(fee));
-        totalAmountInput.val(preparePrice(amount + fee));
+        totalAmountInput.val(preparePrice(totalAmount));
       }
+      $("#totalAmountCalculationNote").text("For example: " + formatDisplayAmount(amount) + " USD + " + formatDisplayAmount(bonusValue) + " USD - " + formatDisplayAmount(fee) + " USD = " + formatDisplayAmount(totalAmount) + " USD");
     });
 
     $("#gateway_alias").change(function () {
@@ -1710,7 +1928,7 @@
     }
 
     if ($("#usdAmount").length) {
-      $("#paymentAmount").val(preparePrice($("#usdAmount").val()));
+      $("#paymentAmount").val($("#usdAmount").val());
     }
 
     e.preventDefault();
