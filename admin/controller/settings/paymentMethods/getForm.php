@@ -29,7 +29,7 @@ if (!count($bonusRules)) {
     ];
 }
 
-$form .= '<div class="form-group mb-3"><label class="form-label">Icon</label>';
+$form .= '<div class="form-group mb-3"><label class="form-label">Select Icon</label>';
 $form .= '<input type="hidden" name="method_logo" id="payment_method_logo" value="' . htmlspecialchars($selectedMethodLogo, ENT_QUOTES, "UTF-8") . '"/>';
 $form .= '<div class="payment-method-logo-preview mb-3"><img id="payment_method_logo_preview" src="' . htmlspecialchars($selectedMethodLogo, ENT_QUOTES, "UTF-8") . '" alt="Payment method icon" style="max-width: 160px; max-height: 52px; object-fit: contain;"></div>';
 $form .= '<div class="row g-2" id="payment_method_logo_grid">';
@@ -49,7 +49,7 @@ if (!empty($uploadedFiles) && is_array($uploadedFiles)) {
     }
 }
 $form .= '</div>';
-$form .= '<div class="form-text mt-2">Pick an uploaded image or upload a new one below.</div>';
+$form .= '<div class="form-text mt-2">Pick an uploaded image or upload a new one below. This logo is shown in the add-funds gateway list.</div>';
 $form .= '<div class="mt-3"><label class="form-label">Upload New Icon</label><input type="file" class="form-control" id="payment_method_logo_upload" accept="image/*" onchange="uploadPaymentMethodLogo(this)"></div>';
 $form .= '<style>.payment-method-logo-option.is-active{border-color:#0d6efd !important;box-shadow:0 0 0 2px rgba(13,110,253,.15);}</style>';
 $form .= '</div>';

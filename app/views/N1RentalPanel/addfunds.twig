@@ -1323,11 +1323,11 @@
 
   function getMethodRate(methodData) {
     if (!methodData) {
-      return 1;
+      return null;
     }
 
     var rate = parseFloat(methodData.exchange_rate);
-    return isNaN(rate) || rate <= 0 ? 1 : rate;
+    return isNaN(rate) || rate <= 0 ? null : rate;
   }
 
   function getActiveBonusRules(methodData) {
@@ -1454,16 +1454,12 @@
     renderGatewayQuickGrid();
   }
 
-  function hasExchangeRate(methodData) {
-    if (!methodData) return false;
-    var rate = parseFloat(methodData.exchange_rate);
-    return !isNaN(rate) && rate > 0;
-  }
-
   function syncCurrencyConverter(forceHide) {
     var methodData = getSelectedMethodData(getActiveMethodId());
-    var shouldShowConverter = !forceHide && hasExchangeRate(methodData) && isDollarRateConversionEnabled(methodData);
-    var rate = !isNaN(globalDollarRate) && globalDollarRate > 0 ? globalDollarRate : getMethodRate(methodData);
+    var methodRate = getMethodRate(methodData);
+    var fallbackRate = !isNaN(globalDollarRate) && globalDollarRate > 0 ? globalDollarRate : 132;
+    var rate = methodRate !== null ? methodRate : fallbackRate;
+    var shouldShowConverter = !forceHide && isDollarRateConversionEnabled(methodData) && (methodRate !== null || fallbackRate > 0);
     var usdValue = parseFloat($("#usdAmount").val());
     var bonusEnabled = isMethodBonusEnabled(methodData);
     var bonusPercent = bonusEnabled ? getBonusPercent(usdValue, methodData) : 0;
@@ -1568,6 +1564,15 @@
               methodData.instructions +
               "</div></div>";
           }
+          if (methodData && (methodData.min_amount || methodData.max_amount)) {
+            methodInstruction +=
+              '<div class="method-box">' +
+              '<label class="control-label">Gateway Limits</label>' +
+              '<div class="panel-body border-solid border-rounded">' +
+              'Minimum: ' + escapeHtml(methodData.min_amount || "0") +
+              (methodData.max_amount ? ' | Maximum: ' + escapeHtml(methodData.max_amount) : '') +
+              '</div></div>';
+          }
           $("#addfunds_fields").html(bonusRatesMarkup + methodInstruction + json.content);
           extraFeeInit(selectedMethod);
           renderGatewayQuickGrid();
@@ -1646,7 +1651,9 @@
       var selectedMethod = getActiveMethodId();
       var methodData = getSelectedMethodData(selectedMethod);
       var amount = parseFloat($(this).val());
-      var rate = hasExchangeRate(methodData) && !isNaN(globalDollarRate) && globalDollarRate > 0 ? globalDollarRate : getMethodRate(methodData);
+      var methodRate = getMethodRate(methodData);
+      var fallbackRate = !isNaN(globalDollarRate) && globalDollarRate > 0 ? globalDollarRate : 132;
+      var rate = methodRate !== null ? methodRate : fallbackRate;
       var bonusEnabled = isMethodBonusEnabled(methodData);
 
       if (isNaN(amount)) {

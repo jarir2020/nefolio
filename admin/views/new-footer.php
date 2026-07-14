@@ -230,7 +230,7 @@
 
   }
 
-  function selectPaymentMethodLogo(button) {
+  window.selectPaymentMethodLogo = function (button) {
     var $button = $(button);
     var logo = $button.data("logo");
 
@@ -238,9 +238,9 @@
     $("#payment_method_logo_preview").attr("src", logo);
     $(".payment-method-logo-option").removeClass("is-active");
     $button.addClass("is-active");
-  }
+  };
 
-  function uploadPaymentMethodLogo(input) {
+  window.uploadPaymentMethodLogo = function (input) {
     if (!input.files || !input.files[0]) {
       return;
     }
@@ -294,7 +294,7 @@
         }
       }
     });
-  }
+  };
 
   function buildPaymentMethodRateRow(index) {
     return '' +
