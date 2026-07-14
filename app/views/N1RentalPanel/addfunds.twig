@@ -1005,14 +1005,14 @@
                           <input type="text" id="bdtAmount" class="form-control" readonly placeholder="0.00">
                         </div>
                       </div>
-                      <div class="rate-summary" id="rateSummaryWrap">
-                        <div class="copy">
-                          <span class="eyebrow">Total you get</span>
-                          <span class="value" id="totalAmountLabel">0.00 USD</span>
-                        </div>
-                        <div class="badge-note" id="rateNote">1 USD = 132.00 BDT | Bonus tier: 0%</div>
-                        <div class="breakdown-note" id="bonusBreakdownNote">For example: 0 USD + 0 USD = 0 USD</div>
+                    </div>
+                    <div class="rate-summary" id="rateSummaryWrap">
+                      <div class="copy">
+                        <span class="eyebrow">Total you get</span>
+                        <span class="value" id="totalAmountLabel">0.00 USD</span>
                       </div>
+                      <div class="badge-note" id="rateNote">1 USD = 132.00 BDT | Bonus tier: 0%</div>
+                      <div class="breakdown-note" id="bonusBreakdownNote">For example: 0 USD + 0 USD = 0 USD</div>
                     </div>
                     <button type="submit" class="btn btn-primary d-block w-100 pay-action">Pay</button>
 
@@ -1714,6 +1714,15 @@
     var methodData = getSelectedMethodData(getActiveMethodId());
     var bonusEnabled = isMethodBonusEnabled(methodData);
     var converterEnabled = isDollarRateConversionEnabled(methodData);
+    var usdRawValue = $("#usdAmount").val();
+    var usdValue = parseFloat(usdRawValue);
+    var totalYouGetAmount = getTotalYouGetAmount(usdValue, methodData);
+
+    if (!isNaN(usdValue)) {
+      $("#totalAmountLabel").text(preparePrice(totalYouGetAmount) + " USD");
+    } else {
+      $("#totalAmountLabel").text("0.00 USD");
+    }
 
     if (forceHide || !converterEnabled) {
       $("#currencyConverterWrap").hide();
@@ -1725,12 +1734,9 @@
     var methodRate = getMethodRate(methodData);
     var fallbackRate = !isNaN(globalDollarRate) && globalDollarRate > 0 ? globalDollarRate : 132;
     var rate = methodRate !== null ? methodRate : fallbackRate;
-    var usdRawValue = $("#usdAmount").val();
-    var usdValue = parseFloat(usdRawValue);
     var bonusPercent = bonusEnabled ? getBonusPercent(usdValue, methodData) : 0;
     var bonusValue = bonusEnabled ? getBonusValue(usdValue, methodData) : 0;
     var feeValue = getFeeAmount(usdValue, methodData);
-    var totalYouGetAmount = getTotalYouGetAmount(usdValue, methodData);
     var feePercent = methodData && methodData.fee !== undefined && methodData.fee !== null ? parseFloat(methodData.fee) : 0;
     var feePercentLabel = isNaN(feePercent) ? 0 : feePercent;
 
