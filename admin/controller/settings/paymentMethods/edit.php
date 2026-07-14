@@ -41,6 +41,9 @@ $methodFee = floatval($_POST["method_fee"]);
 $methodBonusPercentage = floatval($_POST["method_bonus"]);
 $methodBonusStartAmount = intval($_POST["method_bonus_start_amount"]);
 $methodBonusEnabled = isset($_POST["method_bonus_enabled"]) ? intval($_POST["method_bonus_enabled"]) : 1;
+$methodShortName = isset($_POST["method_short_name"]) ? trim(htmlspecialchars($_POST["method_short_name"])) : "";
+$methodFromCurrency = isset($_POST["methodFromCurrency"]) ? trim(htmlspecialchars($_POST["methodFromCurrency"])) : "";
+$dollarRateConversionEnabled = isset($_POST["dollar_rate_conversion_enabled"]) ? intval($_POST["dollar_rate_conversion_enabled"]) : 1;
 $methodStatus = in_array($_POST["method_status"], [0, 1]) ? $_POST["method_status"] : 1;
 $methodInstructions = htmlspecialchars($_POST["method_instructions"]);
 $methodLogo = isset($_POST["method_logo"]) ? trim(htmlspecialchars($_POST["method_logo"])) : "";
@@ -73,27 +76,33 @@ if (!in_array($methodId, $allMethods)) {
 }
 
 if (in_array($methodId, $automaticMethods)) {
-    $update = $conn->prepare("UPDATE paymentmethods SET 
+    $update = $conn->prepare("UPDATE paymentmethods SET
                           methodVisibleName=:name,
                           methodLogo=:logo,
+                          methodShortName=:short_name,
                           methodMin=:min,
                           methodMax=:max,
                           methodFee=:fee,
                           methodBonusPercentage=:bonus,
                           methodBonusStartAmount=:bonus_start_amount,
                           methodBonusEnabled=:bonus_enabled,
+                          dollarRateConversionEnabled=:dollar_rate_enabled,
+                          methodCurrency=:from_currency,
                           methodStatus=:status,
                           methodInstructions=:instructions
                         WHERE methodId=:id");
     $update->execute([
         "name" => $methodVisibleName,
         "logo" => $methodLogo,
+        "short_name" => $methodShortName,
         "min" => $methodMin,
         "max" => $methodMax,
         "fee" => $methodFee,
         "bonus" => $methodBonusPercentage,
         "bonus_start_amount" => $methodBonusStartAmount,
         "bonus_enabled" => $methodBonusEnabled,
+        "dollar_rate_enabled" => $dollarRateConversionEnabled,
+        "from_currency" => $methodFromCurrency,
         "status" => $methodStatus,
         "instructions" => $methodInstructions,
         "id" => $methodId
@@ -107,17 +116,23 @@ if (in_array($methodId, $automaticMethods)) {
     require_once("editMethodExtras.php");
 
 } else {
-    $update = $conn->prepare("UPDATE paymentmethods SET 
+    $update = $conn->prepare("UPDATE paymentmethods SET
                           methodVisibleName=:name,
                           methodLogo=:logo,
+                          methodShortName=:short_name,
                           methodBonusEnabled=:bonus_enabled,
+                          dollarRateConversionEnabled=:dollar_rate_enabled,
+                          methodCurrency=:from_currency,
                           methodStatus=:status,
                           methodInstructions=:instructions
                         WHERE methodId=:id");
     $update->execute([
         "name" => $methodVisibleName,
         "logo" => $methodLogo,
+        "short_name" => $methodShortName,
         "bonus_enabled" => $methodBonusEnabled,
+        "dollar_rate_enabled" => $dollarRateConversionEnabled,
+        "from_currency" => $methodFromCurrency,
         "status" => $methodStatus,
         "instructions" => $methodInstructions,
         "id" => $methodId

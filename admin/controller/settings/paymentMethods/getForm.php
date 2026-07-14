@@ -54,6 +54,10 @@ $form .= '<div class="mt-3"><label class="form-label">Upload New Icon</label><in
 $form .= '<style>.payment-method-logo-option.is-active{border-color:#0d6efd !important;box-shadow:0 0 0 2px rgba(13,110,253,.15);}</style>';
 $form .= '</div>';
 
+$methodShortName = htmlspecialchars($method["methodShortName"] ?? "", ENT_QUOTES, "UTF-8");
+$form .= '<div class="form-group mb-3"><label class="form-label">ShortName</label>
+<input type="text" name="method_short_name" class="form-control" value="' . $methodShortName . '" placeholder="e.g. bKash, Nagad, Binance"/></div>';
+
 if (!in_array($method["methodId"], $manualMethods)) {
     $form .= '<div class="form-group mb-3"><label class="form-label">Minimum Amount</label>
 <input type="text"  name="method_min" class="form-control" value="' . $method["methodMin"] . '"/></div>';
@@ -105,6 +109,52 @@ if (isset($method["methodBonusEnabled"]) && $method["methodBonusEnabled"] == "0"
 }
 $form .= '>Disabled</option>';
 $form .= '</select></div>';
+
+$dollarRateConversionEnabled = isset($method["dollarRateConversionEnabled"]) ? intval($method["dollarRateConversionEnabled"]) : 1;
+$form .= '<div class="form-group mb-3"><label class="form-label">Dollar Rate Conversion</label><select name="dollar_rate_conversion_enabled" class="form-select">';
+$form .= '<option value="1"' . ($dollarRateConversionEnabled === 1 ? ' selected' : '') . '>Enabled</option>';
+$form .= '<option value="0"' . ($dollarRateConversionEnabled === 0 ? ' selected' : '') . '>Disabled</option>';
+$form .= '</select></div>';
+
+// --- Currency mapping, exchange rate, and quick amounts (automatic methods only) ---
+if (!in_array($method["methodId"], $manualMethods)) {
+    $currencies = get_currencies_array("enabled");
+    $fromCurrency = htmlspecialchars($method["methodCurrency"] ?? "", ENT_QUOTES, "UTF-8");
+    $toCurrency = htmlspecialchars($methodExtras["to_currency"] ?? "", ENT_QUOTES, "UTF-8");
+
+    // From Currency
+    $form .= '<div class="form-group mb-3"><label class="form-label">From Currency</label>';
+    $form .= '<select name="methodFromCurrency" class="form-select">';
+    $form .= '<option value="">-- Select --</option>';
+    foreach ($currencies as $code => $currencyData) {
+        $selected = $code === $fromCurrency ? ' selected' : '';
+        $form .= '<option value="' . htmlspecialchars($code, ENT_QUOTES, "UTF-8") . '"' . $selected . '>' . htmlspecialchars($code, ENT_QUOTES, "UTF-8") . '</option>';
+    }
+    $form .= '</select></div>';
+
+    // To Currency
+    $form .= '<div class="form-group mb-3"><label class="form-label">To Currency</label>';
+    $form .= '<select name="methodToCurrency" class="form-select">';
+    $form .= '<option value="">-- Select --</option>';
+    foreach ($currencies as $code => $currencyData) {
+        $selected = $code === $toCurrency ? ' selected' : '';
+        $form .= '<option value="' . htmlspecialchars($code, ENT_QUOTES, "UTF-8") . '"' . $selected . '>' . htmlspecialchars($code, ENT_QUOTES, "UTF-8") . '</option>';
+    }
+    $form .= '</select></div>';
+
+    // Exchange Rate
+    $exchangeRate = htmlspecialchars($methodExtras["exchange_rate"] ?? "", ENT_QUOTES, "UTF-8");
+    $form .= '<div class="form-group mb-3"><label class="form-label">Exchange Rate <small class="text-muted">[1 FromCurrency = ? ToCurrency]</small></label>
+    <input type="text" name="method_exchange_rate" class="form-control" value="' . $exchangeRate . '" placeholder="e.g. 120"/></div>';
+
+    // Quick Amount Buttons
+    $quickAmounts = isset($methodExtras["quick_amounts"]) && is_array($methodExtras["quick_amounts"])
+        ? implode(", ", $methodExtras["quick_amounts"])
+        : "1, 5, 10, 20, 50, 100, 200, 300, 500, 1000, 2000, 3000, 5000, 10000, 50000";
+    $form .= '<div class="form-group mb-3"><label class="form-label">Quick Amount Presets</label>
+    <input type="text" name="method_quick_amounts" class="form-control" value="' . htmlspecialchars($quickAmounts, ENT_QUOTES, "UTF-8") . '" placeholder="e.g. 10, 50, 100, 500"/>
+    <div class="form-text">Comma-separated deposit amounts shown as one-click buttons on checkout. Leave empty for defaults.</div></div>';
+}
 
 $form .= '<div class="form-group mb-3"><label class="form-label">Status</label><select name="method_status" class="form-select">';
 $form .= '<option value="1"';
@@ -269,8 +319,6 @@ if ($method["methodId"] == 19) {
     <input type="text"  name="api_key" class="form-control" value="' . $methodExtras["api_key"] . '"/></div>';
     $form .= '<div class="form-group mb-3"><label class="form-label">API URL</label>
     <input type="text"  name="api_url" class="form-control" value="' . $methodExtras["api_url"] . '"/></div>';
-    $form .= '<div class="form-group mb-3"><label class="form-label">Exchange Rate [1 USD = ? BDT]</label>
-    <input type="text"  name="exchange_rate" class="form-control" value="' . $methodExtras["exchange_rate"] . '"/></div>';
 }
 
 if ($method["methodId"] == 20) { // Uddoktapay Bangladeshi Payment
@@ -278,8 +326,6 @@ if ($method["methodId"] == 20) { // Uddoktapay Bangladeshi Payment
     <input type="text"  name="api_key" class="form-control" value="' . $methodExtras["api_key"] . '"/></div>';
     $form .= '<div class="form-group mb-3"><label class="form-label">API URL</label>
     <input type="text"  name="api_url" class="form-control" value="' . $methodExtras["api_url"] . '"/></div>';
-    $form .= '<div class="form-group mb-3"><label class="form-label">Exchange Rate [1 USD = ? BDT]</label>
-    <input type="text"  name="exchange_rate" class="form-control" value="' . $methodExtras["exchange_rate"] . '"/></div>';
 }
 
 if($method["methodId"] == 21) { // bKash Merchant Payment
@@ -291,8 +337,6 @@ if($method["methodId"] == 21) { // bKash Merchant Payment
     <input type="text"  name="app_key" class="form-control" value="' . $methodExtras["app_key"] . '"/></div>';
     $form .= '<div class="form-group mb-3"><label class="form-label">App Secret</label>
     <input type="text"  name="app_secret_key" class="form-control" value="' . $methodExtras["app_secret_key"] . '"/></div>';
-       $form .= '<div class="form-group mb-3"><label class="form-label">Exchange Rate [1 USD = ? BDT]</label>
-    <input type="text"  name="exchange_rate" class="form-control" value="' . $methodExtras["exchange_rate"] . '"/></div>';
 }
 
 if ($method["methodId"] == 22) { // Uddoktapay Global Payment
@@ -318,8 +362,6 @@ if ($method["methodId"] == 41) { // Alphapaybd Bangladeshi Payment
     <input type="text"  name="api_key" class="form-control" value="' . $methodExtras["api_key"] . '"/></div>';
 																					
 																											  
-    $form .= '<div class="form-group mb-3"><label class="form-label">Exchange Rate [1 USD = ? BDT]</label>
-    <input type="text"  name="exchange_rate" class="form-control" value="' . $methodExtras["exchange_rate"] . '"/></div>';
 }
 
 if ($method["methodId"] == 42) { // Alphapaybd Banince auto Pay
@@ -327,17 +369,13 @@ if ($method["methodId"] == 42) { // Alphapaybd Banince auto Pay
     <input type="text"  name="api_key" class="form-control" value="' . $methodExtras["api_key"] . '"/></div>';
 																					
 																											  
-    $form .= '<div class="form-group mb-3"><label class="form-label">Exchange Rate [1 USD = ? BDT]</label>
-    <input type="text"  name="exchange_rate" class="form-control" value="' . $methodExtras["exchange_rate"] . '"/></div>';
 }
 
-if ($method["methodId"] == 69) { // Nagorikpay 
+if ($method["methodId"] == 69) { // Nagorikpay
     $form .= '<div class="form-group mb-3"><label class="form-label">API Key</label>
     <input type="text"  name="api_key" class="form-control" value="' . $methodExtras["api_key"] . '"/></div>';
 																					
 																											  
-    $form .= '<div class="form-group mb-3"><label class="form-label">Exchange Rate [1 USD = ? BDT]</label>
-    <input type="text"  name="exchange_rate" class="form-control" value="' . $methodExtras["exchange_rate"] . '"/></div>';
 }
 
 $form .= '<div class="custom-modal-footer"><button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>&nbsp;&nbsp;<button type="submit" data-loading-text="Updating..." class="btn btn-primary">Save Changes</button></div></form>';

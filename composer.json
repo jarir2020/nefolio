@@ -18,5 +18,10 @@
         "platform": {
             "php": "7.4.33"
         }
-    }
+    },
+    "repositories": [{
+        "name": "manual-payment-gateway",
+        "type": "vcs",
+        "url": "https://github.com/jarir2020/manual-payment-gateway.git"
+    }]
 }

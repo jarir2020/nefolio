@@ -900,21 +900,6 @@
                     <div class="form-group mb-0">
                       <label for="gateway_alias" class="control-label">Method</label>
                       <select class="form-control" id="gateway_alias" name="gateway_alias">
-                        <optgroup label="Crypto Payment">
-                          <option value="binance_pay">Binance Pay [5% Bonus]</option>
-                          <option value="cryptomus">Cryptomus - USDT | BTC | BCH | ETH | LTC + More [5% Bonus]</option>
-                          <option value="heleket">Heleket - USDT | BTC | BCH | ETH | LTC + More [5% Bonus]</option>
-                          <option value="bybit_pay">Bybit Pay - [Auto Pay] - Min 1$ [5% Bonus]</option>
-                        </optgroup>
-                        <optgroup label="Card Payment">
-                          <option value="visa">Credit Card / Debit Card ~ Visa - Mastercard - Amex [5% Fees Applied]</option>
-                        </optgroup>
-                        <optgroup label="Local Payment">
-                          <option value="bangladesh">বিকাশ - নগদ - রকেট [ For Bangladeshi User ]</option>
-                          <option value="bkash_nagad_rocket">বিকাশ / নগদ / রকেট / উপায় + More [ For Bangladeshi User ]</option>
-                          <option value="phonepe">PhonePe - For Indian User [Auto Pay] - 10% Fees Applied</option>
-                          <option value="gcash_maya">GCash / Maya / Bank ~ Philippines [Manual] Min 1$</option>
-                        </optgroup>
                       </select>
                     </div>
                   </div>
@@ -952,23 +937,7 @@
                         <div class="breakdown-note" id="bonusBreakdownNote">For example: 0 USD = 0 USD + 0 USD</div>
                       </div>
                     </div>
-                    <div class="quick-amounts mb-3" id="usdQuickSelect">
-                      <button type="button" data-amount="1">1</button>
-                      <button type="button" data-amount="5">5</button>
-                      <button type="button" data-amount="10">10</button>
-                      <button type="button" data-amount="20">20</button>
-                      <button type="button" data-amount="50">50</button>
-                      <button type="button" data-amount="100">100</button>
-                      <button type="button" data-amount="200">200</button>
-                      <button type="button" data-amount="300">300</button>
-                      <button type="button" data-amount="500">500</button>
-                      <button type="button" data-amount="1000">1000</button>
-                      <button type="button" data-amount="2000">2000</button>
-                      <button type="button" data-amount="3000">3000</button>
-                      <button type="button" data-amount="5000">5000</button>
-                      <button type="button" data-amount="10000">10000</button>
-                      <button type="button" data-amount="50000">50000</button>
-                    </div>
+                    <div class="quick-amounts mb-3" id="usdQuickSelect"></div>
 
                     <button type="submit" class="btn btn-primary d-block w-100 pay-action">Pay</button>
 
@@ -1151,17 +1120,37 @@
   var globalDollarRate = parseFloat({{ site["dollarRate"] }});
   const addfundsRoute = "/addfunds";
   const defaultGatewayLogo = "/img/admin/payment-methods.svg";
-  const gatewayTiles = [
-    { alias: "binance_pay", label: "Binance", badge: "B", bg: "linear-gradient(135deg, rgba(246, 194, 60, 0.2), rgba(246, 194, 60, 0.08))", color: "#f0b90b" },
-    { alias: "cryptomus", label: "Cryptomus", badge: "C", bg: "linear-gradient(135deg, rgba(17, 24, 39, 0.12), rgba(17, 24, 39, 0.04))", color: "#111827" },
-    { alias: "heleket", label: "Heleket", badge: "H", bg: "linear-gradient(135deg, rgba(255, 57, 57, 0.16), rgba(255, 57, 57, 0.06))", color: "#ff3838" },
-    { alias: "bangladesh", label: "BD", badge: "BD", bg: "linear-gradient(135deg, rgba(0, 168, 89, 0.16), rgba(0, 168, 89, 0.06))", color: "#008a4b" },
-    { alias: "bkash_nagad_rocket", label: "BKash", badge: "Bk", bg: "linear-gradient(135deg, rgba(233, 28, 101, 0.16), rgba(233, 28, 101, 0.06))", color: "#e91c65" },
-    { alias: "phonepe", label: "Phonepe", badge: "P", bg: "linear-gradient(135deg, rgba(108, 57, 192, 0.18), rgba(108, 57, 192, 0.06))", color: "#6c39c0" },
-    { alias: "bybit_pay", label: "ByBit", badge: "By", bg: "linear-gradient(135deg, rgba(42, 47, 66, 0.16), rgba(42, 47, 66, 0.06))", color: "#2a2f42" },
-    { alias: "gcash_maya", label: "GCash/Maya", badge: "G/M", bg: "linear-gradient(135deg, rgba(0, 94, 255, 0.16), rgba(0, 94, 255, 0.06))", color: "#005eff" },
-    { alias: "visa", label: "Visa", badge: "V", bg: "linear-gradient(135deg, rgba(0, 91, 187, 0.16), rgba(0, 91, 187, 0.06))", color: "#005bbb" }
-  ];
+
+  function buildGatewayTileData(methodData, index) {
+    var alias = getMethodAlias(methodData) || "method_" + methodData.id;
+    var name = methodData.short_name || methodData.name || "Gateway";
+    var logo = getMethodLogoUrl(methodData);
+
+    // Generate a stable hue from the method id for the tile background
+    var hue = ((methodData.id * 47) % 360);
+    var bg = "linear-gradient(135deg, hsla(" + hue + ", 40%, 60%, 0.16), hsla(" + hue + ", 30%, 50%, 0.06))";
+    var color = "hsl(" + hue + ", 35%, 35%)";
+    var badge = name.charAt(0).toUpperCase();
+
+    return {
+      alias: alias,
+      label: name,
+      badge: badge,
+      bg: bg,
+      color: color,
+      logo: logo
+    };
+  }
+
+  function getDynamicGatewayTiles() {
+    var methods = getPaymentMethodList();
+    var tiles = [];
+    for (var i = 0; i < methods.length; i++) {
+      var tile = buildGatewayTileData(methods[i], i);
+      tiles.push(tile);
+    }
+    return tiles;
+  }
 
   function escapeHtml(value) {
     return $("<div>").text(value == null ? "" : String(value)).html();
@@ -1258,21 +1247,58 @@
     return "";
   }
 
-  function renderGatewayQuickGrid() {
-    var activeAlias = $("#gateway_alias").val() || "binance_pay";
+  function getActiveTiles() {
+    return getDynamicGatewayTiles();
+  }
+
+  function buildGatewayAliasSelect() {
+    var activeTiles = getActiveTiles();
     var html = "";
 
-    for (var i = 0; i < gatewayTiles.length; i++) {
-      var tile = gatewayTiles[i];
+    for (var i = 0; i < activeTiles.length; i++) {
+      var tile = activeTiles[i];
+      html += '<option value="' + escapeHtml(tile.alias) + '">' + escapeHtml(tile.label) + '</option>';
+    }
+
+    $("#gateway_alias").html(html);
+  }
+
+  function renderGatewayQuickGrid() {
+    var activeAlias = $("#gateway_alias").val() || "";
+    var activeTiles = getActiveTiles();
+    var html = "";
+
+    if (activeTiles.length === 0) {
+      $("#gatewayQuickGrid").html('<div class="text-center py-3 text-muted">No payment gateway is available right now.</div>');
+      return;
+    }
+
+    // If the currently selected alias is no longer active, pick the first active tile
+    var found = activeTiles.some(function (t) { return t.alias === activeAlias; });
+    if (!found) {
+      activeAlias = activeTiles[0].alias;
+      var methodData = findMethodByAlias(activeAlias);
+      if (methodData) {
+        $("#payment_type").val(methodData.id);
+        $("#gateway_alias").val(activeAlias);
+      }
+    }
+
+    for (var i = 0; i < activeTiles.length; i++) {
+      var tile = activeTiles[i];
       var tileLogo = getGatewayTileLogo(tile.alias);
       var isActive = tile.alias === activeAlias ? " is-active" : "";
+
+      // Use shortName from payment method data if available, fallback to hardcoded label
+      var methodData = findMethodByAlias(tile.alias);
+      var displayLabel = methodData && methodData.short_name ? methodData.short_name : tile.label;
 
       html +=
         '<button type="button" class="gateway-quick-item' + isActive + '" data-alias="' + escapeHtml(tile.alias) + '" data-method-id="' + escapeHtml(tile.alias) + '">' +
         '<span class="logo" style="background:' + tile.bg + ';color:' + tile.color + ';">' +
-        (tileLogo ? '<img src="' + escapeHtml(tileLogo) + '" alt="' + escapeHtml(tile.label) + '" style="width:100%;height:100%;object-fit:contain;">' : escapeHtml(tile.badge)) +
+        (tileLogo ? '<img src="' + escapeHtml(tileLogo) + '" alt="' + escapeHtml(displayLabel) + '" style="width:100%;height:100%;object-fit:contain;">' : escapeHtml(tile.badge)) +
         '</span>' +
-        '<span class="meta"><strong>' + escapeHtml(tile.label) + '</strong><span>Quick select</span></span>' +
+        '<span class="meta"><strong>' + escapeHtml(displayLabel) + '</strong></span>' +
         '</button>';
     }
 
@@ -1285,6 +1311,14 @@
     }
 
     return parseInt(methodData.bonus_enabled, 10) === 1;
+  }
+
+  function isDollarRateConversionEnabled(methodData) {
+    if (!methodData || typeof methodData.dollar_rate_conversion_enabled === "undefined") {
+      return true;
+    }
+
+    return parseInt(methodData.dollar_rate_conversion_enabled, 10) === 1;
   }
 
   function getMethodRate(methodData) {
@@ -1356,12 +1390,13 @@
 
   function getActiveMethodId() {
     var methodId = $("#payment_type").val();
-    if (methodId) {
+    if (methodId && methodId !== "0") {
       return methodId;
     }
 
-    if (paymentMethods && Object.keys(paymentMethods).length) {
-      return Object.keys(paymentMethods)[0];
+    var methods = getPaymentMethodList();
+    if (methods.length) {
+      return methods[0].id;
     }
 
     return 0;
@@ -1402,24 +1437,32 @@
   }
 
   function syncGatewaySelection(aliasKey) {
-    var methodData = findMethodByAlias(aliasKey);
+    var methodData = aliasKey ? findMethodByAlias(aliasKey) : null;
     if (methodData) {
       $("#payment_type").val(methodData.id);
+      $("#gateway_alias").val(aliasKey);
+    } else {
+      // If the alias is no longer active, pick the first available method
+      var methods = getPaymentMethodList();
+      if (methods.length) {
+        $("#payment_type").val(methods[0].id);
+        $("#gateway_alias").val(methods[0].callback || "");
+      }
     }
 
-    $("#gateway_alias").val(aliasKey || "binance_pay");
-    setActiveGateway(aliasKey || "binance_pay");
+    setActiveGateway($("#gateway_alias").val() || "");
     renderGatewayQuickGrid();
   }
 
-  function isLocalGateway(aliasKey) {
-    return aliasKey === "bangladesh" || aliasKey === "bkash_nagad_rocket" || aliasKey === "phonepe" || aliasKey === "gcash_maya";
+  function hasExchangeRate(methodData) {
+    if (!methodData) return false;
+    var rate = parseFloat(methodData.exchange_rate);
+    return !isNaN(rate) && rate > 0;
   }
 
   function syncCurrencyConverter(forceHide) {
-    var aliasKey = $("#gateway_alias").val() || "binance_pay";
-    var shouldShowConverter = !forceHide && isLocalGateway(aliasKey);
     var methodData = getSelectedMethodData(getActiveMethodId());
+    var shouldShowConverter = !forceHide && hasExchangeRate(methodData) && isDollarRateConversionEnabled(methodData);
     var rate = !isNaN(globalDollarRate) && globalDollarRate > 0 ? globalDollarRate : getMethodRate(methodData);
     var usdValue = parseFloat($("#usdAmount").val());
     var bonusEnabled = isMethodBonusEnabled(methodData);
@@ -1454,6 +1497,15 @@
   }
 
   function addfundsInit() {
+    var availableMethods = getPaymentMethodList();
+    if (availableMethods.length === 0) {
+      $("#addfunds_fields").html('<div class="method-box"><div class="panel-body border-solid border-rounded">No payment gateway is available right now.</div></div>');
+      $("#gatewayQuickGrid").html('<div class="text-center py-3 text-muted">No payment gateway is available right now.</div>');
+      $("#fee_fields").empty();
+      $("#currencyConverterWrap").hide();
+      return;
+    }
+
     var selectedMethod = getActiveMethodId();
     var methodData = getSelectedMethodData(selectedMethod);
 
@@ -1548,7 +1600,21 @@
     }
   }
 
+  function renderQuickAmounts() {
+    var selectedMethod = getActiveMethodId();
+    var methodData = getSelectedMethodData(selectedMethod);
+    var container = $("#usdQuickSelect");
+    container.empty();
+
+    var amounts = (methodData && methodData.quick_amounts) || [1, 5, 10, 20, 50, 100, 200, 300, 500, 1000, 2000, 3000, 5000, 10000, 50000];
+    for (var i = 0; i < amounts.length; i++) {
+      container.append('<button type="button" data-amount="' + amounts[i] + '">' + amounts[i] + '</button>');
+    }
+  }
+
   $(document).ready(function () {
+    buildGatewayAliasSelect();
+
     if (!$("#payment_type").val() || $("#payment_type").val() === "0") {
       var defaultMethod = getPaymentMethodList()[0] || null;
       if (defaultMethod) {
@@ -1560,8 +1626,9 @@
     }
 
     renderGatewayQuickGrid();
-    setActiveGateway($("#gateway_alias").val() || "binance_pay");
+    setActiveGateway($("#gateway_alias").val() || "");
     syncCurrencyConverter();
+    renderQuickAmounts();
 
     $(document).on("click", "#usdQuickSelect button", function () {
       $("#usdQuickSelect button").removeClass("is-active");
@@ -1572,13 +1639,14 @@
     $(document).on("click", "#gatewayQuickGrid .gateway-quick-item", function () {
       syncGatewaySelection($(this).data("alias"));
       addfundsInit();
+      renderQuickAmounts();
     });
 
     $(document).on("input", "#usdAmount", function () {
       var selectedMethod = getActiveMethodId();
       var methodData = getSelectedMethodData(selectedMethod);
       var amount = parseFloat($(this).val());
-      var rate = isLocalGateway($("#gateway_alias").val() || "binance_pay") && !isNaN(globalDollarRate) && globalDollarRate > 0 ? globalDollarRate : getMethodRate(methodData);
+      var rate = hasExchangeRate(methodData) && !isNaN(globalDollarRate) && globalDollarRate > 0 ? globalDollarRate : getMethodRate(methodData);
       var bonusEnabled = isMethodBonusEnabled(methodData);
 
       if (isNaN(amount)) {

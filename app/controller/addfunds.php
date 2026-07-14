@@ -90,19 +90,25 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             $methodExtras = json_decode($paymentMethods[$i]["methodExtras"], true);
             $exchangeRate = isset($methodExtras["exchange_rate"]) ? $methodExtras["exchange_rate"] : null;
             $bonusRules = isset($methodExtras["bonus_rules"]) && is_array($methodExtras["bonus_rules"]) ? $methodExtras["bonus_rules"] : [];
+            $quickAmounts = isset($methodExtras["quick_amounts"]) && is_array($methodExtras["quick_amounts"])
+                ? $methodExtras["quick_amounts"]
+                : null;
             $methodLogo = trim((string) $paymentMethods[$i]["methodLogo"]);
             $methodsList[] = [
                 "id"            => $paymentMethods[$i]["methodId"],
                 "position"      => $paymentMethods[$i]["methodPosition"],
                 "name"          => $paymentMethods[$i]["methodVisibleName"],
+                "short_name"    => $paymentMethods[$i]["methodShortName"] ?? "",
                 "logo"          => $normalizeMethodLogo($methodLogo !== "" ? $methodLogo : $defaultMethodLogo),
                 "callback"      => $paymentMethods[$i]["methodCallback"],
                 "currency"      => $paymentMethods[$i]["methodCurrency"],
                 "exchange_rate" => $exchangeRate,
                 "bonus_enabled" => isset($paymentMethods[$i]["methodBonusEnabled"]) ? intval($paymentMethods[$i]["methodBonusEnabled"]) : 1,
+                "dollar_rate_conversion_enabled" => isset($paymentMethods[$i]["dollarRateConversionEnabled"]) ? intval($paymentMethods[$i]["dollarRateConversionEnabled"]) : 1,
                 "bonus_rules"   => $bonusRules,
                 "instructions"  => trim(htmlspecialchars_decode($paymentMethods[$i]["methodInstructions"])),
                 "fee"           => $paymentMethods[$i]["methodFee"],
+                "quick_amounts" => $quickAmounts,
             ];
         }
         // grouped by id for JS

@@ -1,0 +1,36 @@
+Based on the provided screenshot (`image_7dab38.jpg`), here is a comprehensive feature list extracted from the "Edit payment method" interface:
+
+### Payment Method Configuration Features
+
+**Basic Information & Branding**
+
+* **Custom Logo Integration:** Ability to input a URL for the payment method's logo, complete with a live image preview.
+* **Custom Method Name:** Field to define the exact display title of the payment option (e.g., "Bkash, Rocket, Uday & More").
+
+**Transaction Limits & Adjustments**
+
+* **Threshold Limits:** Set specific "Minimum Amount" and "Maximum Amount" boundaries for transactions.
+* **Fee Configuration:** Option to apply an "Extra Fee Percentage" to cover processing costs.
+* **Flat Bonus System:** Set a global "Bonus Percentage" alongside a "Bonus Start Amount" threshold to trigger it.
+
+**Tiered Bonus Rules (Incentives)**
+
+* **Feature Toggle:** A master switch to easily enable or disable the tier-based bonus system.
+* **Dynamic Tier Creation:** Ability to add multiple bonus rules based on the deposited amount (e.g., 3% for $50, 10% for $1000).
+* **Rule Management:** Interface to add, edit, or delete individual bonus tiers from a structured list.
+
+**Currency Conversion Settings**
+
+* **Currency Mapping:** Dropdowns to specify the "From Currency" (e.g., USD) and the "To Currency" (e.g., BDT).
+* **Live Conversion Toggle:** A switch to enable or disable real-time live currency conversion.
+* **Manual Exchange Rate:** A dedicated field at the bottom to set a custom, fixed exchange rate (e.g., 1 USD = 125 BDT) independent of live rates.
+
+**User Experience (UX) Enhancements**
+
+* **Quick Amount Buttons:** A toggleable feature that provides users with preset, one-click deposit amounts (e.g., 10, 50, 100).
+* **Preset Customization:** Allows administrators to easily add new quick amounts or remove existing ones via 'x' icons.
+
+**Content & Integration**
+
+* **Rich Text Instructions:** A full WYSIWYG editor (supporting bold, italics, links, images, lists, and headings) to display custom deposit instructions, rules, or warnings to the user.
+* **API Configuration:** Secure fields under "Credentials & API Settings" to input an "API Key" and "API URL" for connecting to the payment processor's checkout endpoint.

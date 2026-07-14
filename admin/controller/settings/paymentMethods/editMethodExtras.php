@@ -170,11 +170,9 @@ if ($methodId == 18) {
 if ($methodId == 20) { // Uddoktapay Bangladeshi Payment
     $apiKey = htmlspecialchars($_POST["api_key"]);
     $apiUrl = htmlspecialchars($_POST["api_url"]);
-    $exchangeRate = htmlspecialchars($_POST["exchange_rate"]);
     $methodExtras = [
         "api_key" => $apiKey,
         "api_url" => $apiUrl,
-        "exchange_rate" => $exchangeRate
     ];
 }
 
@@ -183,13 +181,11 @@ if ($methodId == 21) { // bKash Merchant Payment
     $password = htmlspecialchars($_POST["password"]);
     $app_key = htmlspecialchars($_POST["app_key"]);
     $app_secret_key = htmlspecialchars($_POST["app_secret_key"]);
-    $exchange_rate = htmlspecialchars($_POST["exchange_rate"]);
     $methodExtras = [
         "username" => $username,
         "password" => $password,
         "app_key" => $app_key,
         "app_secret_key" => $app_secret_key,
-         "exchange_rate" => $exchange_rate
     ];
 }
 
@@ -217,28 +213,22 @@ if ($methodId == 24) { // binance auto Pay
 
 if ($methodId == 41) { // Alphapaybd Bangladeshi Payment
     $apiKey = htmlspecialchars($_POST["api_key"]);
-    $exchangeRate = htmlspecialchars($_POST["exchange_rate"]);
     $methodExtras = [
         "api_key" => $apiKey,
-        "exchange_rate" => $exchangeRate
     ];
 }
 
 if ($methodId == 42) { // Alphapaybd Binance
     $apiKey = htmlspecialchars($_POST["api_key"]);
-    $exchangeRate = htmlspecialchars($_POST["exchange_rate"]);
     $methodExtras = [
         "api_key" => $apiKey,
-        "exchange_rate" => $exchangeRate
     ];
 }
 
 if ($methodId == 69) { // Nagorikpay
     $apiKey = htmlspecialchars($_POST["api_key"]);
-    $exchangeRate = htmlspecialchars($_POST["exchange_rate"]);
     $methodExtras = [
         "api_key" => $apiKey,
-        "exchange_rate" => $exchangeRate
     ];
 }
 
@@ -265,14 +255,43 @@ if ($methodId == 88) {
     $apiKey = htmlspecialchars($_POST["api_key"]);
     $secret_key = htmlspecialchars($_POST["secret_key"]);
     $domain = htmlspecialchars($_POST["domain"]);
-    $exchangeRate = htmlspecialchars($_POST["exchange_rate"]);
 
     $methodExtras = [
         "api_key" => $apiKey,
         "secret_key" => $secret_key,
         "domain" => $domain,
-        "exchange_rate" => $exchangeRate
     ];
+}
+
+// Universal: to_currency (Feature A)
+if (isset($_POST["methodToCurrency"]) && trim($_POST["methodToCurrency"]) !== "") {
+    $methodExtras["to_currency"] = htmlspecialchars(trim($_POST["methodToCurrency"]));
+}
+
+// Universal: exchange_rate for all methods (Feature B)
+if (isset($_POST["method_exchange_rate"]) && trim($_POST["method_exchange_rate"]) !== "") {
+    $methodExtras["exchange_rate"] = htmlspecialchars(trim($_POST["method_exchange_rate"]));
+}
+
+// Universal: quick_amounts (Feature C)
+if (isset($_POST["method_quick_amounts"]) && trim($_POST["method_quick_amounts"]) !== "") {
+    $raw = trim($_POST["method_quick_amounts"]);
+    $parts = array_map("trim", explode(",", $raw));
+    $parts = array_filter($parts, function ($v) {
+        return $v !== "";
+    });
+    $numeric = [];
+    foreach ($parts as $part) {
+        if (is_numeric($part)) {
+            $numeric[] = floatval($part);
+        }
+    }
+    if (!empty($numeric)) {
+        sort($numeric);
+        $methodExtras["quick_amounts"] = $numeric;
+    }
+} else {
+    unset($methodExtras["quick_amounts"]);
 }
 
 $hasBonusRules = isset($_POST["method_bonus_rules"]);
