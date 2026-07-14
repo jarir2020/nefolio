@@ -533,6 +533,13 @@
     letter-spacing: 0.01em;
   }
 
+  .fee-summary-subtitle {
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 12px;
+  }
+
   .history-table {
     overflow-x: auto;
   }
@@ -1744,9 +1751,9 @@
 
     $("#exchangeRateLabel").text("1 USD = " + preparePrice(rate) + " BDT");
     if (bonusEnabled) {
-      $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Bonus tier: " + bonusPercent + "% | Fee: " + feePercentLabel + "%").show();
+      $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Bonus tier: " + bonusPercent + "% | Extra fee: " + feePercentLabel + "%").show();
     } else {
-      $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Fee: " + feePercentLabel + "%").show();
+      $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Extra fee: " + feePercentLabel + "%").show();
     }
 
     if (!isNaN(usdValue)) {
@@ -1848,6 +1855,8 @@
     var feeValue = getFeeAmount(amount, methodData);
     var totalAmount = getTotalPayableAmount(amount, methodData);
     var breakdownNote = buildAmountCalculationText(amount, methodData);
+    var feePercent = methodData && methodData.fee !== undefined && methodData.fee !== null ? parseFloat(methodData.fee) : 0;
+    var feePercentLabel = isNaN(feePercent) ? 0 : feePercent;
 
     if (!methodData) {
       fields.empty();
@@ -1856,9 +1865,10 @@
 
     fields.html(
       '<div class="fee-summary-title">Independent fee calculation</div>' +
+      '<div class="fee-summary-subtitle">Extra fee (' + feePercentLabel + '%)</div>' +
       '<div class="fee-grid">' +
       '<div class="form-group">' +
-      '<label class="control-label">Extra fee</label>' +
+      '<label class="control-label">Fee amount</label>' +
       '<input type="text" class="form-control" id="methodExtraFee" disabled value="' + (isNaN(amount) ? "0.00" : preparePrice(feeValue)) + '"/>' +
       "</div>" +
       '<div class="form-group">' +
@@ -1947,9 +1957,9 @@
       $("#bdtAmount").val(preparePrice(amount * rate));
       $("#totalAmountLabel").text(preparePrice(totalYouGetAmount) + " USD");
       if (bonusEnabled) {
-        $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Bonus tier: " + bonusPercent + "% | Fee: " + formatDisplayAmount(feeValue) + " USD");
+        $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Bonus tier: " + bonusPercent + "% | Extra fee: " + formatDisplayAmount(feeValue) + " USD");
       } else {
-        $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Fee: " + formatDisplayAmount(feeValue) + " USD");
+        $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Extra fee: " + formatDisplayAmount(feeValue) + " USD");
       }
       if (bonusEnabled && bonusValue > 0) {
         $("#bonusBreakdownNote").text("For example: " + formatDisplayAmount(amount) + " USD + " + formatDisplayAmount(bonusValue) + " USD = " + formatDisplayAmount(totalYouGetAmount) + " USD");
