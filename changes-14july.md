@@ -19,6 +19,7 @@
 - Refreshed the `/addfunds` page UI to a compact card layout with a cleaner gateway grid, better converter spacing, and a visible calculation breakdown for bonus and fee math.
 - Updated the add-funds amount fields so the visible USD input stays editable while typing, with no frontend formatting or validation forcing the value into a locked decimal shape.
 - Added the one-off DB helper `hosting-db-columns.php` for deploying the missing schema columns on hosted environments.
+- Added a one-off DB helper `hosting-sms-creds.php` to fetch the SMS gateway settings (`sms_provider`, `sms_title`, `sms_user`, `sms_pass`, `sms_validate`) from the `settings` table as JSON for ops/deploy use.
 
 ## Notes
 
@@ -46,4 +47,5 @@ Converter Visibility Wiring	app/views/N1RentalPanel/addfunds.twig	1433	1434	sync
 Payment Method Icon Multi-Upload	admin/controller/appearance.php	1	1	upload handler	Modify	Admin media flow	Allowed multiple image uploads, preserved source extensions, and stored uploaded files for payment method icon selection	files, paymentmethods	:-	:-
 Payment Method Icon Picker	admin/controller/settings/paymentMethods/getForm.php	1	1	getForm form builder	Modify	Admin method editor	Rendered uploaded icons side by side with select and delete actions inside the edit modal	paymentmethods	:-	:-
 AddFunds UI Refresh	app/views/N1RentalPanel/addfunds.twig	1	1	Template and JS	Modify	User add-funds UI	Redesigned the add-funds panel, moved quick presets, added raw amount entry, and showed bonus/fee breakdown	inline UI	:-	:-
+SMS Creds Helper	hosting-sms-creds.php	1	1	standalone helper	New	Ops/deploy helper	Fetches `sms_provider`, `sms_title`, `sms_user`, `sms_pass`, and `sms_validate` from `settings` as JSON	settings	:-	:-
 ```
