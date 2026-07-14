@@ -1011,7 +1011,7 @@
                           <span class="value" id="totalAmountLabel">0.00 USD</span>
                         </div>
                         <div class="badge-note" id="rateNote">1 USD = 132.00 BDT | Bonus tier: 0%</div>
-                        <div class="breakdown-note" id="bonusBreakdownNote">For example: 0 USD + 0 USD + 0 USD = 0 USD</div>
+                        <div class="breakdown-note" id="bonusBreakdownNote">For example: 0 USD + 0 USD = 0 USD</div>
                       </div>
                     </div>
                     <button type="submit" class="btn btn-primary d-block w-100 pay-action">Pay</button>
@@ -1475,30 +1475,33 @@
     return amount * (feePercent / 100);
   }
 
-  function getNetTotalAmount(amount, methodData) {
+  function getTotalPayableAmount(amount, methodData) {
     amount = parseFloat(amount);
     if (isNaN(amount)) {
       return 0;
     }
 
-    return amount + getBonusValue(amount, methodData) + getFeeAmount(amount, methodData);
+    return amount + getFeeAmount(amount, methodData);
+  }
+
+  function getTotalYouGetAmount(amount, methodData) {
+    amount = parseFloat(amount);
+    if (isNaN(amount)) {
+      return 0;
+    }
+
+    return amount + getBonusValue(amount, methodData);
   }
 
   function buildAmountCalculationText(amount, methodData) {
     amount = parseFloat(amount);
     if (isNaN(amount) || !methodData) {
-      return "Enter an amount to calculate the fee and total.";
+      return "Enter an amount to calculate the fee and deposit total.";
     }
 
-    var bonusEnabled = isMethodBonusEnabled(methodData);
-    var bonusValue = bonusEnabled ? getBonusValue(amount, methodData) : 0;
     var feeValue = getFeeAmount(amount, methodData);
-    var totalAmount = getNetTotalAmount(amount, methodData);
+    var totalAmount = getTotalPayableAmount(amount, methodData);
     var parts = ["For example: " + formatDisplayAmount(amount) + " USD"];
-
-    if (bonusEnabled && bonusValue > 0) {
-      parts.push("+ " + formatDisplayAmount(bonusValue) + " USD");
-    }
 
     if (feeValue > 0) {
       parts.push("+ " + formatDisplayAmount(feeValue) + " USD");
@@ -1727,7 +1730,7 @@
     var bonusPercent = bonusEnabled ? getBonusPercent(usdValue, methodData) : 0;
     var bonusValue = bonusEnabled ? getBonusValue(usdValue, methodData) : 0;
     var feeValue = getFeeAmount(usdValue, methodData);
-    var totalAmount = getNetTotalAmount(usdValue, methodData);
+    var totalYouGetAmount = getTotalYouGetAmount(usdValue, methodData);
     var feePercent = methodData && methodData.fee !== undefined && methodData.fee !== null ? parseFloat(methodData.fee) : 0;
     var feePercentLabel = isNaN(feePercent) ? 0 : feePercent;
 
@@ -1743,9 +1746,9 @@
     if (!isNaN(usdValue)) {
       $("#paymentAmount").val(usdRawValue);
       $("#bdtAmount").val(preparePrice(usdValue * rate));
-      $("#totalAmountLabel").text(preparePrice(totalAmount) + " USD");
+      $("#totalAmountLabel").text(preparePrice(totalYouGetAmount) + " USD");
       if (bonusEnabled && (bonusValue > 0 || feeValue > 0)) {
-        $("#bonusBreakdownNote").text("For example: " + formatDisplayAmount(usdValue) + " USD + " + formatDisplayAmount(bonusValue) + " USD + " + formatDisplayAmount(feeValue) + " USD = " + formatDisplayAmount(totalAmount) + " USD");
+        $("#bonusBreakdownNote").text("For example: " + formatDisplayAmount(usdValue) + " USD + " + formatDisplayAmount(bonusValue) + " USD = " + formatDisplayAmount(totalYouGetAmount) + " USD");
         $("#bonusBreakdownNote").show();
       } else {
         $("#bonusBreakdownNote").text("").hide();
@@ -1837,7 +1840,7 @@
     var fields = $("#fee_fields");
     var amount = parseFloat($("#usdAmount").val());
     var feeValue = getFeeAmount(amount, methodData);
-    var totalAmount = getNetTotalAmount(amount, methodData);
+    var totalAmount = getTotalPayableAmount(amount, methodData);
     var breakdownNote = buildAmountCalculationText(amount, methodData);
 
     if (!methodData) {
@@ -1853,7 +1856,7 @@
       '<input type="text" class="form-control" id="methodExtraFee" disabled value="' + (isNaN(amount) ? "0.00" : preparePrice(feeValue)) + '"/>' +
       "</div>" +
       '<div class="form-group">' +
-      '<label class="control-label">Total Amount</label>' +
+      '<label class="control-label">Total You Deposit</label>' +
       '<input type="text" id="totalAmount" class="form-control" disabled value="' + (isNaN(amount) ? "0.00" : preparePrice(totalAmount)) + '" />' +
       '<div class="breakdown-note mt-2" id="totalAmountCalculationNote">' + breakdownNote + '</div>' +
       "</div></div>"
@@ -1917,32 +1920,33 @@
       var bonusEnabled = isMethodBonusEnabled(methodData);
 
       if (isNaN(amount)) {
-        $("#usdConvertedAmount").val("");
-        $("#paymentAmount").val("");
-        $("#bdtAmount").val("");
-        $("#totalAmountLabel").text("0.00 USD");
-        $("#bonusBreakdownNote").text("").hide();
-        $("#methodExtraFee").val("0.00");
-        $("#totalAmount").val("0.00");
-        $("#totalAmountCalculationNote").text("Enter an amount to calculate the fee and total.");
-        return;
+      $("#usdConvertedAmount").val("");
+      $("#paymentAmount").val("");
+      $("#bdtAmount").val("");
+      $("#totalAmountLabel").text("0.00 USD");
+      $("#bonusBreakdownNote").text("").hide();
+      $("#methodExtraFee").val("0.00");
+      $("#totalAmount").val("0.00");
+      $("#totalAmountCalculationNote").text("Enter an amount to calculate the fee and deposit total.");
+      return;
       }
 
       var bonusPercent = bonusEnabled ? getBonusPercent(amount, methodData) : 0;
       var bonusValue = bonusEnabled ? getBonusValue(amount, methodData) : 0;
       var feeValue = getFeeAmount(amount, methodData);
-      var totalAmount = getNetTotalAmount(amount, methodData);
+      var totalAmount = getTotalPayableAmount(amount, methodData);
+      var totalYouGetAmount = getTotalYouGetAmount(amount, methodData);
       $("#usdConvertedAmount").val($(this).val());
       $("#paymentAmount").val($(this).val());
       $("#bdtAmount").val(preparePrice(amount * rate));
-      $("#totalAmountLabel").text(preparePrice(totalAmount) + " USD");
+      $("#totalAmountLabel").text(preparePrice(totalYouGetAmount) + " USD");
       if (bonusEnabled) {
         $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Bonus tier: " + bonusPercent + "% | Fee: " + formatDisplayAmount(feeValue) + " USD");
       } else {
         $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Fee: " + formatDisplayAmount(feeValue) + " USD");
       }
-      if (bonusEnabled && (bonusValue > 0 || feeValue > 0)) {
-        $("#bonusBreakdownNote").text("For example: " + formatDisplayAmount(amount) + " USD + " + formatDisplayAmount(bonusValue) + " USD + " + formatDisplayAmount(feeValue) + " USD = " + formatDisplayAmount(totalAmount) + " USD");
+      if (bonusEnabled && bonusValue > 0) {
+        $("#bonusBreakdownNote").text("For example: " + formatDisplayAmount(amount) + " USD + " + formatDisplayAmount(bonusValue) + " USD = " + formatDisplayAmount(totalYouGetAmount) + " USD");
         $("#bonusBreakdownNote").show();
       } else {
         $("#bonusBreakdownNote").text("").hide();
