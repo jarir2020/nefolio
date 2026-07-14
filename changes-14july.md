@@ -29,6 +29,36 @@
 - No changes were needed to the routing layer, language files, or Twig template structure — all changes are scoped to the controller/data/view triad.
 - The add-funds front-end intentionally keeps the typed amount raw and leaves validation to the server-side flow.
 
+## Edit Payment Method Design Gap
+
+The current admin "Edit payment method" form does not fully match the provided template image. The data fields are mostly present, but the visual structure is different.
+
+### Current look
+
+- The form is rendered as a long stacked Bootstrap form inside the existing admin modal.
+- The icon picker is functional, but the spacing, preview treatment, and grouping are more utilitarian than the target template.
+- Sections such as bonus rules, converter settings, quick amounts, instructions, and API credentials appear as plain form blocks rather than polished cards.
+- The layout does not yet match the template's two-column top section, card grouping, and softer modal styling.
+
+### Target look from the reference image
+
+- A cleaner modal header with a strong title and close button placement.
+- A compact top row with logo URL/icon area on the left and method name on the right.
+- A visible icon preview box directly under the logo field.
+- Clear grouped cards for bonus rules, conversion settings, quick amounts, instructions, credentials, and exchange rate.
+- Tighter spacing, more deliberate section borders, and a more premium admin-dashboard feel.
+
+### Recommendation
+
+- A frontend-only redesign should be enough if we keep the existing controller and save logic.
+- The main work is to restyle the form markup in `admin/controller/settings/paymentMethods/getForm.php` and, if needed, the surrounding modal shell in the admin view.
+- Backend behavior, field names, and save handlers can stay as they are unless the redesign needs new layout hooks.
+
+### Conclusion
+
+- The current form is functionally close, but visually different from the target template.
+- If the goal is to copy the template design, the fastest path is a frontend redesign of the edit modal rather than a backend rewrite.
+
 ## Excel Rows
 
 Copy/paste block for the spreadsheet:

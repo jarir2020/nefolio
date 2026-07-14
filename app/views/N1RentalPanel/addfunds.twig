@@ -302,15 +302,23 @@
     .gateway-quick-item {
       min-height: 78px;
       padding: 10px;
-      gap: 0;
+      gap: 6px;
     }
 
     .gateway-quick-item .meta {
-      display: none;
+      display: block;
     }
 
     .gateway-quick-item .logo {
+      width: 30px;
+      height: 30px;
       margin: 0;
+    }
+
+    .gateway-quick-item .meta strong {
+      font-size: 12px;
+      line-height: 1.15;
+      text-align: center;
     }
 
     .bonus-rates-grid {
@@ -1375,7 +1383,7 @@
       var tileLogo = getGatewayTileLogo(tile.alias);
       var isActive = tile.alias === activeAlias ? " is-active" : "";
 
-      // Use shortName beside the logo on desktop; mobile CSS hides the label.
+      // Use shortName beside the logo; mobile CSS keeps the compact icon + label layout.
       var methodData = findMethodByAlias(tile.alias);
       var displayLabel = methodData && methodData.short_name ? methodData.short_name : tile.label;
 

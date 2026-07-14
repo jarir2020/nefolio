@@ -1,8 +1,13 @@
 <?php
-$form .= '<form method="POST" action="admin/settings/paymentMethods/edit">';
+$form .= '<form method="POST" action="admin/settings/paymentMethods/edit" class="payment-method-editor">';
 $form .= '<input type="hidden" name="method_id" value="' . $method["methodId"] . '"/>';
-$form .= '<div class="form-group mb-3"><label class="form-label">Method Name</label>
-<input type="text"  name="method_name" class="form-control" value="' . $method["methodVisibleName"] . '"/></div>';
+$form .= '<div class="payment-method-editor__hero">';
+$form .= '<div class="payment-method-editor__hero-title">Edit payment method</div>';
+$form .= '<div class="payment-method-editor__hero-text">Match the payment gateway design, keep all existing save logic, and manage icons without leaving the modal.</div>';
+$form .= '</div>';
+$form .= '<div class="payment-method-editor__card payment-method-editor__card--compact">';
+$form .= '<div class="form-group mb-0"><label class="form-label">Method Name</label><input type="text" name="method_name" class="form-control" value="' . $method["methodVisibleName"] . '"/></div>';
+$form .= '</div>';
 
 $selectedMethodLogo = trim((string) $method["methodLogo"]);
 if ($selectedMethodLogo === "") {
@@ -29,7 +34,8 @@ if (!count($bonusRules)) {
     ];
 }
 
-$form .= '<div class="form-group mb-3"><label class="form-label">Select Icon</label>';
+$form .= '<div class="payment-method-editor__card">';
+$form .= '<div class="payment-method-editor__card-title">Select Icon</div>';
 $form .= '<input type="hidden" name="method_logo" id="payment_method_logo" value="' . htmlspecialchars($selectedMethodLogo, ENT_QUOTES, "UTF-8") . '"/>';
 $form .= '<input type="hidden" name="payment_method_deleted_files" id="payment_method_deleted_files" value=""/>';
 $currentSelectedFileId = "";
@@ -43,11 +49,11 @@ if (!empty($uploadedFiles) && is_array($uploadedFiles)) {
     }
 }
 $form .= '<input type="hidden" name="payment_method_current_file_id" id="payment_method_current_file_id" value="' . htmlspecialchars((string) $currentSelectedFileId, ENT_QUOTES, "UTF-8") . '"/>';
-$form .= '<div class="payment-method-logo-preview mb-3" style="position:relative;display:inline-block;">';
-$form .= '<button type="button" class="payment-method-logo-delete" onclick="deleteCurrentPaymentMethodLogo()" aria-label="Delete selected icon" style="position:absolute;top:-8px;right:-8px;z-index:2;width:28px;height:28px;border:none;border-radius:50%;background:rgba(220,53,69,.96);color:#fff;font-size:18px;line-height:28px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.18);cursor:pointer;">&times;</button>';
-$form .= '<img id="payment_method_logo_preview" src="' . htmlspecialchars($selectedMethodLogo, ENT_QUOTES, "UTF-8") . '" alt="Payment method icon" style="max-width: 160px; max-height: 52px; object-fit: contain;" onerror="this.onerror=null;this.src=\'' . htmlspecialchars($defaultMethodLogo, ENT_QUOTES, "UTF-8") . '\';">';
+$form .= '<div class="payment-method-logo-preview mb-3">';
+$form .= '<button type="button" class="payment-method-logo-delete" onclick="deleteCurrentPaymentMethodLogo()" aria-label="Delete selected icon">&times;</button>';
+$form .= '<img id="payment_method_logo_preview" src="' . htmlspecialchars($selectedMethodLogo, ENT_QUOTES, "UTF-8") . '" alt="Payment method icon" onerror="this.onerror=null;this.src=\'' . htmlspecialchars($defaultMethodLogo, ENT_QUOTES, "UTF-8") . '\';">';
 $form .= '</div>';
-$form .= '<div class="row g-2" id="payment_method_logo_grid" data-default-logo="' . htmlspecialchars($defaultMethodLogo, ENT_QUOTES, "UTF-8") . '" style="max-height:340px;overflow-y:auto;">';
+$form .= '<div class="payment-method-logo-grid" id="payment_method_logo_grid" data-default-logo="' . htmlspecialchars($defaultMethodLogo, ENT_QUOTES, "UTF-8") . '">';
 if (!empty($uploadedFiles) && is_array($uploadedFiles)) {
     foreach ($uploadedFiles as $file) {
         $fileId = intval($file["id"]);
@@ -57,21 +63,19 @@ if (!empty($uploadedFiles) && is_array($uploadedFiles)) {
         }
 
         $isActive = $fileLink === $selectedMethodLogo ? " is-active" : "";
-        $form .= '<div class="col-6 col-md-4 col-lg-3" data-file-id="' . $fileId . '" data-file-link="' . htmlspecialchars($fileLink, ENT_QUOTES, "UTF-8") . '">';
-        $form .= '<div class="payment-method-logo-option-wrap" style="position:relative;">';
-        $form .= '<button type="button" class="payment-method-logo-delete" data-file-id="' . $fileId . '" data-file-link="' . htmlspecialchars($fileLink, ENT_QUOTES, "UTF-8") . '" onclick="deletePaymentMethodLogoFile(this)" aria-label="Delete uploaded icon" style="position:absolute;top:8px;right:8px;z-index:2;width:28px;height:28px;border:none;border-radius:50%;background:rgba(220,53,69,.96);color:#fff;font-size:18px;line-height:28px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.18);cursor:pointer;">&times;</button>';
-        $form .= '<button type="button" class="payment-method-logo-option' . $isActive . '" data-logo="' . htmlspecialchars($fileLink, ENT_QUOTES, "UTF-8") . '" data-file-id="' . $fileId . '" onclick="selectPaymentMethodLogo(this)" style="width:100%;min-height:74px;border:1px solid #d8dee9;border-radius:12px;background:#fff;padding:10px;display:flex;align-items:center;justify-content:center;transition:all .15s ease;">';
-        $form .= '<img src="' . htmlspecialchars($fileLink, ENT_QUOTES, "UTF-8") . '" alt="Uploaded icon" style="max-width:100%;max-height:48px;object-fit:contain;" onerror="this.onerror=null;this.src=\'' . htmlspecialchars($defaultMethodLogo, ENT_QUOTES, "UTF-8") . '\';">';
+        $form .= '<div class="payment-method-logo-option-wrap" data-file-id="' . $fileId . '" data-file-link="' . htmlspecialchars($fileLink, ENT_QUOTES, "UTF-8") . '">';
+        $form .= '<button type="button" class="payment-method-logo-delete" data-file-id="' . $fileId . '" data-file-link="' . htmlspecialchars($fileLink, ENT_QUOTES, "UTF-8") . '" onclick="deletePaymentMethodLogoFile(this)" aria-label="Delete uploaded icon">&times;</button>';
+        $form .= '<button type="button" class="payment-method-logo-option' . $isActive . '" data-logo="' . htmlspecialchars($fileLink, ENT_QUOTES, "UTF-8") . '" data-file-id="' . $fileId . '" onclick="selectPaymentMethodLogo(this)">';
+        $form .= '<img src="' . htmlspecialchars($fileLink, ENT_QUOTES, "UTF-8") . '" alt="Uploaded icon" onerror="this.onerror=null;this.src=\'' . htmlspecialchars($defaultMethodLogo, ENT_QUOTES, "UTF-8") . '\';">';
         $form .= '</button>';
-        $form .= '</div>';
         $form .= '</div>';
     }
 }
 $form .= '</div>';
-$form .= '<div class="form-text mt-2">Pick an uploaded image or upload a new one below. This logo is shown in the add-funds gateway list.</div>';
+$form .= '<div class="payment-method-logo-help">Pick an uploaded image or upload a new one below. This logo is shown in the add-funds gateway list.</div>';
 $form .= '<div class="mt-3"><label class="form-label">Upload New Icon</label><input type="file" class="form-control" id="payment_method_logo_upload" accept="image/*" multiple onchange="uploadPaymentMethodLogo(this)"></div>';
-$form .= '<style>.payment-method-logo-option.is-active{border-color:#0d6efd !important;box-shadow:0 0 0 2px rgba(13,110,253,.15);} .payment-method-logo-option-wrap{transition:transform .15s ease,opacity .15s ease;} .payment-method-logo-option-wrap:hover{transform:translateY(-1px);} .payment-method-logo-delete{box-sizing:border-box;}</style>';
 $form .= '</div>';
+$form .= '<div class="payment-method-editor__card payment-method-editor__card--stack">';
 
 $methodShortName = htmlspecialchars($method["methodShortName"] ?? "", ENT_QUOTES, "UTF-8");
 $form .= '<div class="form-group mb-3"><label class="form-label">ShortName</label>
@@ -397,4 +401,36 @@ if ($method["methodId"] == 69) { // Nagorikpay
 																											  
 }
 
-$form .= '<div class="custom-modal-footer"><button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>&nbsp;&nbsp;<button type="submit" data-loading-text="Updating..." class="btn btn-primary">Save Changes</button></div></form>';
+$form .= '<div class="custom-modal-footer"><button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>&nbsp;&nbsp;<button type="submit" data-loading-text="Updating..." class="btn btn-primary">Save Changes</button></div>';
+$form .= '</div></form>';
+$form .= '<style>
+.payment-method-editor{display:flex;flex-direction:column;gap:16px}
+.payment-method-editor__hero{padding:0 2px 2px}
+.payment-method-editor__hero-title{font-size:26px;font-weight:800;line-height:1.2;color:#111827}
+.payment-method-editor__hero-text{margin-top:6px;color:#6b7280;font-size:14px;line-height:1.6}
+.payment-method-editor__card{background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(15,23,42,.05)}
+.payment-method-editor__card--compact{padding:16px 18px}
+.payment-method-editor__card--stack{display:flex;flex-direction:column;gap:16px}
+.payment-method-editor__card-title{font-size:16px;font-weight:800;color:#111827;margin-bottom:14px}
+.payment-method-editor .form-label{font-weight:700;color:#111827;margin-bottom:.45rem}
+.payment-method-editor .form-control,.payment-method-editor .form-select,.payment-method-editor .input-group-text{border-color:#d7dce5;border-radius:12px}
+.payment-method-editor .input-group .form-control{border-top-right-radius:0;border-bottom-right-radius:0}
+.payment-method-editor .input-group .input-group-text{border-top-left-radius:0;border-bottom-left-radius:0}
+.payment-method-editor .form-group{margin-bottom:0}
+.payment-method-logo-preview{position:relative;min-height:124px;border:1px solid #e5e7eb;border-radius:16px;background:linear-gradient(180deg,#f8fafc 0,#fff 100%);display:flex;align-items:center;justify-content:center;padding:18px}
+.payment-method-logo-preview img{max-width:100%;max-height:72px;object-fit:contain}
+.payment-method-logo-delete{position:absolute;top:10px;right:10px;width:30px;height:30px;border:none;border-radius:999px;background:#ef4444;color:#fff;font-size:18px;line-height:30px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(239,68,68,.28);cursor:pointer}
+.payment-method-logo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;max-height:260px;overflow:auto;padding-right:2px}
+.payment-method-logo-option-wrap{position:relative}
+.payment-method-logo-option{width:100%;min-height:78px;border:1px solid #e5e7eb;border-radius:14px;background:#fff;padding:10px;display:flex;align-items:center;justify-content:center;transition:all .15s ease}
+.payment-method-logo-option img{max-width:100%;max-height:46px;object-fit:contain}
+.payment-method-logo-option.is-active{border-color:#2563eb !important;box-shadow:0 0 0 2px rgba(37,99,235,.12)}
+.payment-method-logo-option-wrap:hover .payment-method-logo-option{transform:translateY(-1px)}
+.payment-method-logo-help{font-size:13px;color:#6b7280;line-height:1.5;margin-top:10px}
+.payment-method-editor .custom-modal-footer{display:flex;justify-content:flex-end;gap:12px;padding-top:2px}
+.payment-method-editor .custom-modal-footer .btn{min-width:160px}
+.payment-method-editor .row.g-2, .payment-method-editor .row.g-3{--bs-gutter-x:1rem;--bs-gutter-y:1rem}
+.payment-method-editor .payment-method-editor__card + .payment-method-editor__card{margin-top:-2px}
+@media (max-width: 991px){.payment-method-editor__hero-title{font-size:22px}}
+@media (max-width: 767px){.payment-method-editor .custom-modal-footer{flex-direction:column}.payment-method-editor .custom-modal-footer .btn{width:100%;min-width:0}.payment-method-logo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.payment-method-logo-preview{min-height:108px}}
+</style>';
