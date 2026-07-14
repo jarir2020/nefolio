@@ -525,6 +525,14 @@
     gap: 14px;
   }
 
+  .fee-summary-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 10px;
+    letter-spacing: 0.01em;
+  }
+
   .history-table {
     overflow-x: auto;
   }
@@ -1003,7 +1011,7 @@
                           <span class="value" id="totalAmountLabel">0.00 USD</span>
                         </div>
                         <div class="badge-note" id="rateNote">1 USD = 132.00 BDT | Bonus tier: 0%</div>
-                        <div class="breakdown-note" id="bonusBreakdownNote">For example: 0 USD = 0 USD + 0 USD</div>
+                        <div class="breakdown-note" id="bonusBreakdownNote">For example: 0 USD + 0 USD + 0 USD = 0 USD</div>
                       </div>
                     </div>
                     <button type="submit" class="btn btn-primary d-block w-100 pay-action">Pay</button>
@@ -1473,7 +1481,31 @@
       return 0;
     }
 
-    return amount + getBonusValue(amount, methodData) - getFeeAmount(amount, methodData);
+    return amount + getBonusValue(amount, methodData) + getFeeAmount(amount, methodData);
+  }
+
+  function buildAmountCalculationText(amount, methodData) {
+    amount = parseFloat(amount);
+    if (isNaN(amount) || !methodData) {
+      return "Enter an amount to calculate the fee and total.";
+    }
+
+    var bonusEnabled = isMethodBonusEnabled(methodData);
+    var bonusValue = bonusEnabled ? getBonusValue(amount, methodData) : 0;
+    var feeValue = getFeeAmount(amount, methodData);
+    var totalAmount = getNetTotalAmount(amount, methodData);
+    var parts = ["For example: " + formatDisplayAmount(amount) + " USD"];
+
+    if (bonusEnabled && bonusValue > 0) {
+      parts.push("+ " + formatDisplayAmount(bonusValue) + " USD");
+    }
+
+    if (feeValue > 0) {
+      parts.push("+ " + formatDisplayAmount(feeValue) + " USD");
+    }
+
+    parts.push("= " + formatDisplayAmount(totalAmount) + " USD");
+    return parts.join(" ");
   }
 
   function getActiveMethodId() {
@@ -1713,7 +1745,7 @@
       $("#bdtAmount").val(preparePrice(usdValue * rate));
       $("#totalAmountLabel").text(preparePrice(totalAmount) + " USD");
       if (bonusEnabled && (bonusValue > 0 || feeValue > 0)) {
-        $("#bonusBreakdownNote").text("For example: " + formatDisplayAmount(usdValue) + " USD + " + formatDisplayAmount(bonusValue) + " USD - " + formatDisplayAmount(feeValue) + " USD = " + formatDisplayAmount(totalAmount) + " USD");
+        $("#bonusBreakdownNote").text("For example: " + formatDisplayAmount(usdValue) + " USD + " + formatDisplayAmount(bonusValue) + " USD + " + formatDisplayAmount(feeValue) + " USD = " + formatDisplayAmount(totalAmount) + " USD");
         $("#bonusBreakdownNote").show();
       } else {
         $("#bonusBreakdownNote").text("").hide();
@@ -1802,42 +1834,30 @@
 
   function extraFeeInit(method) {
     var methodData = getSelectedMethodData(method);
-    var fee = methodData ? parseFloat(methodData.fee).toFixed(2) : "0.00";
     var fields = $("#fee_fields");
     var amount = parseFloat($("#usdAmount").val());
-    var bonusValue = getBonusValue(amount, methodData);
     var feeValue = getFeeAmount(amount, methodData);
     var totalAmount = getNetTotalAmount(amount, methodData);
-    var breakdownNote = "";
-    var bonusEnabled = isMethodBonusEnabled(methodData);
+    var breakdownNote = buildAmountCalculationText(amount, methodData);
 
-    if (!isNaN(amount)) {
-      breakdownNote = "For example: " + formatDisplayAmount(amount) + " USD";
-      if (bonusEnabled && bonusValue > 0) {
-        breakdownNote += " + " + formatDisplayAmount(bonusValue) + " USD";
-      }
-      if (feeValue > 0) {
-        breakdownNote += " - " + formatDisplayAmount(feeValue) + " USD";
-      }
-      breakdownNote += " = " + formatDisplayAmount(totalAmount) + " USD";
-    }
-
-    if (parseFloat(fee) > 0) {
-      fields.html(
-        '<div class="fee-grid">' +
-        '<div class="form-group">' +
-        '<label class="control-label">Extra fee</label>' +
-        '<input type="text" class="form-control" id="methodExtraFee" disabled value="' + (isNaN(amount) ? "0.00" : preparePrice(getFeeAmount(amount, methodData))) + '"/>' +
-        "</div>" +
-        '<div class="form-group">' +
-        '<label class="control-label">Total Amount</label>' +
-        '<input type="text" id="totalAmount" class="form-control" disabled value="' + (isNaN(amount) ? "0.00" : preparePrice(totalAmount)) + '" />' +
-        '<div class="breakdown-note mt-2" id="totalAmountCalculationNote">' + breakdownNote + '</div>' +
-        "</div></div>"
-      );
-    } else {
+    if (!methodData) {
       fields.empty();
+      return;
     }
+
+    fields.html(
+      '<div class="fee-summary-title">Independent fee calculation</div>' +
+      '<div class="fee-grid">' +
+      '<div class="form-group">' +
+      '<label class="control-label">Extra fee</label>' +
+      '<input type="text" class="form-control" id="methodExtraFee" disabled value="' + (isNaN(amount) ? "0.00" : preparePrice(feeValue)) + '"/>' +
+      "</div>" +
+      '<div class="form-group">' +
+      '<label class="control-label">Total Amount</label>' +
+      '<input type="text" id="totalAmount" class="form-control" disabled value="' + (isNaN(amount) ? "0.00" : preparePrice(totalAmount)) + '" />' +
+      '<div class="breakdown-note mt-2" id="totalAmountCalculationNote">' + breakdownNote + '</div>' +
+      "</div></div>"
+    );
   }
 
   function renderQuickAmounts() {
@@ -1904,7 +1924,7 @@
         $("#bonusBreakdownNote").text("").hide();
         $("#methodExtraFee").val("0.00");
         $("#totalAmount").val("0.00");
-        $("#totalAmountCalculationNote").text("");
+        $("#totalAmountCalculationNote").text("Enter an amount to calculate the fee and total.");
         return;
       }
 
@@ -1922,7 +1942,7 @@
         $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Fee: " + formatDisplayAmount(feeValue) + " USD");
       }
       if (bonusEnabled && (bonusValue > 0 || feeValue > 0)) {
-        $("#bonusBreakdownNote").text("For example: " + formatDisplayAmount(amount) + " USD + " + formatDisplayAmount(bonusValue) + " USD - " + formatDisplayAmount(feeValue) + " USD = " + formatDisplayAmount(totalAmount) + " USD");
+        $("#bonusBreakdownNote").text("For example: " + formatDisplayAmount(amount) + " USD + " + formatDisplayAmount(bonusValue) + " USD + " + formatDisplayAmount(feeValue) + " USD = " + formatDisplayAmount(totalAmount) + " USD");
         $("#bonusBreakdownNote").show();
       } else {
         $("#bonusBreakdownNote").text("").hide();
@@ -1932,25 +1952,16 @@
         return;
       }
 
-      var feePercentage = parseFloat(methodData.fee);
-      if (isNaN(feePercentage)) {
-        feePercentage = 0;
-      }
       var feeInput = $("#methodExtraFee");
       var totalAmountInput = $("#totalAmount");
-      var fee = amount * (feePercentage / 100);
-      var bonusValue = getBonusValue(amount, methodData);
-      var totalAmount = getNetTotalAmount(amount, methodData);
+      var fee = getFeeAmount(amount, methodData);
+      var noteText = buildAmountCalculationText(amount, methodData);
 
       if (feeInput.length && totalAmountInput.length) {
         feeInput.val(preparePrice(fee));
         totalAmountInput.val(preparePrice(totalAmount));
       }
-      if (bonusEnabled) {
-        $("#totalAmountCalculationNote").text("For example: " + formatDisplayAmount(amount) + " USD + " + formatDisplayAmount(bonusValue) + " USD - " + formatDisplayAmount(fee) + " USD = " + formatDisplayAmount(totalAmount) + " USD");
-      } else {
-        $("#totalAmountCalculationNote").text("For example: " + formatDisplayAmount(amount) + " USD - " + formatDisplayAmount(fee) + " USD = " + formatDisplayAmount(totalAmount) + " USD");
-      }
+      $("#totalAmountCalculationNote").text(noteText);
     });
 
     $("#gateway_alias").change(function () {
