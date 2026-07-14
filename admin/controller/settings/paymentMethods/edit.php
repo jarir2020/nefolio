@@ -31,8 +31,6 @@ $automaticMethods = [
     69
 ];
 
-$allMethods = array_merge($automaticMethods, $manualMethods);
-
 $methodId = intval($_POST["method_id"]);
 $methodVisibleName = htmlspecialchars($_POST["method_name"]);
 $methodMin = $_POST["method_min"];
@@ -68,7 +66,7 @@ if ($methodRateRulesPosted) {
     }
 }
 
-$currentMethod = $conn->prepare("SELECT methodExtras FROM paymentmethods WHERE methodId=:id");
+$currentMethod = $conn->prepare("SELECT * FROM paymentmethods WHERE methodId=:id");
 $currentMethod->execute(["id" => $methodId]);
 $currentMethod = $currentMethod->fetch(PDO::FETCH_ASSOC);
 
@@ -99,8 +97,8 @@ if ($methodLogo !== "" && in_array($methodLogo, $deletedFileLinks, true)) {
     $methodLogo = $defaultMethodLogo;
 }
 
-if (!in_array($methodId, $allMethods)) {
-    errorExit("Invalid payment method");
+if (!$currentMethod) {
+    errorExit("This payment method doesn't exist.");
 }
 
 if (in_array($methodId, $automaticMethods)) {
