@@ -298,6 +298,22 @@
     display: none;
   }
 
+  @media (max-width: 767px) {
+    .gateway-quick-item {
+      min-height: 78px;
+      padding: 10px;
+      gap: 0;
+    }
+
+    .gateway-quick-item .meta {
+      display: none;
+    }
+
+    .gateway-quick-item .logo {
+      margin: 0;
+    }
+  }
+
   .converter-panel {
     margin-bottom: 18px;
     padding: 18px;
@@ -1184,18 +1200,21 @@
 
   function buildGatewayTileData(methodData, index) {
     var alias = getMethodAlias(methodData) || "method_" + methodData.id;
-    var name = methodData.short_name || methodData.name || "Gateway";
+    var shortName = methodData.tile_label || methodData.short_name || methodData.name || "Gateway";
+    var methodName = methodData.method_name || methodData.name || shortName || "Gateway";
     var logo = getMethodLogoUrl(methodData);
 
     // Generate a stable hue from the method id for the tile background
     var hue = ((methodData.id * 47) % 360);
     var bg = "linear-gradient(135deg, hsla(" + hue + ", 40%, 60%, 0.16), hsla(" + hue + ", 30%, 50%, 0.06))";
     var color = "hsl(" + hue + ", 35%, 35%)";
-    var badge = name.charAt(0).toUpperCase();
+    var badge = shortName.charAt(0).toUpperCase();
 
     return {
       alias: alias,
-      label: name,
+      label: shortName,
+      methodName: methodName,
+      shortName: shortName,
       badge: badge,
       bg: bg,
       color: color,
@@ -1318,7 +1337,7 @@
 
     for (var i = 0; i < activeTiles.length; i++) {
       var tile = activeTiles[i];
-      html += '<option value="' + escapeHtml(tile.alias) + '">' + escapeHtml(tile.label) + '</option>';
+      html += '<option value="' + escapeHtml(tile.alias) + '">' + escapeHtml(tile.methodName || tile.label) + '</option>';
     }
 
     $("#gateway_alias").html(html);
@@ -1350,7 +1369,7 @@
       var tileLogo = getGatewayTileLogo(tile.alias);
       var isActive = tile.alias === activeAlias ? " is-active" : "";
 
-      // Use shortName from payment method data if available, fallback to hardcoded label
+      // Use shortName beside the logo on desktop; mobile CSS hides the label.
       var methodData = findMethodByAlias(tile.alias);
       var displayLabel = methodData && methodData.short_name ? methodData.short_name : tile.label;
 
@@ -1367,19 +1386,11 @@
   }
 
   function isMethodBonusEnabled(methodData) {
-    if (!methodData || typeof methodData.bonus_enabled === "undefined") {
-      return true;
-    }
-
-    return parseInt(methodData.bonus_enabled, 10) === 1;
+    return !!(methodData && methodData.bonus_ui_enabled);
   }
 
   function isDollarRateConversionEnabled(methodData) {
-    if (!methodData || typeof methodData.dollar_rate_conversion_enabled === "undefined") {
-      return true;
-    }
-
-    return parseInt(methodData.dollar_rate_conversion_enabled, 10) === 1;
+    return !!(methodData && methodData.converter_ui_enabled);
   }
 
   function getMethodRate(methodData) {
@@ -1575,28 +1586,31 @@
     }
 
     var details = [];
-    var bonusStatus = isMethodBonusEnabled(methodData) ? "On" : "Off";
+    var bonusEnabled = isMethodBonusEnabled(methodData);
+    var bonusStatus = bonusEnabled ? "On" : "Off";
     var feePercent = parseFloat(methodData.fee);
     var bonusPercent = parseFloat(methodData.bonus_percentage);
     var bonusStartAmount = parseFloat(methodData.bonus_start_amount);
 
-    details.push("Bonus: " + bonusStatus);
+    if (bonusEnabled) {
+      details.push("Bonus: " + bonusStatus);
 
-    if (!isNaN(bonusPercent) && bonusPercent > 0) {
-      details.push("Default bonus: " + formatDisplayAmount(bonusPercent) + "%");
-    }
+      if (!isNaN(bonusPercent) && bonusPercent > 0) {
+        details.push("Default bonus: " + formatDisplayAmount(bonusPercent) + "%");
+      }
 
-    if (!isNaN(bonusStartAmount) && bonusStartAmount > 0) {
-      details.push("Starts from: " + formatDisplayAmount(bonusStartAmount) + " USD");
+      if (!isNaN(bonusStartAmount) && bonusStartAmount > 0) {
+        details.push("Starts from: " + formatDisplayAmount(bonusStartAmount) + " USD");
+      }
+
+      var ruleText = buildGatewayBonusRuleText(methodData);
+      if (ruleText) {
+        details.push("Rules: " + ruleText);
+      }
     }
 
     if (!isNaN(feePercent) && feePercent > 0) {
       details.push("Fee: " + formatDisplayAmount(feePercent) + "%");
-    }
-
-    var ruleText = buildGatewayBonusRuleText(methodData);
-    if (ruleText) {
-      details.push("Rules: " + ruleText);
     }
 
     if (methodData.min_amount || methodData.max_amount) {
@@ -1636,12 +1650,22 @@
 
   function syncCurrencyConverter(forceHide) {
     var methodData = getSelectedMethodData(getActiveMethodId());
+    var bonusEnabled = isMethodBonusEnabled(methodData);
+    var converterEnabled = isDollarRateConversionEnabled(methodData);
+
+    if (forceHide || !converterEnabled) {
+      $("#currencyConverterWrap").hide();
+      $("#converterFeeFields").empty();
+      $("#rateNote").text("");
+      $("#bonusBreakdownNote").text("").hide();
+      return;
+    }
+
     var methodRate = getMethodRate(methodData);
     var fallbackRate = !isNaN(globalDollarRate) && globalDollarRate > 0 ? globalDollarRate : 132;
     var rate = methodRate !== null ? methodRate : fallbackRate;
     var usdRawValue = $("#usdAmount").val();
     var usdValue = parseFloat(usdRawValue);
-    var bonusEnabled = isMethodBonusEnabled(methodData);
     var bonusPercent = bonusEnabled ? getBonusPercent(usdValue, methodData) : 0;
     var bonusValue = bonusEnabled ? getBonusValue(usdValue, methodData) : 0;
     var feeValue = getFeeAmount(usdValue, methodData);
@@ -1649,31 +1673,31 @@
     var feePercent = methodData && methodData.fee !== undefined && methodData.fee !== null ? parseFloat(methodData.fee) : 0;
     var feePercentLabel = isNaN(feePercent) ? 0 : feePercent;
 
-    if (forceHide) {
-      $("#currencyConverterWrap").hide();
-      return;
-    }
-
     $("#currencyConverterWrap").show();
 
     $("#exchangeRateLabel").text("1 USD = " + preparePrice(rate) + " BDT");
-    $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Bonus tier: " + bonusPercent + "% | Fee: " + feePercentLabel + "%");
+    if (bonusEnabled) {
+      $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Bonus tier: " + bonusPercent + "% | Fee: " + feePercentLabel + "%").show();
+    } else {
+      $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Fee: " + feePercentLabel + "%").show();
+    }
 
     if (!isNaN(usdValue)) {
       $("#paymentAmount").val(usdRawValue);
       $("#bdtAmount").val(preparePrice(usdValue * rate));
       $("#totalAmountLabel").text(preparePrice(totalAmount) + " USD");
-      if (bonusValue > 0 || feeValue > 0) {
+      if (bonusEnabled && (bonusValue > 0 || feeValue > 0)) {
         $("#bonusBreakdownNote").text("For example: " + formatDisplayAmount(usdValue) + " USD + " + formatDisplayAmount(bonusValue) + " USD - " + formatDisplayAmount(feeValue) + " USD = " + formatDisplayAmount(totalAmount) + " USD");
+        $("#bonusBreakdownNote").show();
       } else {
-        $("#bonusBreakdownNote").text("");
+        $("#bonusBreakdownNote").text("").hide();
       }
     } else {
       $("#usdConvertedAmount").val("");
       $("#paymentAmount").val("");
       $("#bdtAmount").val("");
       $("#totalAmountLabel").text("0.00 USD");
-      $("#bonusBreakdownNote").text("");
+      $("#bonusBreakdownNote").text("").hide();
     }
   }
 
@@ -1707,8 +1731,10 @@
           var bonusRatesMarkup = "";
           var bonusItems = "";
           var paymentMethodKeys = paymentMethods ? Object.keys(paymentMethods) : [];
+          var showBonusUi = !!(methodData && methodData.bonus_ui_enabled);
+          var showConverterUi = !!(methodData && methodData.converter_ui_enabled);
 
-          if (paymentMethodKeys.length) {
+          if (showBonusUi && paymentMethodKeys.length) {
             for (var i = 0; i < paymentMethodKeys.length; i++) {
               var paymentMethodRow = paymentMethods[paymentMethodKeys[i]] && paymentMethods[paymentMethodKeys[i]][0] ? paymentMethods[paymentMethodKeys[i]][0] : null;
               if (!paymentMethodRow) {
@@ -1729,18 +1755,20 @@
             }
           }
 
-          bonusRatesMarkup =
-            '<div class="bonus-rates-box">' +
-            '<div class="bonus-rates-head">' +
-            '<div class="bonus-rates-title"><i class="fas fa-gift"></i><span>Bonus Rates</span></div>' +
-            '<button type="button" class="bonus-rates-toggle" data-bs-toggle="collapse" data-bs-target="#bonusRatesCollapse" aria-expanded="false" aria-controls="bonusRatesCollapse">Click to show</button>' +
-            '</div>' +
-            '<div class="collapse" id="bonusRatesCollapse">' +
-            '<div class="bonus-rates-collapse">' +
-            '<ul>' + bonusItems + '</ul>' +
-            '</div>' +
-            '</div>' +
-            '</div>';
+          if (showBonusUi && bonusItems) {
+            bonusRatesMarkup =
+              '<div class="bonus-rates-box">' +
+              '<div class="bonus-rates-head">' +
+              '<div class="bonus-rates-title"><i class="fas fa-gift"></i><span>Bonus Rates</span></div>' +
+              '<button type="button" class="bonus-rates-toggle" data-bs-toggle="collapse" data-bs-target="#bonusRatesCollapse" aria-expanded="false" aria-controls="bonusRatesCollapse">Click to show</button>' +
+              '</div>' +
+              '<div class="collapse" id="bonusRatesCollapse">' +
+              '<div class="bonus-rates-collapse">' +
+              '<ul>' + bonusItems + '</ul>' +
+              '</div>' +
+              '</div>' +
+              '</div>';
+          }
 
           if (methodData.instructions && methodData.instructions.length > 0) {
             methodInstruction =
@@ -1760,10 +1788,14 @@
               '</div></div>';
           }
           $("#addfunds_fields").html(bonusRatesMarkup + methodInstruction + json.content);
-          $("#converterFeeFields").append($("#fee_fields"));
-          extraFeeInit(selectedMethod);
+          if (showConverterUi) {
+            $("#converterFeeFields").append($("#fee_fields"));
+            extraFeeInit(selectedMethod);
+          } else {
+            $("#converterFeeFields").empty();
+          }
           renderGatewayQuickGrid();
-          syncCurrencyConverter();
+          syncCurrencyConverter(!showConverterUi);
         }
       }
     });
@@ -1778,10 +1810,11 @@
     var feeValue = getFeeAmount(amount, methodData);
     var totalAmount = getNetTotalAmount(amount, methodData);
     var breakdownNote = "";
+    var bonusEnabled = isMethodBonusEnabled(methodData);
 
     if (!isNaN(amount)) {
       breakdownNote = "For example: " + formatDisplayAmount(amount) + " USD";
-      if (bonusValue > 0) {
+      if (bonusEnabled && bonusValue > 0) {
         breakdownNote += " + " + formatDisplayAmount(bonusValue) + " USD";
       }
       if (feeValue > 0) {
@@ -1869,7 +1902,7 @@
         $("#paymentAmount").val("");
         $("#bdtAmount").val("");
         $("#totalAmountLabel").text("0.00 USD");
-        $("#bonusBreakdownNote").text("");
+        $("#bonusBreakdownNote").text("").hide();
         $("#methodExtraFee").val("0.00");
         $("#totalAmount").val("0.00");
         $("#totalAmountCalculationNote").text("");
@@ -1877,18 +1910,23 @@
       }
 
       var bonusPercent = bonusEnabled ? getBonusPercent(amount, methodData) : 0;
-      var bonusValue = getBonusValue(amount, methodData);
+      var bonusValue = bonusEnabled ? getBonusValue(amount, methodData) : 0;
       var feeValue = getFeeAmount(amount, methodData);
       var totalAmount = getNetTotalAmount(amount, methodData);
       $("#usdConvertedAmount").val($(this).val());
       $("#paymentAmount").val($(this).val());
       $("#bdtAmount").val(preparePrice(amount * rate));
       $("#totalAmountLabel").text(preparePrice(totalAmount) + " USD");
-      $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Bonus tier: " + bonusPercent + "% | Fee: " + formatDisplayAmount(feeValue) + " USD");
-      if (bonusValue > 0 || feeValue > 0) {
-        $("#bonusBreakdownNote").text("For example: " + formatDisplayAmount(amount) + " USD + " + formatDisplayAmount(bonusValue) + " USD - " + formatDisplayAmount(feeValue) + " USD = " + formatDisplayAmount(totalAmount) + " USD");
+      if (bonusEnabled) {
+        $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Bonus tier: " + bonusPercent + "% | Fee: " + formatDisplayAmount(feeValue) + " USD");
       } else {
-        $("#bonusBreakdownNote").text("");
+        $("#rateNote").text("1 USD = " + preparePrice(rate) + " BDT | Fee: " + formatDisplayAmount(feeValue) + " USD");
+      }
+      if (bonusEnabled && (bonusValue > 0 || feeValue > 0)) {
+        $("#bonusBreakdownNote").text("For example: " + formatDisplayAmount(amount) + " USD + " + formatDisplayAmount(bonusValue) + " USD - " + formatDisplayAmount(feeValue) + " USD = " + formatDisplayAmount(totalAmount) + " USD");
+        $("#bonusBreakdownNote").show();
+      } else {
+        $("#bonusBreakdownNote").text("").hide();
       }
 
       if (!methodData) {
@@ -1909,7 +1947,11 @@
         feeInput.val(preparePrice(fee));
         totalAmountInput.val(preparePrice(totalAmount));
       }
-      $("#totalAmountCalculationNote").text("For example: " + formatDisplayAmount(amount) + " USD + " + formatDisplayAmount(bonusValue) + " USD - " + formatDisplayAmount(fee) + " USD = " + formatDisplayAmount(totalAmount) + " USD");
+      if (bonusEnabled) {
+        $("#totalAmountCalculationNote").text("For example: " + formatDisplayAmount(amount) + " USD + " + formatDisplayAmount(bonusValue) + " USD - " + formatDisplayAmount(fee) + " USD = " + formatDisplayAmount(totalAmount) + " USD");
+      } else {
+        $("#totalAmountCalculationNote").text("For example: " + formatDisplayAmount(amount) + " USD - " + formatDisplayAmount(fee) + " USD = " + formatDisplayAmount(totalAmount) + " USD");
+      }
     });
 
     $("#gateway_alias").change(function () {

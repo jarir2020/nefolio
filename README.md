@@ -21,6 +21,7 @@ Nefolio SMM Panel local setup and deployment system.
 ## CI/CD Deployment
 
 This repository uses GitHub Actions to automatically deploy updates to the production site via FTP when pushed to the `main` branch.
+After the FTP sync finishes, the workflow also calls `https://netfollows.com/hosting-db-columns.php` so the hosted database gets the missing columns automatically.
 
 ### Prerequisites
 

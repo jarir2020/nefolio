@@ -56,12 +56,16 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             $quickAmounts = isset($methodExtras["quick_amounts"]) && is_array($methodExtras["quick_amounts"])
                 ? $methodExtras["quick_amounts"]
                 : null;
+            $methodBonusEnabled = isset($paymentMethods[$i]["methodBonusEnabled"]) ? intval($paymentMethods[$i]["methodBonusEnabled"]) : 1;
+            $dollarRateConversionEnabled = isset($paymentMethods[$i]["dollarRateConversionEnabled"]) ? intval($paymentMethods[$i]["dollarRateConversionEnabled"]) : 1;
             $methodLogo = trim((string) $paymentMethods[$i]["methodLogo"]);
             $methodsList[] = [
                 "id"            => $paymentMethods[$i]["methodId"],
                 "position"      => $paymentMethods[$i]["methodPosition"],
                 "name"          => $paymentMethods[$i]["methodVisibleName"],
+                "method_name"   => $paymentMethods[$i]["methodVisibleName"],
                 "short_name"    => $paymentMethods[$i]["methodShortName"] ?? "",
+                "tile_label"    => trim($paymentMethods[$i]["methodShortName"] ?? "") !== "" ? $paymentMethods[$i]["methodShortName"] : $paymentMethods[$i]["methodVisibleName"],
                 "logo"          => $normalizeMethodLogo($methodLogo !== "" ? $methodLogo : $defaultMethodLogo),
                 "callback"      => $paymentMethods[$i]["methodCallback"],
                 "currency"      => $paymentMethods[$i]["methodCurrency"],
@@ -70,8 +74,10 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 "exchange_rate" => $exchangeRate,
                 "bonus_percentage" => $paymentMethods[$i]["methodBonusPercentage"],
                 "bonus_start_amount" => $paymentMethods[$i]["methodBonusStartAmount"],
-                "bonus_enabled" => isset($paymentMethods[$i]["methodBonusEnabled"]) ? intval($paymentMethods[$i]["methodBonusEnabled"]) : 1,
-                "dollar_rate_conversion_enabled" => isset($paymentMethods[$i]["dollarRateConversionEnabled"]) ? intval($paymentMethods[$i]["dollarRateConversionEnabled"]) : 1,
+                "bonus_enabled" => $methodBonusEnabled,
+                "bonus_ui_enabled" => $methodBonusEnabled === 1,
+                "dollar_rate_conversion_enabled" => $dollarRateConversionEnabled,
+                "converter_ui_enabled" => $dollarRateConversionEnabled === 1,
                 "bonus_rules"   => $bonusRules,
                 "instructions"  => trim(htmlspecialchars_decode($paymentMethods[$i]["methodInstructions"])),
                 "fee"           => $paymentMethods[$i]["methodFee"],

