@@ -977,6 +977,8 @@
 
                     <div class="quick-amounts mb-3" id="usdQuickSelect"></div>
 
+                    <div id="converterFeeFields" class="converter-fee-fields mb-3"></div>
+
                     <div class="converter-panel" id="currencyConverterWrap" style="display:none;">
                       <div class="converter-head">
                         <h4>Dollar Rate Conversion</h4>
@@ -995,7 +997,6 @@
                           <input type="text" id="bdtAmount" class="form-control" readonly placeholder="0.00">
                         </div>
                       </div>
-                      <div id="converterFeeFields" class="converter-fee-fields"></div>
                       <div class="rate-summary" id="rateSummaryWrap">
                         <div class="copy">
                           <span class="eyebrow">Total you get</span>
@@ -1681,7 +1682,6 @@
 
     if (forceHide || !converterEnabled) {
       $("#currencyConverterWrap").hide();
-      $("#converterFeeFields").empty();
       $("#rateNote").text("");
       $("#bonusBreakdownNote").text("").hide();
       return;
@@ -1791,12 +1791,8 @@
               '</div></div>';
           }
           $("#addfunds_fields").html(bonusRatesMarkup + methodInstruction + json.content);
-          if (showConverterUi) {
-            $("#converterFeeFields").append($("#fee_fields"));
-            extraFeeInit(selectedMethod);
-          } else {
-            $("#converterFeeFields").empty();
-          }
+          $("#converterFeeFields").append($("#fee_fields"));
+          extraFeeInit(selectedMethod);
           renderGatewayQuickGrid();
           syncCurrencyConverter(!showConverterUi);
         }
