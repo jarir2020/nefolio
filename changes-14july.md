@@ -20,6 +20,7 @@
 - Updated the add-funds amount fields so the visible USD input stays editable while typing, with no frontend formatting or validation forcing the value into a locked decimal shape.
 - Added the one-off DB helper `hosting-db-columns.php` for deploying the missing schema columns on hosted environments.
 - Added a one-off DB helper `hosting-sms-creds.php` to fetch the SMS gateway settings (`sms_provider`, `sms_title`, `sms_user`, `sms_pass`, `sms_validate`) from the `settings` table as JSON for ops/deploy use.
+- Moved add-funds UI state preparation into `app/controller/addfunds.php` so the Twig view receives `method_name`, `tile_label`, `bonus_ui_enabled`, and `converter_ui_enabled` instead of deriving them inline.
 
 ## Notes
 
@@ -48,4 +49,5 @@ Payment Method Icon Multi-Upload	admin/controller/appearance.php	1	1	upload hand
 Payment Method Icon Picker	admin/controller/settings/paymentMethods/getForm.php	1	1	getForm form builder	Modify	Admin method editor	Rendered uploaded icons side by side with select and delete actions inside the edit modal	paymentmethods	:-	:-
 AddFunds UI Refresh	app/views/N1RentalPanel/addfunds.twig	1	1	Template and JS	Modify	User add-funds UI	Redesigned the add-funds panel, moved quick presets, added raw amount entry, and showed bonus/fee breakdown	inline UI	:-	:-
 SMS Creds Helper	hosting-sms-creds.php	1	1	standalone helper	New	Ops/deploy helper	Fetches `sms_provider`, `sms_title`, `sms_user`, `sms_pass`, and `sms_validate` from `settings` as JSON	settings	:-	:-
+AddFunds UI State Prep	app/controller/addfunds.php	59	80	GET addfunds data loader	Modify	User add-funds flow	Prepared `method_name`, `tile_label`, `bonus_ui_enabled`, and `converter_ui_enabled` in the controller so the Twig template only renders UI	state prep	:-	:-
 ```

@@ -312,6 +312,15 @@
     .gateway-quick-item .logo {
       margin: 0;
     }
+
+    .bonus-rates-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .bonus-rate-card .range,
+    .bonus-rate-card .percent {
+      font-size: 16px;
+    }
   }
 
   .converter-panel {
@@ -619,72 +628,53 @@
 
   .bonus-rates-collapse {
     margin-top: 12px;
-    padding: 14px 16px;
-    border-radius: 16px;
+    padding: 16px;
+    border-radius: 18px;
     background: #fff;
     border: 1px solid rgba(15, 23, 42, 0.08);
   }
 
-  .bonus-rates-collapse ul {
-    margin: 0;
-    padding-left: 18px;
-    color: #334155;
-    line-height: 1.7;
-  }
-
-  .bonus-rates-collapse li + li {
-    margin-top: 6px;
-  }
-
-  .bonus-rate-item {
+  .bonus-rates-grid {
     display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 8px 12px;
-    padding: 12px 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
   }
 
-  .bonus-rate-item + .bonus-rate-item {
-    border-top: 1px dashed rgba(15, 23, 42, 0.08);
-  }
-
-  .bonus-rate-name {
-    font-weight: 800;
-    color: #0f172a;
-  }
-
-  .bonus-rate-details {
-    grid-column: 1 / -1;
-    color: #64748b;
-    font-size: 13px;
-    line-height: 1.5;
-  }
-
-  .bonus-rates-collapse ul {
-    list-style: none;
-    padding-left: 0;
-  }
-
-  .bonus-rate-status {
-    display: inline-flex;
+  .bonus-rate-card {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    min-width: 56px;
-    padding: 6px 10px;
-    border-radius: 999px;
-    font-size: 12px;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1px solid rgba(226, 232, 240, 1);
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+    min-height: 62px;
+  }
+
+  .bonus-rate-card .range {
+    font-size: 18px;
     font-weight: 800;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    color: #6b7280;
+    letter-spacing: -0.02em;
   }
 
-  .bonus-rate-status.is-on {
-    background: rgba(22, 163, 74, 0.12);
-    color: #15803d;
+  .bonus-rate-card .percent {
+    min-width: 62px;
+    padding: 8px 14px;
+    border-radius: 12px;
+    background: #f3f4fb;
+    color: #27324d;
+    font-size: 18px;
+    font-weight: 800;
+    text-align: center;
   }
 
-  .bonus-rate-status.is-off {
-    background: rgba(239, 68, 68, 0.12);
-    color: #b91c1c;
+  .bonus-rates-empty {
+    padding: 12px 2px 2px;
+    color: #64748b;
+    font-size: 14px;
   }
 
   .content-stack {
@@ -1405,21 +1395,14 @@
   function getActiveBonusRules(methodData) {
     var rules = [];
 
-    if (methodData && Array.isArray(methodData.bonus_rules) && methodData.bonus_rules.length) {
+    if (methodData && Array.isArray(methodData.bonus_tiers) && methodData.bonus_tiers.length) {
+      rules = methodData.bonus_tiers;
+    } else if (methodData && Array.isArray(methodData.bonus_rules) && methodData.bonus_rules.length) {
       rules = methodData.bonus_rules;
-    } else if (Array.isArray(bonusRateRules) && bonusRateRules.length) {
-      rules = bonusRateRules;
     }
 
     if (!rules.length) {
-      rules = [
-        { range_from: 0, range_to: 99, bonus_percent: 0, is_active: 1 },
-        { range_from: 100, range_to: 999, bonus_percent: 3, is_active: 1 },
-        { range_from: 1000, range_to: 4999, bonus_percent: 5, is_active: 1 },
-        { range_from: 5000, range_to: 9999, bonus_percent: 7, is_active: 1 },
-        { range_from: 10000, range_to: 49999, bonus_percent: 8, is_active: 1 },
-        { range_from: 50000, range_to: null, bonus_percent: 20, is_active: 1 }
-      ];
+      rules = [];
     }
 
     return rules.filter(function (rule) {
@@ -1546,10 +1529,10 @@
   function buildGatewayBonusRuleText(methodData) {
     var rules = [];
 
-    if (methodData && Array.isArray(methodData.bonus_rules) && methodData.bonus_rules.length) {
+    if (methodData && Array.isArray(methodData.bonus_tiers) && methodData.bonus_tiers.length) {
+      rules = methodData.bonus_tiers;
+    } else if (methodData && Array.isArray(methodData.bonus_rules) && methodData.bonus_rules.length) {
       rules = methodData.bonus_rules;
-    } else if (Array.isArray(bonusRateRules) && bonusRateRules.length) {
-      rules = bonusRateRules;
     }
 
     if (!rules.length) {
@@ -1578,6 +1561,49 @@
     }
 
     return parts.join(" | ");
+  }
+
+  function formatBonusTierLabel(rule) {
+    if (!rule) {
+      return "";
+    }
+
+    var from = parseFloat(rule.range_from);
+    if (isNaN(from)) {
+      from = 0;
+    }
+
+    return "$" + formatDisplayAmount(from) + "+";
+  }
+
+  function buildBonusRatesGrid(methodData) {
+    var rules = getActiveBonusRules(methodData);
+    var cards = [];
+
+    for (var i = 0; i < rules.length; i++) {
+      var rule = rules[i];
+      if (!rule) {
+        continue;
+      }
+
+      var percent = parseFloat(rule.bonus_percent);
+      if (isNaN(percent) || percent <= 0) {
+        continue;
+      }
+
+      cards.push(
+        '<div class="bonus-rate-card">' +
+        '<span class="range">' + escapeHtml(formatBonusTierLabel(rule)) + '</span>' +
+        '<span class="percent">' + escapeHtml(formatDisplayAmount(percent)) + '%</span>' +
+        '</div>'
+      );
+    }
+
+    if (!cards.length) {
+      return '<div class="bonus-rates-empty">No bonus rates available for this gateway.</div>';
+    }
+
+    return '<div class="bonus-rates-grid">' + cards.join("") + '</div>';
   }
 
   function buildGatewayBonusDetails(methodData) {
@@ -1729,33 +1755,10 @@
         if (json.success === true) {
           var methodInstruction = "";
           var bonusRatesMarkup = "";
-          var bonusItems = "";
-          var paymentMethodKeys = paymentMethods ? Object.keys(paymentMethods) : [];
           var showBonusUi = !!(methodData && methodData.bonus_ui_enabled);
           var showConverterUi = !!(methodData && methodData.converter_ui_enabled);
 
-          if (showBonusUi && paymentMethodKeys.length) {
-            for (var i = 0; i < paymentMethodKeys.length; i++) {
-              var paymentMethodRow = paymentMethods[paymentMethodKeys[i]] && paymentMethods[paymentMethodKeys[i]][0] ? paymentMethods[paymentMethodKeys[i]][0] : null;
-              if (!paymentMethodRow) {
-                continue;
-              }
-
-              bonusItems +=
-                '<li class="bonus-rate-item">' +
-                '<span class="bonus-rate-name">' +
-                '<img src="' + (paymentMethodRow.logo || "") + '" alt="" onerror="this.onerror=null;this.src=\'' + defaultPaymentMethodLogo + '\';" style="width:18px;height:18px;object-fit:contain;margin-right:8px;border-radius:4px;">' +
-                (paymentMethodRow.name || "Payment Method") +
-                '</span>' +
-                '<span class="bonus-rate-status ' + (isMethodBonusEnabled(paymentMethodRow) ? "is-on" : "is-off") + '">' +
-                getMethodBonusStatusLabel(paymentMethodRow) +
-                '</span>' +
-                '<div class="bonus-rate-details">' + escapeHtml(buildGatewayBonusDetails(paymentMethodRow)) + '</div>' +
-                '</li>';
-            }
-          }
-
-          if (showBonusUi && bonusItems) {
+          if (showBonusUi) {
             bonusRatesMarkup =
               '<div class="bonus-rates-box">' +
               '<div class="bonus-rates-head">' +
@@ -1764,7 +1767,7 @@
               '</div>' +
               '<div class="collapse" id="bonusRatesCollapse">' +
               '<div class="bonus-rates-collapse">' +
-              '<ul>' + bonusItems + '</ul>' +
+              buildBonusRatesGrid(methodData) +
               '</div>' +
               '</div>' +
               '</div>';

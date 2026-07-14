@@ -58,6 +58,26 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 : null;
             $methodBonusEnabled = isset($paymentMethods[$i]["methodBonusEnabled"]) ? intval($paymentMethods[$i]["methodBonusEnabled"]) : 1;
             $dollarRateConversionEnabled = isset($paymentMethods[$i]["dollarRateConversionEnabled"]) ? intval($paymentMethods[$i]["dollarRateConversionEnabled"]) : 1;
+            $bonusTiers = [];
+
+            if ($methodBonusEnabled === 1) {
+                if (!empty($bonusRules)) {
+                    $bonusTiers = $bonusRules;
+                } elseif ((float) $paymentMethods[$i]["methodBonusPercentage"] > 0) {
+                    $startAmount = (float) $paymentMethods[$i]["methodBonusStartAmount"];
+                    if ($startAmount < 0) {
+                        $startAmount = 0;
+                    }
+
+                    $bonusTiers[] = [
+                        "range_from" => $startAmount,
+                        "range_to" => null,
+                        "bonus_percent" => (float) $paymentMethods[$i]["methodBonusPercentage"],
+                        "is_active" => 1,
+                    ];
+                }
+            }
+
             $methodLogo = trim((string) $paymentMethods[$i]["methodLogo"]);
             $methodsList[] = [
                 "id"            => $paymentMethods[$i]["methodId"],
@@ -79,6 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 "dollar_rate_conversion_enabled" => $dollarRateConversionEnabled,
                 "converter_ui_enabled" => $dollarRateConversionEnabled === 1,
                 "bonus_rules"   => $bonusRules,
+                "bonus_tiers"   => $bonusTiers,
                 "instructions"  => trim(htmlspecialchars_decode($paymentMethods[$i]["methodInstructions"])),
                 "fee"           => $paymentMethods[$i]["methodFee"],
                 "quick_amounts" => $quickAmounts,
